@@ -1,6 +1,6 @@
 {
     "name": "marauders-map",
-    "displayName": "Marauder's Map",
+    "displayName": "The Marauder's Map",
     "publisher": "bs-code",
     "description": "Customize keybindings into groups that come with a quickPicker for visual a reminder",
     "version": "0.0.1",
@@ -15,6 +15,17 @@
     ],
     "main": "./extension.js",
     "contributes": {
+      "configuration": {
+      "type": "object",
+      "title": "MaraudersMap Settings",
+      "properties": {
+        "MaraudersMap.spells": {
+          "type": "array",
+          "default": [],
+          "description": "An array of keybinding groups."
+        }
+      }
+    },
         "commands": [
             {
                 "command": "MaraudersMap.helloWorld",
