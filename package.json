@@ -1,6 +1,7 @@
 {
     "name": "marauders-map",
     "displayName": "Marauder's Map",
+    "publisher": "bs-code",
     "description": "Customize keybindings into groups that come with a quickPicker for visual a reminder",
     "version": "0.0.1",
     "engines": {
@@ -9,13 +10,22 @@
     "categories": [
         "Other"
     ],
-    "activationEvents": [],
+    "activationEvents": [
+        "onStartupFinished"
+    ],
     "main": "./extension.js",
     "contributes": {
         "commands": [
             {
-                "command": "marauders-map.helloWorld",
-                "title": "Hello World"
+                "command": "MaraudersMap.helloWorld",
+                "title": "Hello World",
+                "category": "MaraudersMap"
+            },
+            {
+                "command": "MaraudersMap.expectoPatronum",
+                "title": "Create New Group",
+                "category": "MaraudersMap",
+                "icon": "$(group-by-ref-type)"
             }
         ]
     },
@@ -25,12 +35,15 @@
         "test": "vscode-test"
     },
     "devDependencies": {
-        "@types/vscode": "^1.91.0",
         "@types/mocha": "^10.0.7",
         "@types/node": "20.x",
-        "eslint": "^8.57.0",
-        "typescript": "^5.4.5",
+        "@types/vscode": "^1.91.0",
         "@vscode/test-cli": "^0.0.9",
-        "@vscode/test-electron": "^2.4.0"
+        "@vscode/test-electron": "^2.4.0",
+        "eslint": "^8.57.0",
+        "typescript": "^5.4.5"
+    },
+    "dependencies": {
+        "jsonc-parser": "^3.3.1"
     }
 }
