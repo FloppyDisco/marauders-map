@@ -2,6 +2,7 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const vscode = require('vscode');
+const jsonc = require('jsonc-parser');
 
 /**
  * Function to determine if the extension is running in VSCodium or VS Code.
@@ -16,6 +17,11 @@ function getPathToKeybindingsFile() {
   const platform = os.platform();
   const baseFolder = isVSCodium() ? 'VSCodium' : 'Code';  // change directory name based on application
 
+    // console.log('---------------');
+    // console.log('platform',platform);
+    // console.log('isVSCodium',isVSCodium());
+    // console.log('baseFolder',baseFolder);
+
   switch (platform) {
     case 'darwin': // macOS
       return path.join(os.homedir(), 'Library', 'Application Support', baseFolder, 'User', 'keybindings.json');
@@ -24,6 +30,12 @@ function getPathToKeybindingsFile() {
     case 'linux': // Linux
       return path.join(os.homedir(), '.config', baseFolder, 'User', 'keybindings.json');
     default:
+
+    // |-----------------------|
+    // |        feature        |
+    // |-----------------------|
+    // add setting for user to provide path to keybindings.json
+
       throw new Error(`Unsupported platform: ${platform}`);
   }
 }
@@ -32,7 +44,7 @@ function getPathToKeybindingsFile() {
 function getKeybindings() {
   try {
     const data = fs.readFileSync(getPathToKeybindingsFile(), 'utf8');
-    const keybindings = JSON.parse(data);
+    const keybindings = jsonc.parse(data);
     return keybindings;
   } catch (error) {
     console.error('Error reading keybindings.json:', error);
