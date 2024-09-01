@@ -1,65 +1,78 @@
-# marauders-map README
-
-This is the README for your extension "marauders-map". After writing up a brief description, we recommend including the following sections.
+# The Marauder's Map
+The Marauder's Map is the magical guide that can show you where everything and everyone is at Hogwarts!
 
 ## Features
+Add Pages to your very own Marauder's Map, where you can write down your most cherished spells.
+Give each spell a unique key to cast quickly when you need it.
+But don't worry, should you forget how to perform your favorite wizardings,
+the Marauder's Map will be there to show you the way **!**
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+## Usage
+- install the extension,
+- open the command palette and type in `open map`
+- select the command to open the map!
+- add your first page to the map by selecting `+ New Page`
+- enter a name for your page
+- choose a keybinding that will open this page of the map
+- select your first spell to add to your new page
+- give your spell a keybinding to make it quick to use
+- write down a custom label for your spell so you'll remember exactly what it does
 
-For example if there is an image subfolder under your extension project workspace:
+## Implementation
+this extension works by reading and writing keybindings from keybindings.json
+it doesn't really add any special sauce, it just manages keybindings using custom "when" clauses.
+but then again, the best magic tricks are usually the least complicated ones...
 
-\!\[feature X\]\(images/feature-x.png\)
+### The Problem
+Honestly, the organization of keybindings in vscode pretty much sucks by default.
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+And no, the anwer is not vim.
 
-## Requirements
+How many keybindings are hidden behind the (ctrl+k) chord... nobody knows!
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+And how many different Fold commands are there?!?
 
-## Extension Settings
+And calling the command palette to type the desired command in is inefficient.
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+### The Solution
 
-For example:
+This extension allows you to create
+"pages/menus/groups" (whatever you want to call them)
+of keybindings that are related to eachother.
+When a keybinding group is called,
+you can then press the keybinding for any of the
+commands in that group immediately,
+but if you are struggling to remember the exact
+command you want, a quickPick Box will pop up to
+prompt you with the available options for that group.
 
-This extension contributes the following settings:
+**One group can call another group...**
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+Which means:
+- you can nest your keybindings as deep as you want
+- you're not limited to just one chord like the default keybindings
 
-## Known Issues
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+(ctrl+E) opens your "Editor" group and
+(ctrl+F) calls your desired fold command.
+This means your workflow doesn't really change
+from the default behavior, but with this extension
+you can now nest deeper and be given a
+visual prompt if desired. Maybe you want (ctrl+F)
+to bring up a menu of ALL Fold commands. Now it can!
+customize your keybindings however you want.
 
-## Release Notes
+**Keybindings are scoped to each group**
 
-Users appreciate release notes as you update your extension.
+so you can reuse commonly used letters over and over again without conflicts.
+this means you can always use the letter that the
+command starts with, or you can always have the menu
+items assigned to your home row keys, or 1, 2, 3, 4, etc.
 
-### 1.0.0
 
-Initial release of ...
+This extension doesn't fix all the problems of how
+keybindings work in vscode by default,
+but it fixes ONE of the problems.
+Sky's the limit now, go make the magic happen.
 
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+## *You're a Wizard Harry ...*
