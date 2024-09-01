@@ -8,6 +8,8 @@ const {
 const {
     getKeybindings,
     getSpellsForPage,
+    getAllMapPages,
+    saveKeybinding,
 } = require("./src/managers/keybindingsManager");
 
 /**
@@ -19,7 +21,7 @@ function activate(context) {
         0
     );
     extensionStatusBar.text = SETTINGS.mapIcon;
-    extensionStatusBar.command = COMMANDS.startSpell;
+    extensionStatusBar.command = COMMANDS.openMap;
     extensionStatusBar.show();
 
     let maraudersMap;
@@ -32,7 +34,7 @@ function activate(context) {
         // |--------------------------------------------------------|
 
         vscode.commands.registerCommand(
-            COMMANDS.startSpell,
+            COMMANDS.openMap,
             ({ mapPage, mapDelay } = {}) => {
                 whenContext = `${maraudersMapPrefix}.${mapPage}`;
                 setWhenContext(whenContext);
@@ -101,7 +103,7 @@ function activate(context) {
         // |--------------------------------|
 
         vscode.commands.registerCommand(
-            COMMANDS.endSpell,
+            COMMANDS.closeMap,
             ({ command, args } = {}) => {
                 // these MUST be called directly in function
                 removeWhenContext(whenContext);
@@ -112,33 +114,45 @@ function activate(context) {
             }
         ),
 
-        //   Save a new Spell to the page
-        // --------------------------------
+        // |--------------------------------|
+        // |        Expecto Patronum        |
+        // |--------------------------------|
+
         vscode.commands.registerCommand(
             COMMANDS.saveSpell,
-            async ({ mapPage }) => {
-
+            async ({ mapPage } = {}) => {
                 if (!mapPage) {
-                    // no map Page provided, we are creating a new map Page
                     mapPage = await promptUserForPage();
-                    // promptUserForMapDelay();
+                    if (mapPage === undefined) {
+                        return;
+                    } // exit on 'Esc' key
                 }
 
                 const selectedCommand = await promptUserForCommand();
+                if (selectedCommand === undefined) {
+                    return;
+                } // exit on 'Esc' key
 
-                if(!selectedCommand){return} // exit
-
-                const isNestedPage = selectedCommand === COMMANDS.startSpell
+                const isNestedPage = selectedCommand === COMMANDS.openMap;
                 let nestedPage;
-                if(isNestedPage){
+                if (isNestedPage) {
                     nestedPage = await promptUserForPage();
+                    if (nestedPage === undefined) {
+                        return;
+                    } // exit on 'Esc' key
                 }
 
                 const selectedKey = await promptUserForKey();
+                if (selectedKey === undefined) {
+                    return;
+                } // exit on 'Esc' key
 
                 const selectedLabel = isNestedPage
                     ? `$(arrow-right) Go to ${nestedPage} spells ...`
                     : await promptUserForLabel(selectedCommand, selectedKey);
+                if (selectedLabel === undefined) {
+                    return;
+                } // exit on 'Esc' key
 
                 // |-----------------------|
                 // |        Feature        |
@@ -147,50 +161,23 @@ function activate(context) {
                 //
                 const selectedArgs = isNestedPage
                     ? {
-                        mapPage: nestedPage,
-                        mapDelay: 0
-                    }
-                    : undefined
-                    // : promptUserForArgs();
-
+                          mapPage: nestedPage,
+                          mapDelay: 0,
+                      }
+                    : undefined;
+                // : promptUserForArgs();
 
                 const newKeybinding = {
-                    key: selectedKey,
-                    command: COMMANDS.endSpell,
+                    key: selectedKey ? selectedKey : undefined,
+                    command: COMMANDS.closeMap,
                     when: `${maraudersMapPrefix}.${mapPage}`,
                     args: {
                         command: selectedCommand,
-                        label: selectedLabel,
-                        args: selectedArgs
-                    }
-                }
-
-                console.log('newKeybinding',newKeybinding);
-                console.log('stringify(newKeybinding)',JSON.stringify(newKeybinding));
-
-                // save newKeybinding to json
-
-        // {
-        //     "key": "cmd+,",
-        //     "command": "MaraudersMap.mischiefManaged",
-        //     "when" : "MaraudersMap.editor",
-        //     "args": {
-        //         "label": "Split Editor Down"
-        //         "command": "editor.splitDown",
-        //     }
-        // },
-        // {
-        //     "key": "cmd+g",
-        //     "command": "MaraudersMap.mischiefManaged",
-        //     "when" : "MaraudersMap.Editor",
-        //     "args": {
-        //         "command": "MaraudersMap.iSolemnlySwearThatIAmUpToNoGood",
-        //         "args": {
-        //             "mapPage": "Git",
-        //             "mapDelay": 0
-        //         }
-        //     }
-        // },
+                        label: selectedLabel ? selectedLabel : undefined,
+                        args: selectedArgs,
+                    },
+                };
+                saveKeybinding(newKeybinding);
             }
         ),
 
@@ -203,9 +190,16 @@ function activate(context) {
         })
     ); // end of subscriptions.push()
 
+    /**
+     * Function to prompt the user to enter a command.
+     * @returns {Promise<string | undefined>} The provided command or undefined if canceled.
+     */
     async function promptUserForCommand() {
         let availableCommands = await vscode.commands.getCommands(true);
-        availableCommands = availableCommands.map((cmd) => ({label: `$(wand) ${cmd}`, command: cmd}))
+        availableCommands = availableCommands.map((cmd) => ({
+            label: `$(wand) ${cmd}`,
+            command: cmd,
+        }));
         //
         const addCustomCommand = {
             label: "$(pencil) Enter a custom command ...",
@@ -213,7 +207,7 @@ function activate(context) {
         };
         const goToAnotherPage = {
             label: "$(arrow-right) Go to another page ...",
-            command: COMMANDS.startSpell,
+            command: COMMANDS.openMap,
             alwaysShow: true,
         };
         const options = [
@@ -226,7 +220,9 @@ function activate(context) {
             placeHolder: "Choose a command ...",
         });
         //
-        if (!selectedOption) {return undefined};
+        if (!selectedOption) {
+            return undefined;
+        }
         //
         if (selectedOption.label === addCustomCommand.label) {
             selectedOption.command = await vscode.window.showInputBox({
@@ -237,145 +233,146 @@ function activate(context) {
             });
         }
         //
-        return selectedOption.command.trim()
+        return selectedOption.command.trim();
     }
-
 
     /**
      * Function to prompt the user to enter a keybinding.
      * @returns {Promise<string | undefined>} The provided keybinding or undefined if canceled.
      */
     async function promptUserForKey() {
-        const selectedKey = await vscode.window.showInputBox({
+        console.log("prompting user for a key binding");
+
+        return await vscode.window.showInputBox({
             title: SETTINGS.inputBoxTitle,
-            placeHolder: 'Enter a keybinding: cmd+h or ctrl+p ...',
+            placeHolder: "Enter a keybinding: cmd+h or ctrl+p ...",
             validateInput: (text) => {
                 // test to see if the provided input is a keybinding
-                return null;  // Return null if the input is valid
-            }
+                return null; // Return null if the input is valid
+            },
         });
-        return selectedKey ? selectedKey : undefined
     }
 
-
-    async function promptUserForLabel(selectedCommand, selectedKey){
-        const selectedLabel = await vscode.window.showInputBox({
+    /**
+     * Function to prompt the user to enter a label.
+     * @returns {Promise<string | undefined>} The provided label or undefined if canceled.
+     */
+    async function promptUserForLabel(selectedCommand, selectedKey) {
+        return await vscode.window.showInputBox({
             title: SETTINGS.inputBoxTitle,
-            placeHolder: 'Enter a custom label ...',
+            placeHolder: "Enter a custom label ...",
             prompt: `Or leave blank for default: ${selectedCommand} (${selectedKey})`,
             validateInput: (text) => {
                 // test to see if the provided input is a keybinding
-                return null;  // Return null if the input is valid
-            }
+                return null; // Return null if the input is valid
+            },
         });
-        return selectedLabel ? selectedLabel : undefined
     }
-    async function saveCommandToMapPage(mapPage) {
-        // MapPage is now set
-        // ----------------------
 
-        // Ask the user what command they would like to save to the Page
-        const availableCommands = await vscode.commands.getCommands(true);
-        const commandSelection = await vscode.window.showQuickPick(
-            availableCommands.map((command) => ({ label: command })),
-            {
-                title: `Select a command to save to the ${mapPage} page`,
-                placeHolder: "Choose a command...",
-            }
-        );
-
-        // If the user cancels the selection, exit the function
-        if (!commandSelection) {
-            vscode.window.showInformationMessage(
-                "No command selected. Operation canceled."
-            );
-            return;
-        }
-        const selectedCommand = commandSelection.label;
-
-        // Ask for the keybinding for this command
-        const keybinding = await vscode.window.showInputBox({
-            prompt: `Enter the keybinding for the command '${selectedCommand}'`,
-            placeHolder: "e.g., ctrl+k ctrl+c",
+    /**
+     * Function to prompt the user to enter a time for mapDelay.
+     * @returns {Promise<number | undefined>} The provided delay time or undefined if canceled.
+     */
+    async function promptUserForMapDelay() {
+        const mapDelayTime = await vscode.window.showInputBox({
+            title: SETTINGS.inputBoxTitle,
+            placeHolder: "Enter a delay time before opening the map ...",
+            prompt: `Or leave blank for default: ${getDefaultMapDelay()})`,
             validateInput: (text) => {
-                return text.trim() === "" ? "Keybinding cannot be empty" : null;
+                // test to see if the provided input is a keybinding
+                return null; // Return null if the input is valid
             },
         });
+        return Number(mapDelayTime);
+    }
 
-        // If the user cancels the input box, exit the function
-        if (!keybinding) {
-            vscode.window.showInformationMessage(
-                "No keybinding entered. Operation canceled."
-            );
-            return;
-        }
+    /**
+     * Function to create a new page in the map
+     * @returns {Promise<null | undefined>} null or undefined if canceled.
+     */
+    async function createNewMapPage(mapPage) {
+        console.log("creating  a new map page!");
 
-        // Ask for a custom label for the command
-        const customLabel = await vscode.window.showInputBox({
-            prompt: `Enter a custom label for the command '${selectedCommand}'`,
-            placeHolder: "e.g., My Custom Command",
-            validateInput: (text) => {
-                return text.trim() === "" ? "Label cannot be empty" : null;
+        const selectedKey = await promptUserForKey();
+        if (selectedKey === undefined) {
+            return undefined;
+        } // exit on 'Esc' key
+
+        const selectedMapDelay = await promptUserForMapDelay();
+        if (selectedMapDelay === undefined) {
+            return undefined;
+        } // exit on 'Esc' key
+
+        const keybinding = {
+            key: selectedKey,
+            command: COMMANDS.openMap,
+            args: {
+                mapPage,
+                mapDelay: selectedMapDelay ? selectedMapDelay : undefined,
             },
-        });
-
-        // If the user cancels the input box, exit the function
-        if (!customLabel) {
-            vscode.window.showInformationMessage(
-                "No label entered. Operation canceled."
-            );
-            return;
-        }
-
-        // Save the command to keybindings.json
-        const keybindings = vscode.workspace.getConfiguration("keybindings");
-        const currentKeybindings = keybindings.get("keybindings", []);
-
-        const newKeybinding = {
-            key: keybinding,
-            command: selectedCommand,
-            when: `MaraudersMap.${mapPage}`,
-            label: customLabel,
         };
 
-        currentKeybindings.push(newKeybinding);
+        saveKeybinding(keybinding);
+        return true;
     }
 
+    /**
+     * Function to prompt the user to enter a mapPage
+     * @returns {Promise<string | undefined>} the provided page name or undefined if canceled.
+     */
     async function promptUserForPage() {
-        return "no page provided";
-        // ask what mapPage the spell should go on?
+        console.log("prompting the user for a page name");
 
-        // prompt user for what mapPage the spell should be saved to
+        const keybindings = getKeybindings();
+        const allPages = getAllMapPages(keybindings).map((page) => ({
+            label: `$(files)$(wand) ${page}`,
+            mapPage: page,
+        }));
 
-        // create a quickPick with
+        const addMapPage = {
+            label: "$(pencil) + Add a new Page to the Map ...",
+            alwaysShow: true,
+        };
+        const options = [addMapPage, ...allPages];
+        const selectedOption = await vscode.window.showQuickPick(options, {
+            title: SETTINGS.inputBoxTitle,
+            placeHolder: "Select a page to add your spell to ...",
+        });
+        //
+        if (!selectedOption) {
+            return undefined;
+        } // exit on 'Esc' key
+        //
+        if (selectedOption.label === addMapPage.label) {
+            selectedOption.mapPage = await vscode.window.showInputBox({
+                title: SETTINGS.inputBoxTitle,
+                placeHolder: "Enter a title for the new page of the map ...",
+                validateInput: (text) =>
+                    text.trim() === "" ? "Command cannot be empty" : null,
+            });
 
-        // an option to create a new mapPage
+            if (!(await createNewMapPage(selectedOption.mapPage))) {
+                return undefined;
+            } // exit on 'Esc' key
+        }
+        //
+        console.log("page selected returning", selectedOption.mapPage);
 
-        // create a new mapPage
-        // prompt for pageName
-        // promp for keybinding
-        // prompt for mapDelay
-        /*
-                {
-                    "key": "cmd+e",
-                    "command": "MaraudersMap.iSolemnlySwear...",
-                    "args": {
-                        "mapPage": "editor",
-                        "icon": "somethingHere"
-                        "mapDelay": 300, // if a number is set it will be used if not, default will be used
-                        }
-                        }
-                        */
-        //   save the kew group to keybindings.json
-
-        // and a list of all the previously saved mapPages
+        return selectedOption.mapPage;
     }
 } // end of activate
+
+function deactivate() {}
+
+module.exports = {
+    activate,
+    deactivate,
+};
 
 /* example keybindings:
     {
         "key": "cmd+e",
-        "command": "MaraudersMap.iSolemnlySwear...",
+        "command": "MaraudersMap.iSolemnlySwearThatIAmUpToNoGood",
         "args": {
             "mapPage": "Editor",
             "mapDelay": 300, // if a number is set it will be used if not, default will be used
@@ -389,12 +386,17 @@ function activate(context) {
             "label": "Split Editor Down"
             "command": "editor.splitDown",
         }
+    },
+    {
+    "key": "cmd+g",
+    "command": "MaraudersMap.mischiefManaged",
+    "when" : "MaraudersMap.Editor",
+    "args": {
+        "command": "MaraudersMap.iSolemnlySwearThatIAmUpToNoGood",
+        "args": {
+            "mapPage": "Git",
+            "mapDelay": 0
+        }
     }
+},
 */
-
-function deactivate() {}
-
-module.exports = {
-    activate,
-    deactivate,
-};
