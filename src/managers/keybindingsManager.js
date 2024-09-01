@@ -3,7 +3,7 @@ const os = require('os');
 const path = require('path');
 const vscode = require('vscode');
 const jsonc = require('jsonc-parser');
-const {maraudersMapPrefix} = require('../constants');
+const {maraudersMapPrefix, COMMANDS} = require('../constants');
 
 /**
  * Function to determine if the extension is running in VSCodium or VS Code.
@@ -41,7 +41,11 @@ function getPathToKeybindingsFile() {
   }
 }
 
-// Function to read the keybindings.json file
+
+/**
+ * Function to get all keybindings from keybindings.json
+ * @returns {array} - a array of all keybindings.
+*/
 function getKeybindings() {
   try {
     const data = fs.readFileSync(getPathToKeybindingsFile(), 'utf8');
@@ -53,20 +57,6 @@ function getKeybindings() {
   }
 }
 
-// Function to write a new keybinding to the keybindings.json file
-function saveNewKeybinding(newKeybinding) {
-  const keybindingsPath = getPathToKeybindingsFile();
-
-  try {
-    const currentKeybindings = getKeybindings();
-    currentKeybindings.push(newKeybinding);
-
-    fs.writeFileSync(keybindingsPath, JSON.stringify(currentKeybindings, null, 2));
-    console.log('Keybinding added successfully.');
-  } catch (error) {
-    console.error('Error writing to keybindings.json:', error);
-  }
-}
 
 /**
  * Function to filter an array of keybindings by the provided mapPage
@@ -102,17 +92,64 @@ function getPageKeybinding(keybindings, mapPage) {
 /**
  * Function to gather all mapPages created by the user
  * @param {array} keybindings an array of keybindings parsed from keybindings.json
- * @returns {array} an array of all mapPage keybindings
- */
+ * @returns {array} - A list of map pages.
+*/
 function getAllMapPages(keybindings) {
-
+  // Use a Set to store unique mapPage values
+  const mapPages = new Set();
+  keybindings.forEach(keybinding => {
+    if (keybinding.command === COMMANDS.openMap) {
+          if (keybinding.args?.mapPage) {
+              mapPages.add(keybinding.args.mapPage);
+          }
+      } else if(keybinding.command === COMMANDS.closeMap && keybinding.args?.command === COMMANDS.openMap){
+          const nestedArgs = keybinding.args.args;
+          if (nestedArgs && nestedArgs.mapPage) {
+              mapPages.add(nestedArgs.mapPage);
+          }
+      }
+  });
+  // Convert the Set back to an array
+  return Array.from(mapPages);
 }
 
+
+/**
+ * Function to write a new keybinding to the keybindings.json file with a backup and preserve comments.
+ * @param {Object} newKeybinding - The new keybinding object to add.
+ */
+function saveKeybinding(newKeybinding) {
+
+
+  console.log('saving the keybinding',);
+
+  const keybindingsPath = getPathToKeybindingsFile();
+  const backupPath = keybindingsPath + '.backup';
+
+  try {
+
+      const currentContent = fs.readFileSync(keybindingsPath, 'utf8');
+      fs.writeFileSync(backupPath, currentContent);
+
+      // Parse the JSONC content preserving comments
+      const currentKeybindings = jsonc.parse(currentContent) || [];
+      const edits = jsonc.modify(currentContent, [currentKeybindings.length], newKeybinding, { formattingOptions: { insertSpaces: true, tabSize: 2 } });
+
+      // Apply the edits to the original content to get the new content with the comment preserved
+      const newContent = jsonc.applyEdits(currentContent, edits);
+
+      // Write the updated content back to keybindings.json
+      fs.writeFileSync(keybindingsPath, newContent, 'utf8');
+
+  } catch (error) {
+      console.error('Error writing to keybindings.json:', error);
+  }
+}
 
 module.exports = {
   getKeybindings,
   getSpellsForPage,
   getPageKeybinding,
   getAllMapPages,
-  saveNewKeybinding
+  saveKeybinding
 };
