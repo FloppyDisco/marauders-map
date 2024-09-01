@@ -130,10 +130,6 @@ function getAllMapPages(keybindings) {
  * @param {Object} newKeybinding - The new keybinding object to add.
  */
 function saveKeybinding(newKeybinding) {
-
-
-  console.log('saving the keybinding',);
-
   const keybindingsPath = getPathToKeybindingsFile();
   const backupPath = keybindingsPath + '.backup';
 
@@ -144,7 +140,7 @@ function saveKeybinding(newKeybinding) {
 
       // Parse the JSONC content preserving comments
       const currentKeybindings = jsonc.parse(currentContent) || [];
-      const edits = jsonc.modify(currentContent, [currentKeybindings.length], newKeybinding, { formattingOptions: { insertSpaces: true, tabSize: 2 } });
+      const edits = jsonc.modify(currentContent, [0], newKeybinding, { formattingOptions: { insertSpaces: true, tabSize: 2 } });
 
       // Apply the edits to the original content to get the new content with the comment preserved
       const newContent = jsonc.applyEdits(currentContent, edits);
