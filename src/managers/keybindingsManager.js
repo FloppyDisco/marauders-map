@@ -3,6 +3,7 @@ const os = require('os');
 const path = require('path');
 const vscode = require('vscode');
 const jsonc = require('jsonc-parser');
+const {maraudersMapPrefix} = require('../constants');
 
 /**
  * Function to determine if the extension is running in VSCodium or VS Code.
@@ -67,7 +68,51 @@ function saveNewKeybinding(newKeybinding) {
   }
 }
 
+/**
+ * Function to filter an array of keybindings by the provided mapPage
+ * @param {array} keybindings an array of keybindings parsed from keybindings.json
+ * @param {string} mapPage the value to filter the keybindings by
+ * @returns {array} the filtered keybindings
+ */
+function getSpellsForPage(keybindings, mapPage) {
+        return keybindings.filter(kb => {
+					return kb.when && kb.when.startsWith(maraudersMapPrefix) && kb.when.endsWith(mapPage)
+				}).map(kb => {
+					return { ...kb.args, key: kb.key }
+				}).map(kb => {
+
+					// modify keybinding to be more visually appealing
+					// create a label if one does not exist
+					kb.label = `${kb.label} (${kb.key})`
+					return kb
+				})
+
+}
+
+/**
+ * Function to find the mapPage keybinding for this page
+ * @param {array} keybindings an array of keybindings parsed from keybindings.json
+ * @param {string} mapPage the page to find the keybinding for
+ * @returns {object} the keybinding obj saved for this mapPage
+ */
+function getMapPageKeybinding(keybindings, mapPage) {
+
+}
+
+/**
+ * Function to gather all mapPages created by the user
+ * @param {array} keybindings an array of keybindings parsed from keybindings.json
+ * @returns {array} an array of all mapPage keybindings
+ */
+function getAllMapPages(keybindings) {
+
+}
+
+
 module.exports = {
   getKeybindings,
+  getSpellsForPage,
+  getMapPageKeybinding,
+  getAllMapPages,
   saveNewKeybinding
 };
