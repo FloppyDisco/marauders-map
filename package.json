@@ -2,6 +2,7 @@
     "name": "marauders-map",
     "displayName": "The Marauder's Map",
     "publisher": "bs-code",
+    "repository": "https://github.com/FloppyDisco/marauders-map",
     "description": "Customize keybindings into groups that come with a quickPicker for visual a reminder",
     "version": "0.0.1",
     "engines": {
