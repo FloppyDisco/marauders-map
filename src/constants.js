@@ -1,13 +1,14 @@
 const maraudersMapPrefix = "MaraudersMap";
 
+const mapIcon = "🗺️"
+
 const SETTINGS = {
     defaultMapDelay: {
         key: "defaultMapDelay",
         value: 1500
     },
-    mapIcon: "🗺️",
-    compassIcon: "🧭",
-
+    inputBoxTitle:`The Marauder's Map ${mapIcon}`,
+    mapIcon: mapIcon,
 }
 
 const COMMANDS = {
