@@ -17,26 +17,26 @@
     "contributes": {
       "configuration": {
       "type": "object",
-      "title": "MaraudersMap Settings",
+      "title": "MaraudersMap",
       "properties": {
-        "MaraudersMap.spells": {
-          "type": "array",
-          "default": [],
-          "description": "An array of keybinding groups."
-        }
+
       }
     },
         "commands": [
             {
-                "command": "MaraudersMap.helloWorld",
-                "title": "Hello World",
-                "category": "MaraudersMap"
+                "command": "MaraudersMap.expectoPatronum",
+                "title": "Save a new spell",
+                "category": "Marauder's Map"
             },
             {
-                "command": "MaraudersMap.expectoPatronum",
-                "title": "Create New Group",
-                "category": "MaraudersMap",
-                "icon": "$(group-by-ref-type)"
+                "command": "MaraudersMap.mischiefManaged",
+                "title": "Close the Map && Cast the Spell",
+                "category": "Marauder's Map"
+            },
+            {
+                "command": "MaraudersMap.iSolemnlySwearThatIAmUpToNoGood",
+                "title": "Open the Map!",
+                "category": "Marauder's Map"
             }
         ]
     },
