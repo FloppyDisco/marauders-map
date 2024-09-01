@@ -95,7 +95,7 @@ function getSpellsForPage(keybindings, mapPage) {
  * @param {string} mapPage the page to find the keybinding for
  * @returns {object} the keybinding obj saved for this mapPage
  */
-function getMapPageKeybinding(keybindings, mapPage) {
+function getPageKeybinding(keybindings, mapPage) {
 
 }
 
@@ -112,7 +112,7 @@ function getAllMapPages(keybindings) {
 module.exports = {
   getKeybindings,
   getSpellsForPage,
-  getMapPageKeybinding,
+  getPageKeybinding,
   getAllMapPages,
   saveNewKeybinding
 };
