@@ -10,6 +10,11 @@ function activate(context) {
 
     activateCreateGroupCommand(context);
 
+	const extensionStatusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right,0)
+	extensionStatusBar.text = SETTINGS.mapIcon
+	extensionStatusBar.command = COMMANDS.startSpell
+	extensionStatusBar.show();
+
     let maraudersMap;
     let statusBar;
 
