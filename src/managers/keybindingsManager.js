@@ -140,7 +140,7 @@ function saveKeybinding(newKeybinding) {
 
       // Parse the JSONC content preserving comments
       const currentKeybindings = jsonc.parse(currentContent) || [];
-      const edits = jsonc.modify(currentContent, [0], newKeybinding, { formattingOptions: { insertSpaces: true, tabSize: 2 } });
+      const edits = jsonc.modify(currentContent, [currentKeybindings.length], newKeybinding, { formattingOptions: { insertSpaces: true, tabSize: 2 } });
 
       // Apply the edits to the original content to get the new content with the comment preserved
       const newContent = jsonc.applyEdits(currentContent, edits);
