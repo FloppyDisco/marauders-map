@@ -43,12 +43,12 @@ function activate(context) {
                     vscode.StatusBarAlignment.Left,
                     0
                 );
-                pageStatusBar.text = `The Marauders Map ${SETTINGS.mapIcon}: ${mapPage}`;
+                pageStatusBar.text = `$(wand) ${mapPage}`;
                 pageStatusBar.command = COMMANDS.displayMap;
                 pageStatusBar.show();
 
                 maraudersMap = vscode.window.createQuickPick();
-                maraudersMap.title = `The Marauder's Map ${SETTINGS.mapIcon}`;
+                maraudersMap.title = SETTINGS.inputBoxTitle;
                 maraudersMap.placeholder = "Choose your spell...";
 
                 maraudersMap.items = [
