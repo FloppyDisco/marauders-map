@@ -36,65 +36,72 @@ function activate(context) {
         vscode.commands.registerCommand(
             COMMANDS.openMap,
             ({ mapPage, mapDelay } = {}) => {
+                if (!mapPage) {
+                    vscode.commands.executeCommand(COMMANDS.saveSpell);
+                } else {
+                    whenContext = `${maraudersMapPrefix}.${mapPage}`;
+                    setWhenContext(whenContext);
 
+                    const keybindings = getKeybindings();
 
-                whenContext = `${maraudersMapPrefix}.${mapPage}`;
-                setWhenContext(whenContext);
-
-                const keybindings = getKeybindings();
-
-                pageStatusBar = vscode.window.createStatusBarItem(
-                    vscode.StatusBarAlignment.Left,
-                    0
-                );
-                pageStatusBar.text = `$(wand) ${mapPage}`;
-                pageStatusBar.tooltip = 'Sometimes spells go wonky, click to close'
-                pageStatusBar.command = COMMANDS.closeMap;
-                pageStatusBar.show();
-
-                maraudersMap = vscode.window.createQuickPick();
-                maraudersMap.title = `${SETTINGS.mapIcon} ${mapPage} Spells`;
-                maraudersMap.placeholder = "Choose your spell...";
-
-                maraudersMap.items = [
-                    {
-                        label: "+ Add a Spell",
-                        command: COMMANDS.saveSpell,
-                        args: { mapPage },
-                    },
-                    ...getSpellsForPage(keybindings, mapPage),
-                ];
-
-                maraudersMap.onDidHide(() => {
-                    // these MUST be called directly in function
-                    removeWhenContext(whenContext); // cancel the when context for this page of the map
-                    maraudersMap.dispose();
-                    pageStatusBar.dispose();
-                });
-
-                maraudersMap.onDidChangeSelection(([selection]) => {
-                    // these MUST be called directly in function
-                    removeWhenContext(whenContext);
-                    maraudersMap.dispose();
-                    pageStatusBar.dispose();
-
-                    vscode.commands.executeCommand(
-                        selection.command,
-                        selection.args
+                    pageStatusBar = vscode.window.createStatusBarItem(
+                        vscode.StatusBarAlignment.Left,
+                        0
                     );
-                });
+                    pageStatusBar.text = `$(wand) ${mapPage}`;
+                    pageStatusBar.tooltip =
+                        "Sometimes spells go wonky, click to close!";
+                    pageStatusBar.command = COMMANDS.closeMap;
+                    pageStatusBar.show();
 
-                const mapDelayTime =
-                    mapDelay !== undefined ? mapDelay : getDefaultMapDelay();
+                    maraudersMap = vscode.window.createQuickPick();
+                    maraudersMap.title = `${SETTINGS.mapIcon} ${mapPage}`;
+                    maraudersMap.placeholder = "Choose your spell...";
 
-                if (mapDelayTime) {
-                    setTimeout(() => { // show map after delay
-                        if (maraudersMap && !maraudersMap.visible) {
-                            maraudersMap.show();
-                        }
-                    }, mapDelayTime);
-                } else { // map delay is zero, show map!
-                    maraudersMap.show();
+                    maraudersMap.items = [
+                        {
+                            label: "+ Add a Spell",
+                            command: COMMANDS.saveSpell,
+                            args: { mapPage },
+                        },
+                        ...getSpellsForPage(keybindings, mapPage),
+                    ];
+
+                    maraudersMap.onDidHide(() => {
+                        // these MUST be called directly in function
+                        removeWhenContext(whenContext); // cancel the when context for this page of the map
+                        maraudersMap.dispose();
+                        pageStatusBar.dispose();
+                    });
+
+                    maraudersMap.onDidChangeSelection(([selection]) => {
+                        // these MUST be called directly in function
+                        removeWhenContext(whenContext);
+                        maraudersMap.dispose();
+                        pageStatusBar.dispose();
+
+                        vscode.commands.executeCommand(
+                            selection.command,
+                            selection.args
+                        );
+                    });
+
+                    const mapDelayTime =
+                        mapDelay !== undefined
+                            ? mapDelay
+                            : getDefaultMapDelay();
+
+                    if (mapDelayTime) {
+                        setTimeout(() => {
+                            // show map after delay
+                            if (maraudersMap && !maraudersMap.visible) {
+                                maraudersMap.show();
+                            }
+                        }, mapDelayTime);
+                    } else {
+                        // map delay is zero, show map!
+                        maraudersMap.show();
+                    }
                 }
             }
         ),
@@ -115,7 +122,7 @@ function activate(context) {
                 // |-----------------------|
                 // briefly show mischief managed when spell is cast
                 pageStatusBar.dispose();
-                if(command){
+                if (command) {
                     vscode.commands.executeCommand(command, args);
                 }
             }
@@ -188,13 +195,10 @@ function activate(context) {
             }
         ),
 
-
         // |---------------------|
         // |        Lumos        |
         // |---------------------|
 
-        //   open the map page, used for the pageStatusBar item
-        // ------------------------------------------------------
         vscode.commands.registerCommand(COMMANDS.displayMap, () => {
             if (maraudersMap && !maraudersMap.visible) {
                 maraudersMap.show();
@@ -289,9 +293,9 @@ function activate(context) {
         const mapDelayTime = await vscode.window.showInputBox({
             title: SETTINGS.inputBoxTitle,
             placeHolder: "Enter a delay time before opening the map ...",
-            prompt: `Or leave blank for default: ${getDefaultMapDelay()})`,
+            prompt: `Or leave blank for default: ${getDefaultMapDelay()}(ms)`,
             validateInput: (text) => {
-                // test to see if the provided input is a keybinding
+                // test to see if the provided input is an acceptable number value
                 return null; // Return null if the input is valid
             },
         });
@@ -333,8 +337,6 @@ function activate(context) {
      * @returns {Promise<string | undefined>} the provided page name or undefined if canceled.
      */
     async function promptUserForPage() {
-        console.log("prompting the user for a page name");
-
         const keybindings = getKeybindings();
         const allPages = getAllMapPages(keybindings).map((page) => ({
             label: `$(files)$(wand) ${page}`,
@@ -342,7 +344,7 @@ function activate(context) {
         }));
 
         const addMapPage = {
-            label: "$(pencil) + Add a new Page to the Map ...",
+            label: "$(add) New Page to Map",
             alwaysShow: true,
         };
         const options = [addMapPage, ...allPages];
@@ -355,6 +357,10 @@ function activate(context) {
             return undefined;
         } // exit on 'Esc' key
         //
+        // |-----------------------|
+        // |        Feature        |
+        // |-----------------------|
+        // capture the text of the inputBox it the user types before selecting addNewPage
         if (selectedOption.label === addMapPage.label) {
             selectedOption.mapPage = await vscode.window.showInputBox({
                 title: SETTINGS.inputBoxTitle,
