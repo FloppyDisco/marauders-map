@@ -14,8 +14,8 @@ const SETTINGS = {
 const COMMANDS = {
     saveSpell: `${maraudersMapPrefix}.expectoPatronum`,
     deleteSpell: `${maraudersMapPrefix}.obliviate`,
-    startSpell:  `${maraudersMapPrefix}.iSolemnlySwearThatIAmUpToNoGood`,
-    endSpell:  `${maraudersMapPrefix}.mischiefManaged`,
+    openMap:  `${maraudersMapPrefix}.iSolemnlySwearThatIAmUpToNoGood`,
+    closeMap:  `${maraudersMapPrefix}.mischiefManaged`,
     displayMap: `_${maraudersMapPrefix}.lumos`
     // accio
     // erecto
