@@ -7,7 +7,7 @@ const SETTINGS = {
         key: "defaultMapDelay",
         value: 1500
     },
-    inputBoxTitle:`The Marauder's Map ${mapIcon}`,
+    inputBoxTitle:`${mapIcon} I solemnly swear that I am up to no good...`,
     mapIcon: mapIcon,
 }
 
