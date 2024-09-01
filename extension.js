@@ -36,6 +36,8 @@ function activate(context) {
         vscode.commands.registerCommand(
             COMMANDS.openMap,
             ({ mapPage, mapDelay } = {}) => {
+
+
                 whenContext = `${maraudersMapPrefix}.${mapPage}`;
                 setWhenContext(whenContext);
 
@@ -46,11 +48,12 @@ function activate(context) {
                     0
                 );
                 pageStatusBar.text = `$(wand) ${mapPage}`;
-                pageStatusBar.command = COMMANDS.displayMap;
+                pageStatusBar.tooltip = 'Sometimes spells go wonky, click to close'
+                pageStatusBar.command = COMMANDS.closeMap;
                 pageStatusBar.show();
 
                 maraudersMap = vscode.window.createQuickPick();
-                maraudersMap.title = SETTINGS.inputBoxTitle;
+                maraudersMap.title = `${SETTINGS.mapIcon} ${mapPage} Spells`;
                 maraudersMap.placeholder = "Choose your spell...";
 
                 maraudersMap.items = [
@@ -85,14 +88,12 @@ function activate(context) {
                     mapDelay !== undefined ? mapDelay : getDefaultMapDelay();
 
                 if (mapDelayTime) {
-                    setTimeout(() => {
-                        // show mapPage after delay
+                    setTimeout(() => { // show map after delay
                         if (maraudersMap && !maraudersMap.visible) {
                             maraudersMap.show();
                         }
                     }, mapDelayTime);
-                } else {
-                    // map delay is zero
+                } else { // map delay is zero, show map!
                     maraudersMap.show();
                 }
             }
@@ -108,9 +109,15 @@ function activate(context) {
                 // these MUST be called directly in function
                 removeWhenContext(whenContext);
                 maraudersMap.dispose();
-                pageStatusBar.dispose();
 
-                vscode.commands.executeCommand(command, args);
+                // |-----------------------|
+                // |        Feature        |
+                // |-----------------------|
+                // briefly show mischief managed when spell is cast
+                pageStatusBar.dispose();
+                if(command){
+                    vscode.commands.executeCommand(command, args);
+                }
             }
         ),
 
@@ -180,6 +187,11 @@ function activate(context) {
                 saveKeybinding(newKeybinding);
             }
         ),
+
+
+        // |---------------------|
+        // |        Lumos        |
+        // |---------------------|
 
         //   open the map page, used for the pageStatusBar item
         // ------------------------------------------------------
