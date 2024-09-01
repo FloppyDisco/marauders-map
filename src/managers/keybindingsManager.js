@@ -68,15 +68,26 @@ function getSpellsForPage(keybindings, mapPage) {
         return keybindings.filter(kb => {
 					return kb.when && kb.when.startsWith(maraudersMapPrefix) && kb.when.endsWith(mapPage)
 				}).map(kb => {
-					return { ...kb.args, key: kb.key }
-				}).map(kb => {
-
-					// modify keybinding to be more visually appealing
-					// create a label if one does not exist
-					kb.label = `${kb.label} (${kb.key})`
-					return kb
+					return createSpellFromKeyBinding(kb);
 				})
+}
 
+function createSpellFromKeyBinding(kb) {
+  const args = kb.args
+
+  //  "cmd+alt+e" => "⌘⌥E"
+  let key = kb.key.toUpperCase()
+  .replace('CMD','⌘')
+  .replace('ALT','⌥')
+  .replace("CTRL",'^')
+  .replace('+','')
+
+  let label = `${args.label ? args.label : args.command} (${key})`
+
+  return {
+    ...kb.args,
+    label
+  }
 }
 
 /**
