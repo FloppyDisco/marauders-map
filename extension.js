@@ -16,7 +16,9 @@ const {
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
-    // let mapIsOpen = false;
+    //   Do something with this
+    // --------------------------
+
     const extensionStatusBar = vscode.window.createStatusBarItem(
         vscode.StatusBarAlignment.Right,
         0
@@ -38,74 +40,73 @@ function activate(context) {
         vscode.commands.registerCommand(
             COMMANDS.openMap,
             async ({ mapPage, mapDelay } = {}) => {
+                if (pagePrompt) {
+                    pagePrompt.hide();
+                } // cancel the previous call to openMap if a specific mapPage is called
 
-                if(pagePrompt){
-                    pagePrompt.dispose();
-                }
-
+                let selectedPageManually = false
                 if (!mapPage) {
                     mapPage = await promptUserForPage();
-                    if (mapPage === undefined) {
-                        return;
-                    } // exit on 'Esc' key
+                    if (mapPage === undefined) {return} // exit on 'Esc' key
+                    selectedPageManually = true
                 }
-                    // |-------------------|
-                    // |        BUG        |
-                    // |-------------------|
+                // |-------------------|
+                // |        BUG        |
+                // |-------------------|
 
-                    // space in when context messes up scoping
-                    // may be fixed with .replace()
-                    whenContext = `${maraudersMapPrefix}.${mapPage.replace(
-                        " ",
-                        "_"
-                    )}`;
-                    setPageWhenContext(whenContext);
+                // space in when context messes up scoping
+                // may be fixed with .replace()
+                whenContext = `${maraudersMapPrefix}.${mapPage.replace(
+                    " ",
+                    "_"
+                )}`;
+                setPageWhenContext(whenContext);
 
-                    const keybindings = getKeybindings();
+                const keybindings = getKeybindings();
 
-                    if (pageStatusBar) {
-                        pageStatusBar.dispose();
-                    }
-                    pageStatusBar = vscode.window.createStatusBarItem(
-                        vscode.StatusBarAlignment.Left,
-                        0
-                    );
-                    pageStatusBar.text = `$(wand) ${mapPage}`;
-                    pageStatusBar.tooltip =
-                        "Sometimes spells go wonky, click to close!";
-                    pageStatusBar.command = COMMANDS.closeMap;
-                    pageStatusBar.show();
+                if (pageStatusBar) {
+                    pageStatusBar.dispose();
+                }
+                pageStatusBar = vscode.window.createStatusBarItem(
+                    vscode.StatusBarAlignment.Left,
+                    0
+                );
+                pageStatusBar.text = `$(wand) ${mapPage}`;
+                pageStatusBar.tooltip =
+                    "Sometimes spells go wonky, click to close!";
+                pageStatusBar.command = COMMANDS.closeMap;
+                pageStatusBar.show();
 
-                    if (maraudersMap) {
-                        maraudersMap.dispose();
-                    }
-                    maraudersMap = vscode.window.createQuickPick();
-                    maraudersMap.title = `${SETTINGS.mapIcon} ${mapPage}`;
-                    maraudersMap.placeholder = "Choose your spell...";
+                if (maraudersMap) {
+                    maraudersMap.dispose();
+                }
+                maraudersMap = vscode.window.createQuickPick();
+                maraudersMap.title = `${SETTINGS.mapIcon} ${mapPage}`;
+                maraudersMap.placeholder = "Choose your spell...";
 
-                    maraudersMap.items = [
-                        {
-                            label: "$(add) New Spell",
-                            command: COMMANDS.saveSpell,
-                            args: { mapPage },
-                        },
-                        ...getSpellsForPage(keybindings, mapPage),
-                    ];
+                maraudersMap.items = [
+                    {
+                        label: "$(add) New Spell",
+                        command: COMMANDS.saveSpell,
+                        args: { mapPage },
+                    },
+                    ...getSpellsForPage(keybindings, mapPage),
+                ];
 
-                    // |-----------------------|
-                    // |        Feature        |
-                    // |-----------------------|
+                // |-----------------------|
+                // |        Feature        |
+                // |-----------------------|
 
-                    // add buttons to the box
-                    // maraudersMap.buttons= [];
-                    /*
+                // add buttons to the box
+                // maraudersMap.buttons= [];
+                /*
 
 
                     */
-                    // add buttons to each item
-                    // move item up
-                    // move item down
-                    /*
+                // add buttons to each item
+                // move item up
+                // move item down
+                /*
                     {
                         label: 'Item 2',
                         description: 'Description for item 2',
@@ -128,41 +129,39 @@ function activate(context) {
                     });
                     */
 
-                    maraudersMap.onDidHide(() => {
-                        // these MUST be called directly in function
-                        removePageWhenContext(whenContext); // cancel the when context for this page of the map
-                        maraudersMap.dispose();
-                        pageStatusBar.dispose();
-                    });
+                maraudersMap.onDidHide(() => {
+                    // these MUST be called directly in function
+                    removePageWhenContext(whenContext); // cancel the when context for this page of the map
+                    maraudersMap.dispose();
+                    pageStatusBar.dispose();
+                });
 
-                    maraudersMap.onDidChangeSelection(([selection]) => {
-                        // these MUST be called directly in function
-                        removePageWhenContext(whenContext);
-                        maraudersMap.dispose();
-                        pageStatusBar.dispose();
+                maraudersMap.onDidChangeSelection(([selection]) => {
+                    // these MUST be called directly in function
+                    removePageWhenContext(whenContext);
+                    maraudersMap.dispose();
+                    pageStatusBar.dispose();
 
-                        vscode.commands.executeCommand(
-                            selection.command,
-                            selection.args
-                        );
-                    });
+                    vscode.commands.executeCommand(
+                        selection.command,
+                        selection.args
+                    );
+                });
 
-                    const mapDelayTime =
-                        mapDelay !== undefined
-                            ? mapDelay
-                            : getDefaultMapDelay();
+                const mapDelayTime =
+                    mapDelay !== undefined ? mapDelay : getDefaultMapDelay();
 
-                    if (mapDelayTime) {
-                        setTimeout(() => {
-                            // show map after delay
-                            if (maraudersMap && !maraudersMap.visible) {
-                                maraudersMap.show();
-                            }
-                        }, mapDelayTime);
-                    } else {
-                        // map delay is zero, show map!
-                        maraudersMap.show();
-                    }
+                if (!selectedPageManually && mapDelayTime) {
+                    setTimeout(() => {
+                        // show map after delay
+                        if (maraudersMap && !maraudersMap.visible) {
+                            maraudersMap.show();
+                        }
+                    }, mapDelayTime);
+                } else {
+                    // map delay is zero, show map!
+                    maraudersMap.show();
+                }
             }
         ),
 
@@ -201,6 +200,11 @@ function activate(context) {
                     } // exit on 'Esc' key
                 }
 
+                // |-------------------|
+                // |        BUG        |
+                // |-------------------|
+                // saving a new page from the menu for a nested page does not nest the page
+
                 const selectedCommand = await promptUserForCommand();
                 if (selectedCommand === undefined) {
                     return;
@@ -209,7 +213,7 @@ function activate(context) {
                 const isNestedPage = selectedCommand === COMMANDS.openMap;
                 let nestedPage;
                 if (isNestedPage) {
-                    nestedPage = await promptUserForPage();
+                    nestedPage = await promptUserForPage(isNestedPage);
                     if (nestedPage === undefined) {
                         return;
                     } // exit on 'Esc' key
@@ -344,61 +348,32 @@ function activate(context) {
         });
     }
 
-    // /**
-    //  * Function to prompt the user to enter a time for mapDelay.
-    //  * @returns {Promise<number | undefined>} The provided delay time or undefined if canceled.
-    //  */
-    // async function promptUserForMapDelay() {
-    //     const mapDelayTime = await vscode.window.showInputBox({
-    //         title: SETTINGS.inputBoxTitle,
-    //         placeHolder: "Enter a delay time before opening the map ...",
-    //         prompt: `Or leave blank for default: ${getDefaultMapDelay()}(ms)`,
-    //         validateInput: (text) => {
-    //             // test to see if the provided input is an acceptable number value
-    //             return null; // Return null if the input is valid
-    //         },
-    //     });
-    //     return Number(mapDelayTime);
-    // }
-
     /**
      * Function to create a new page in the map
-     * @returns {Promise<null | undefined>} null or undefined if canceled.
+     * @param {string} mapPage the name of the page to be created
+     * @returns {Promise<string | undefined>} the create Map Page name or undefined if canceled.
      */
     async function createNewMapPage(mapPage) {
-        console.log("creating  a new map page!");
-
-        const selectedKey = await promptUserForKey();
-        if (selectedKey === undefined) {
-            return undefined;
-        } // exit on 'Esc' key
-
-
-        // |-----------------------|
-        // |        Feature        |
-        // |-----------------------|
-        // do we really need to prompt the user for this? they can add it to json.
-
-        // const selectedMapDelay = await promptUserForMapDelay();
-        // if (selectedMapDelay === undefined) {
-        //     return undefined;
-        // } // exit on 'Esc' key
-
-
-        const selectedMapDelay = "";
-
-        const keybinding = {
-            key: selectedKey,
-            command: COMMANDS.openMap,
-            when: `!${SETTINGS.mapOpenContext}`,
-            args: {
-                mapPage,
-                mapDelay: selectedMapDelay ? selectedMapDelay : undefined,
-            },
-        };
-
-        saveKeybinding(keybinding);
-        return true;
+        return new Promise(async (resolve) => {
+            const selectedKey = await promptUserForKey();
+            if (selectedKey) {
+                const selectedMapDelay = "";
+                const keybinding = {
+                    key: selectedKey,
+                    command: COMMANDS.openMap,
+                    when: `!${SETTINGS.mapOpenContext}`,
+                    args: {
+                        mapPage,
+                        mapDelay: selectedMapDelay
+                            ? selectedMapDelay
+                            : undefined,
+                    },
+                };
+                saveKeybinding(keybinding);
+                resolve(mapPage);
+            }
+            resolve(undefined);
+        });
     }
 
     /**
@@ -410,56 +385,71 @@ function activate(context) {
         const keybindings = getKeybindings();
         const allPages = getAllPagesFromMap(keybindings);
 
-    const addMapPage = {
-        label: "$(add) New Page to Map",
-        alwaysShow: true,
-    };
-    const options = [addMapPage, ...allPages];
+        const addMapPage = {
+            label: "$(add) New Page to Map",
+            alwaysShow: true,
+        };
+        const options = [...allPages, addMapPage];
 
-    const pagePrompt = vscode.window.createQuickPick();
-    pagePrompt.items = options;
-    pagePrompt.title = SETTINGS.inputBoxTitle;
-    pagePrompt.placeholder = "Select a page ...";
+        pagePrompt = vscode.window.createQuickPick();
+        pagePrompt.items = options;
+        pagePrompt.title = SETTINGS.inputBoxTitle;
+        pagePrompt.placeholder = "Select a page ...";
+        let userInput = "";
+        pagePrompt.onDidChangeValue((value) => {
+            userInput = value;
+        });
 
-    let userInput = '';
-
-    // Capture the text typed by the user in the input box
-    pagePrompt.onDidChangeValue(value => {
-        userInput = value;
-    });
-
-    return new Promise((resolve) => {
-        pagePrompt.onDidAccept(async () => {
-            const selectedOption = pagePrompt.selectedItems[0];
-
-            if (selectedOption.label === addMapPage.label) {
-                const newPageTitle = await vscode.window.showInputBox({
-                    title: SETTINGS.inputBoxTitle,
-                    placeHolder: "Enter a title for the new page of the map ...",
-                    value: userInput, // Pre-fill with the captured input
-                    validateInput: (text) =>
-                        text.trim() === "" ? "Command cannot be empty" : null,
-                });
-
-                if (newPageTitle && await createNewMapPage(newPageTitle)) {
-                    resolve(newPageTitle);
+        return new Promise((resolve) => {
+            pagePrompt.onDidAccept(async () => {
+                pagePrompt.hide();
+                const [selectedOption] = pagePrompt.selectedItems;
+                if (selectedOption.label === addMapPage.label) {
+                    //   Create a new page
+                    // ---------------------
+                    if (isNestedPage) {
+                        resolve(
+                            await vscode.window.showInputBox({
+                                title: SETTINGS.inputBoxTitle,
+                                placeHolder:
+                                    "Enter a title for the new page of the map ...",
+                                value: userInput, // Pre-fill with the captured user input
+                                validateInput: (text) =>
+                                    text.trim() === ""
+                                        ? "Command cannot be empty"
+                                        : null,
+                            })
+                        ); // Resolve to the new page name
+                    } else {
+                        resolve(
+                            await createNewMapPage(
+                                await vscode.window.showInputBox({
+                                    title: SETTINGS.inputBoxTitle,
+                                    placeHolder:
+                                        "Enter a title for the new page of the map ...",
+                                    value: userInput, // Pre-fill with the captured user input
+                                    validateInput: (text) =>
+                                        text.trim() === ""
+                                            ? "Command cannot be empty"
+                                            : null,
+                                })
+                            )
+                        );
+                    }
                 } else {
-                    resolve(undefined);
+                    //   Select a pre-existing page
+                    // ------------------------------
+                    resolve(selectedOption.mapPage);
                 }
-            } else {
-                resolve(selectedOption.mapPage);
-            }
-            pagePrompt.hide();
-        });
+            });
 
-        pagePrompt.onDidHide(() => {
-            pagePrompt.dispose(); // Ensure the Quick Pick is disposed to free resources
-            resolve(undefined); // Resolve undefined on cancel
-        });
+            pagePrompt.onDidHide(() => {
+                pagePrompt.dispose();
+            });
 
-        pagePrompt.show();
-    });
-}
+            pagePrompt.show();
+        });
+    }
 } // end of activate
 
 function deactivate() {}
