@@ -21,10 +21,10 @@
             "type": "object",
             "title": "Marauder's Map Configuration",
             "properties": {
-                "maraudersMap.defaultMapDelay":{
+                "MaraudersMap.defaultMapDelay":{
                     "type": "number",
                     "default": 1000,
-                    "description": "Time, in (ms), to delay opening a map page by default."
+                    "description": "Time (ms) to delay opening a map page by default."
                 }
             }
         },
