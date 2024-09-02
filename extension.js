@@ -376,27 +376,24 @@ function activate(context) {
      * @param {string} mapPage the name of the page to be created
      * @returns {Promise<string | undefined>} the create Map Page name or undefined if canceled.
      */
-    async function createNewMapPage(mapPage) {
-        return new Promise(async (resolve) => {
-            const selectedKey = await promptUserForKey();
-            if (selectedKey) {
-                const selectedMapDelay = "";
-                const keybinding = {
-                    key: selectedKey,
-                    command: COMMANDS.openMap,
-                    when: `!${SETTINGS.mapOpenContext}`,
-                    args: {
-                        mapPage,
-                        mapDelay: selectedMapDelay
-                            ? selectedMapDelay
-                            : undefined,
-                    },
-                };
-                saveKeybinding(keybinding);
-                resolve(mapPage);
-            }
-            resolve(undefined);
-        });
+    function createNewMapPage(mapPage, selectedKey) {
+        if (mapPage && selectedKey) {
+            const selectedMapDelay = "";
+            const keybinding = {
+                key: selectedKey,
+                command: COMMANDS.openMap,
+                when: `!${SETTINGS.mapOpenContext}`,
+                args: {
+                    mapPage,
+                    mapDelay: selectedMapDelay
+                        ? selectedMapDelay
+                        : undefined,
+                },
+            };
+            saveKeybinding(keybinding);
+            return mapPage
+        }
+        return undefined // exit
     }
 
     /**
@@ -428,56 +425,39 @@ function activate(context) {
                 pagePrompt.hide();
                 const [selectedOption] = pagePrompt.selectedItems;
                 if (selectedOption.label === addMapPage.label) {
-                    //   Create a new page
-                    // ---------------------
+                    // Selected to create a new page
                     if (isNestedPage) {
-                        resolve(
-                            await vscode.window.showInputBox({
-                                title: SETTINGS.inputBoxTitle,
-                                placeHolder:
-                                    "The Room of Requirement",
-                                value: userInput, // Pre-fill with the captured user input
-                                prompt:"A Name ...",
-                                validateInput: (text) =>
-                                    text.trim() === ""
-                                        ? "Command cannot be empty"
-                                        : null,
-                            })
-                        ); // Resolve to the new page name
-                    } else {
+                        resolve( // the new name for the page
+                            await promptUserForName(userInput)
+                        );
+                    } else { // is not a nested page
 
 
-                        // |-------------------|
-                        // |        BUG        |
-                        // |-------------------|
+                        resolve( // the new name for the page after creation
+                            createNewMapPage(
 
-                        // escaping out of the pick a name prompt still goes to the select a keybinding prompt
-                        
-                        resolve(
-                            await createNewMapPage(
-                                await vscode.window.showInputBox({
-                                    title: SETTINGS.inputBoxTitle,
-                                    placeHolder:
-                                        "The Cupboard under the Stairs",
-                                    value: userInput, // Pre-fill with the captured user input
-                                    prompt:"A Name ...",
-                                    validateInput: (text) =>
-                                        text.trim() === ""
-                                            ? "Command cannot be empty"
-                                            : null,
-                                })
+
+                                // |---------------------|
+                                // |        *BUG*        |
+                                // |---------------------|
+
+                                // escaping out of the pick a name prompt still goes to the select a keybinding prompt
+                                // would be nice if the first escape cancelled both
+
+                                await promptUserForName(userInput),
+                                await promptUserForKey()
                             )
                         );
                     }
                 } else {
-                    //   Select a pre-existing page
-                    // ------------------------------
+                    //   Selected a pre-existing page
                     resolve(selectedOption.mapPage);
                 }
             });
 
             pagePrompt.onDidHide(() => {
                 pagePrompt.dispose();
+                pagePrompt = null;
             });
 
             pagePrompt.show();
