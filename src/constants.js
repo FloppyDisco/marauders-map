@@ -7,6 +7,7 @@ const SETTINGS = {
         key: "defaultMapDelay",
         value: 1500
     },
+    mapOpenContext: "MaraudersMapIsOpen",
     inputBoxTitle:`${mapIcon} I solemnly swear that I am up to no good...`,
     mapIcon: mapIcon,
 }
