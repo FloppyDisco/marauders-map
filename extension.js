@@ -16,6 +16,7 @@ const {
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
+    let mapIsOpen = false;
     const extensionStatusBar = vscode.window.createStatusBarItem(
         vscode.StatusBarAlignment.Right,
         0
@@ -36,14 +37,21 @@ function activate(context) {
         vscode.commands.registerCommand(
             COMMANDS.openMap,
             ({ mapPage, mapDelay } = {}) => {
+                if (mapIsOpen){return} // exit if command is already running
+                mapIsOpen = true;
+
                 if (!mapPage) {
                     vscode.commands.executeCommand(COMMANDS.saveSpell);
                 } else {
+
                     whenContext = `${maraudersMapPrefix}.${mapPage}`;
                     setWhenContext(whenContext);
 
                     const keybindings = getKeybindings();
 
+                    if (pageStatusBar){
+                        pageStatusBar.dispose();
+                    }
                     pageStatusBar = vscode.window.createStatusBarItem(
                         vscode.StatusBarAlignment.Left,
                         0
@@ -54,6 +62,9 @@ function activate(context) {
                     pageStatusBar.command = COMMANDS.closeMap;
                     pageStatusBar.show();
 
+                    if (maraudersMap){
+                        maraudersMap.dispose();
+                    }
                     maraudersMap = vscode.window.createQuickPick();
                     maraudersMap.title = `${SETTINGS.mapIcon} ${mapPage}`;
                     maraudersMap.placeholder = "Choose your spell...";
@@ -103,6 +114,7 @@ function activate(context) {
                         maraudersMap.show();
                     }
                 }
+                mapIsOpen = false;
             }
         ),
 
@@ -135,6 +147,9 @@ function activate(context) {
         vscode.commands.registerCommand(
             COMMANDS.saveSpell,
             async ({ mapPage } = {}) => {
+                if(mapIsOpen){return} // exit
+                mapIsOpen = true;
+
                 if (!mapPage) {
                     mapPage = await promptUserForPage();
                     if (mapPage === undefined) {
@@ -192,6 +207,7 @@ function activate(context) {
                     },
                 };
                 saveKeybinding(newKeybinding);
+                mapIsOpen = false;
             }
         ),
 
