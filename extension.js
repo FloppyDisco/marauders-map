@@ -8,7 +8,7 @@ const {
 const {
     getKeybindings,
     getSpellsForPage,
-    getAllMapPages,
+    getAllPagesFromMap,
     saveKeybinding,
 } = require("./src/managers/keybindingsManager");
 
@@ -401,16 +401,14 @@ function activate(context) {
         return true;
     }
 
-/**
- * Function to prompt the user to enter a mapPage
- * @returns {Promise<string | undefined>} The provided page name or undefined if canceled.
- */
-async function promptUserForPage() {
-    const keybindings = getKeybindings();
-    const allPages = getAllMapPages(keybindings).map((page) => ({
-        label: `$(files)$(wand) ${page}`,
-        mapPage: page,
-    }));
+    /**
+     * Function to prompt the user to enter a mapPage
+     * @returns {Promise<string | undefined>} The provided page name or undefined if canceled.
+     */
+    async function promptUserForPage(isNestedPage = false) {
+
+        const keybindings = getKeybindings();
+        const allPages = getAllPagesFromMap(keybindings);
 
     const addMapPage = {
         label: "$(add) New Page to Map",
