@@ -27,6 +27,7 @@ function activate(context) {
 
     let maraudersMap;
     let pageStatusBar;
+    let pagePrompt;
     let whenContext;
 
     context.subscriptions.push(
@@ -38,9 +39,9 @@ function activate(context) {
             COMMANDS.openMap,
             async ({ mapPage, mapDelay } = {}) => {
 
-                // if(pagePrompt){
-                //     pagePrompt.dispose();
-                // }
+                if(pagePrompt){
+                    pagePrompt.dispose();
+                }
 
                 if (!mapPage) {
                     mapPage = await promptUserForPage();
@@ -400,50 +401,67 @@ function activate(context) {
         return true;
     }
 
-    /**
-     * Function to prompt the user to enter a mapPage
-     * @returns {Promise<string | undefined>} the provided page name or undefined if canceled.
-     */
-    async function promptUserForPage() {
-        const keybindings = getKeybindings();
-        const allPages = getAllMapPages(keybindings).map((page) => ({
-            label: `$(files)$(wand) ${page}`,
-            mapPage: page,
-        }));
+/**
+ * Function to prompt the user to enter a mapPage
+ * @returns {Promise<string | undefined>} The provided page name or undefined if canceled.
+ */
+async function promptUserForPage() {
+    const keybindings = getKeybindings();
+    const allPages = getAllMapPages(keybindings).map((page) => ({
+        label: `$(files)$(wand) ${page}`,
+        mapPage: page,
+    }));
 
-        const addMapPage = {
-            label: "$(add) New Page to Map",
-            alwaysShow: true,
-        };
-        const options = [addMapPage, ...allPages];
-        const selectedOption = await vscode.window.showQuickPick(options, {
-            title: SETTINGS.inputBoxTitle,
-            placeHolder: "Select a page to add your spell to ...",
+    const addMapPage = {
+        label: "$(add) New Page to Map",
+        alwaysShow: true,
+    };
+    const options = [addMapPage, ...allPages];
+
+    const pagePrompt = vscode.window.createQuickPick();
+    pagePrompt.items = options;
+    pagePrompt.title = SETTINGS.inputBoxTitle;
+    pagePrompt.placeholder = "Select a page ...";
+
+    let userInput = '';
+
+    // Capture the text typed by the user in the input box
+    pagePrompt.onDidChangeValue(value => {
+        userInput = value;
+    });
+
+    return new Promise((resolve) => {
+        pagePrompt.onDidAccept(async () => {
+            const selectedOption = pagePrompt.selectedItems[0];
+
+            if (selectedOption.label === addMapPage.label) {
+                const newPageTitle = await vscode.window.showInputBox({
+                    title: SETTINGS.inputBoxTitle,
+                    placeHolder: "Enter a title for the new page of the map ...",
+                    value: userInput, // Pre-fill with the captured input
+                    validateInput: (text) =>
+                        text.trim() === "" ? "Command cannot be empty" : null,
+                });
+
+                if (newPageTitle && await createNewMapPage(newPageTitle)) {
+                    resolve(newPageTitle);
+                } else {
+                    resolve(undefined);
+                }
+            } else {
+                resolve(selectedOption.mapPage);
+            }
+            pagePrompt.hide();
         });
-        //
-        if (!selectedOption) {
-            return undefined;
-        } // exit on 'Esc' key
-        //
-        // |-----------------------|
-        // |        Feature        |
-        // |-----------------------|
-        // capture the text of the inputBox it the user types before selecting addNewPage
-        if (selectedOption.label === addMapPage.label) {
-            selectedOption.mapPage = await vscode.window.showInputBox({
-                title: SETTINGS.inputBoxTitle,
-                placeHolder: "Enter a title for the new page of the map ...",
-                validateInput: (text) =>
-                    text.trim() === "" ? "Command cannot be empty" : null,
-            });
 
-            if (!(await createNewMapPage(selectedOption.mapPage))) {
-                return undefined;
-            } // exit on 'Esc' key
-        }
-        //
-        return selectedOption.mapPage;
-    }
+        pagePrompt.onDidHide(() => {
+            pagePrompt.dispose(); // Ensure the Quick Pick is disposed to free resources
+            resolve(undefined); // Resolve undefined on cancel
+        });
+
+        pagePrompt.show();
+    });
+}
 } // end of activate
 
 function deactivate() {}
