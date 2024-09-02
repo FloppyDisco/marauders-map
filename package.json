@@ -19,8 +19,14 @@
     "contributes": {
         "configuration": {
             "type": "object",
-            "title": "MaraudersMap",
-            "properties": {}
+            "title": "Marauder's Map Configuration",
+            "properties": {
+                "maraudersMap.defaultMapDelay":{
+                    "type": "number",
+                    "default": 1000,
+                    "description": "Time, in (ms), to delay opening a map page by default."
+                }
+            }
         },
         "commands": [
             {
