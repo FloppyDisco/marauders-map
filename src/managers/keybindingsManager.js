@@ -72,17 +72,25 @@ function getSpellsForPage(keybindings, mapPage) {
 				})
 }
 
-function createSpellFromKeyBinding(kb) {
-  const args = kb.args
 
-  //  "cmd+alt+e" => "⌘⌥E"
-  let key = kb.key.toUpperCase()
+/**
+ * Function to take a json keybinding code and return a human friendly display version
+ * @param {string} keyCode the json keybinding.key
+ * @returns {string} the prettified keyCode
+*/
+function prettifyKey(keyCode){
+   //  "cmd+alt+e" => "⌘⌥E"
+  return keyCode.toUpperCase()
   .replace('CMD','⌘')
   .replace('ALT','⌥')
   .replace("CTRL",'^')
   .replace('+','')
+}
 
-  let label = `${args.label ? args.label : args.command} (${key})`
+function createSpellFromKeyBinding(kb) {
+  const args = kb.args
+
+  let label = `$(wand) (${prettifyKey(kb.key)}) ${args.label ? args.label : args.command}`
 
   return {
     ...kb.args,
@@ -109,9 +117,18 @@ function getAllMapPages(keybindings) {
   // Use a Set to store unique mapPage values
   const mapPages = new Set();
   keybindings.forEach(keybinding => {
+
     if (keybinding.command === COMMANDS.openMap) {
           if (keybinding.args?.mapPage) {
               mapPages.add(keybinding.args.mapPage);
+
+              // |-----------------------|
+              // |        Feature        |
+              // |-----------------------|
+
+              // return keybindings in such a manner that the "key" property is available to display in the picker
+              // this will only be true for non nested keybindings
+
           }
       } else if(keybinding.command === COMMANDS.closeMap && keybinding.args?.command === COMMANDS.openMap){
           const nestedArgs = keybinding.args.args;
@@ -153,10 +170,19 @@ function saveKeybinding(newKeybinding) {
   }
 }
 
+// |-----------------------|
+// |        Feature        |
+// |-----------------------|
+
+// update keybinding function
+
+
+
 module.exports = {
   getKeybindings,
   getSpellsForPage,
   getPageKeybinding,
   getAllMapPages,
-  saveKeybinding
+  saveKeybinding,
+  prettifyKey
 };
