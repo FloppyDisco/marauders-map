@@ -22,22 +22,39 @@ function getPathToKeybindingsFile() {
     // console.log('isVSCodium',isVSCodium());
     // console.log('baseFolder',baseFolder);
 
-  switch (platform) {
-    case 'darwin': // macOS
-      return path.join(os.homedir(), 'Library', 'Application Support', baseFolder, 'User', 'keybindings.json');
-    case 'win32': // Windows
-      return path.join(process.env.APPDATA || '', baseFolder, 'User', 'keybindings.json');
-    case 'linux': // Linux
-      return path.join(os.homedir(), '.config', baseFolder, 'User', 'keybindings.json');
-    default:
+    switch (platform) {
+        case "darwin": // macOS
+            return path.join(
+                os.homedir(),
+                "Library",
+                "Application Support",
+                baseFolder,
+                "User",
+                "keybindings.json"
+            );
+        case "win32": // Windows
+            return path.join(
+                process.env.APPDATA || "",
+                baseFolder,
+                "User",
+                "keybindings.json"
+            );
+        case "linux": // Linux
+            return path.join(
+                os.homedir(),
+                ".config",
+                baseFolder,
+                "User",
+                "keybindings.json"
+            );
+        default:
+            // |-----------------------|
+            // |        feature        |
+            // |-----------------------|
+            // add setting for user to provide path to keybindings.json
 
-    // |-----------------------|
-    // |        feature        |
-    // |-----------------------|
-    // add setting for user to provide path to keybindings.json
-
-      throw new Error(`Unsupported platform: ${platform}`);
-  }
+            throw new Error(`Unsupported platform: ${platform}`);
+    }
 }
 
 /**
@@ -64,10 +81,11 @@ function getKeybindings() {
 function getSpellsForPage(keybindings, mapPage) {
     return keybindings
         .filter((kb) => {
+            const whenClause = kb.when;
             return (
-                kb.when &&
-                kb.when.startsWith(maraudersMapPrefix) &&
-                kb.when.endsWith(mapPage.replace(" ", "_"))
+                whenClause &&
+                whenClause.startsWith(maraudersMapPrefix) &&
+                whenClause.endsWith(mapPage.replace(" ", "_"))
             );
         })
         .map((kb) => {
@@ -88,19 +106,21 @@ function prettifyKey(keyCode) {
         .replace("CMD", "⌘")
         .replace("ALT", "⌥")
         .replace("CTRL", "^")
-        .replace("SHIFT","⇧")
+        .replace("SHIFT", "⇧");
 }
 
 function createSpellFromKeyBinding(kb) {
     const args = kb.args;
 
-    let label = `$(wand) ${
-        args.label ? args.label : args.command
-    } ${prettifyKey(kb.key)}`;
+    const label = `$(wand) ${args.label ? args.label : args.command}`;
+    const description = `${prettifyKey(kb.key)} ${
+        args.label ? args.command : ""
+    }`;
 
     return {
         ...kb.args,
         label,
+        description,
     };
 }
 
@@ -228,7 +248,7 @@ function getAllPagesFromMap(keybindings) {
  * @returns {object} The page object for the UI quickPicker
  */
 function createPage(pageKeybinding) {
-  /*
+    /*
   {
     "mapPage": "thisPage",
     "key": "cmd+f",
@@ -236,12 +256,16 @@ function createPage(pageKeybinding) {
     "label": "${SETTINGS.pagesIcon} ThisPage (cmd+f)", => generate with prettifyKey
   }
   */
-  const page = pageKeybinding.args.mapPage;
-  const label = `${SETTINGS.pagesIcon} ${page} ${prettifyKey(pageKeybinding.key)}`;
-  return {
-      mapPage: page,
-      label
-    }
+    const mapPage = pageKeybinding.args.mapPage;
+    const label = `${SETTINGS.pagesIcon} ${mapPage}`;
+    const description =  prettifyKey(
+        pageKeybinding.key
+    )
+    return {
+        mapPage,
+        label,
+        description,
+    };
 }
 
 /**
@@ -250,23 +274,21 @@ function createPage(pageKeybinding) {
  * @returns {object} The page object for the UI quickPicker
  */
 function createNestedPage(pageKeybinding) {
-  /*
+    /*
   {
     "mapPage": "thisPage",
     "nestedUnder": "otherPage", // if this is undefined it wont show.
     "label": "${SETTINGS.pagesIcon} ThisPage (cmd+f)", => generate with prettifyKey
   }
   */
-  const page = pageKeybinding.args.args.mapPage;
-  const label = `  ${SETTINGS.subpagesIcon} ${page}`;
-  return {
-      label,
-      mapPage: page,
-      nestedUnder: pageKeybinding.when.split(".")[1],
-    }
+    const page = pageKeybinding.args.args.mapPage;
+    const label = `  ${SETTINGS.subpagesIcon} ${page}`;
+    return {
+        label,
+        mapPage: page,
+        nestedUnder: pageKeybinding.when.split(".")[1],
+    };
 }
-
-
 
 /**
  * Function to write a new keybinding to the keybindings.json file with a backup and preserve comments.
