@@ -23,6 +23,22 @@ this extension works by reading and writing keybindings from keybindings.json
 it doesn't really add any special sauce, it just manages keybindings using custom "when" clauses.
 but then again, the best magic tricks are usually the least complicated ones...
 
+
+## Tips!
+you may notice that some keybindings will not work immediately after opening a page of the map,
+but then the keybinding will work once the map has opened. this is probably because of a conflicting
+keybinding and the focus has not shifted yet.
+for example:
+
+- (cmd+e) opens "editor" page.
+- (cmd+m) calls Maximize editor group inside of the "editor" page.
+- (cmd+m) toggles bookmark
+
+pressing cmd+e and then cmd+m before the map opens toggles the bookmark instead of maximizing the editor group.
+it has to do with the particular when clause and focus of the editor.
+you can fix this by putting "!MaraudersMapIsOpen" the when clause of the global "toggle bookmark" command.
+then vscode will not select this command once a page is opened.
+
 ### The Problem
 Honestly, the organization of keybindings in vscode pretty much sucks by default.
 
