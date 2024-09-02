@@ -44,6 +44,14 @@
                 "title": "Open the Map!",
                 "category": "Marauder's Map"
             }
+        ],
+        "keybindings":[
+            {
+                "command": "MaraudersMap.iSolemnlySwearThatIAmUpToNoGood",
+                "when": "!MaraudersMapIsOpen",
+                "key": "ctrl+alt+m",
+                "mac": "cmd+alt+m"
+            }
         ]
     },
     "scripts": {
