@@ -391,8 +391,6 @@ function activate(context) {
             } // exit on 'Esc' key
         }
         //
-        console.log("page selected returning", selectedOption.mapPage);
-
         return selectedOption.mapPage;
     }
 } // end of activate
@@ -408,6 +406,7 @@ module.exports = {
     {
         "key": "cmd+e",
         "command": "MaraudersMap.iSolemnlySwearThatIAmUpToNoGood",
+        "when": "!MaraudersMapIsOpen",
         "args": {
             "mapPage": "Editor",
             "mapDelay": 300, // if a number is set it will be used if not, default will be used
