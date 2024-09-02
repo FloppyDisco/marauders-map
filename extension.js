@@ -43,10 +43,11 @@ function activate(context) {
                 // }
 
                 if (!mapPage) {
-                    vscode.commands.executeCommand(COMMANDS.saveSpell);
-                } else {
-
-
+                    mapPage = await promptUserForPage();
+                    if (mapPage === undefined) {
+                        return;
+                    } // exit on 'Esc' key
+                }
                     // |-------------------|
                     // |        BUG        |
                     // |-------------------|
