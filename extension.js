@@ -221,7 +221,7 @@ function activate(context) {
                 } // exit on 'Esc' key
 
                 const selectedLabel = isNestedPage
-                    ? `$(arrow-right) Go to ${nestedPage} spells ...`
+                    ? `${SETTINGS.subpagesIcon} Go to ${nestedPage} spells ...`
                     : await promptUserForLabel(selectedCommand, selectedKey);
                 if (selectedLabel === undefined) {
                     return;
@@ -281,7 +281,7 @@ function activate(context) {
             alwaysShow: true,
         };
         const goToAnotherPage = {
-            label: "$(arrow-right) Go to another page ...",
+            label: `${SETTINGS.subpagesIcon} Go to another page ...`,
             command: COMMANDS.openMap,
             alwaysShow: true,
         };
