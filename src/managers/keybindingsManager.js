@@ -77,25 +77,29 @@ function getSpellsForPage(keybindings, mapPage) {
  * Function to take a json keybinding code and return a human friendly display version
  * @param {string} keyCode the json keybinding.key
  * @returns {string} the prettified keyCode
-*/
-function prettifyKey(keyCode){
-   //  "cmd+alt+e" => "⌘⌥E"
-  return keyCode.toUpperCase()
-  .replace('CMD','⌘')
-  .replace('ALT','⌥')
-  .replace("CTRL",'^')
-  .replace('+','')
+ */
+function prettifyKey(keyCode) {
+    //  "cmd+alt+e" => "⌘⌥E"
+    return `(${keyCode})`
+        .toUpperCase()
+        .replaceAll("+", "")
+        .replace("CMD", "⌘")
+        .replace("ALT", "⌥")
+        .replace("CTRL", "^")
+        .replace("SHIFT","⇧")
 }
 
 function createSpellFromKeyBinding(kb) {
-  const args = kb.args
+    const args = kb.args;
 
-  let label = `$(wand) (${prettifyKey(kb.key)}) ${args.label ? args.label : args.command}`
+    let label = `$(wand) ${
+        args.label ? args.label : args.command
+    } ${prettifyKey(kb.key)}`;
 
-  return {
-    ...kb.args,
-    label
-  }
+    return {
+        ...kb.args,
+        label,
+    };
 }
 
 /**
