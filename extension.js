@@ -2,8 +2,8 @@ const vscode = require("vscode");
 const { maraudersMapPrefix, COMMANDS, SETTINGS } = require("./src/constants");
 const { getDefaultMapDelay } = require("./src/managers/settingsManager");
 const {
-    setWhenContext,
-    removeWhenContext,
+    setPageWhenContext,
+    removePageWhenContext,
 } = require("./src/managers/whenManager");
 const {
     getKeybindings,
@@ -45,7 +45,7 @@ function activate(context) {
                 } else {
 
                     whenContext = `${maraudersMapPrefix}.${mapPage}`;
-                    setWhenContext(whenContext);
+                    setPageWhenContext(whenContext);
 
                     const keybindings = getKeybindings();
 
@@ -80,14 +80,14 @@ function activate(context) {
 
                     maraudersMap.onDidHide(() => {
                         // these MUST be called directly in function
-                        removeWhenContext(whenContext); // cancel the when context for this page of the map
+                        removePageWhenContext(whenContext); // cancel the when context for this page of the map
                         maraudersMap.dispose();
                         pageStatusBar.dispose();
                     });
 
                     maraudersMap.onDidChangeSelection(([selection]) => {
                         // these MUST be called directly in function
-                        removeWhenContext(whenContext);
+                        removePageWhenContext(whenContext);
                         maraudersMap.dispose();
                         pageStatusBar.dispose();
 
@@ -126,7 +126,7 @@ function activate(context) {
             COMMANDS.closeMap,
             ({ command, args } = {}) => {
                 // these MUST be called directly in function
-                removeWhenContext(whenContext);
+                removePageWhenContext(whenContext);
                 maraudersMap.dispose();
 
                 // |-----------------------|
