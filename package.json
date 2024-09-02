@@ -5,7 +5,7 @@
     "icon": "src/media/icon.png",
     "repository": "https://github.com/FloppyDisco/marauders-map",
     "description": "Boost your productivity with a map of everything at Hogwarts",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "engines": {
         "vscode": "^1.91.0"
     },
@@ -17,13 +17,11 @@
     ],
     "main": "./extension.js",
     "contributes": {
-      "configuration": {
-      "type": "object",
-      "title": "MaraudersMap",
-      "properties": {
-
-      }
-    },
+        "configuration": {
+            "type": "object",
+            "title": "MaraudersMap",
+            "properties": {}
+        },
         "commands": [
             {
                 "command": "MaraudersMap.expectoPatronum",
