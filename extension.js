@@ -62,7 +62,7 @@ function activate(context) {
 
                     const keybindings = getKeybindings();
 
-                    if (pageStatusBar){
+                    if (pageStatusBar) {
                         pageStatusBar.dispose();
                     }
                     pageStatusBar = vscode.window.createStatusBarItem(
@@ -75,7 +75,7 @@ function activate(context) {
                     pageStatusBar.command = COMMANDS.closeMap;
                     pageStatusBar.show();
 
-                    if (maraudersMap){
+                    if (maraudersMap) {
                         maraudersMap.dispose();
                     }
                     maraudersMap = vscode.window.createQuickPick();
@@ -84,12 +84,48 @@ function activate(context) {
 
                     maraudersMap.items = [
                         {
-                            label: "+ Add a Spell",
+                            label: "$(add) New Spell",
                             command: COMMANDS.saveSpell,
                             args: { mapPage },
                         },
                         ...getSpellsForPage(keybindings, mapPage),
                     ];
+
+                    // |-----------------------|
+                    // |        Feature        |
+                    // |-----------------------|
+
+                    // add buttons to the box
+                    // maraudersMap.buttons= [];
+                    /*
+
+
+                    */
+                    // add buttons to each item
+                    // move item up
+                    // move item down
+                    /*
+                    {
+                        label: 'Item 2',
+                        description: 'Description for item 2',
+                        buttons: [
+                            {
+                                iconPath: new vscode.ThemeIcon('trash'), // Another built-in VS Code icon
+                                tooltip: 'Delete this item'
+                            }
+                        ]
+                    }
+
+
+                    // Event listener for when a button is clicked
+                    quickPick.onDidTriggerItemButton((e) => {
+                        if (e.button.tooltip === 'Edit this item') {
+                            vscode.window.showInformationMessage(`Editing: ${e.item.label}`);
+                        } else if (e.button.tooltip === 'Delete this item') {
+                            vscode.window.showInformationMessage(`Deleting: ${e.item.label}`);
+                        }
+                    });
+                    */
 
                     maraudersMap.onDidHide(() => {
                         // these MUST be called directly in function
@@ -307,22 +343,22 @@ function activate(context) {
         });
     }
 
-    /**
-     * Function to prompt the user to enter a time for mapDelay.
-     * @returns {Promise<number | undefined>} The provided delay time or undefined if canceled.
-     */
-    async function promptUserForMapDelay() {
-        const mapDelayTime = await vscode.window.showInputBox({
-            title: SETTINGS.inputBoxTitle,
-            placeHolder: "Enter a delay time before opening the map ...",
-            prompt: `Or leave blank for default: ${getDefaultMapDelay()}(ms)`,
-            validateInput: (text) => {
-                // test to see if the provided input is an acceptable number value
-                return null; // Return null if the input is valid
-            },
-        });
-        return Number(mapDelayTime);
-    }
+    // /**
+    //  * Function to prompt the user to enter a time for mapDelay.
+    //  * @returns {Promise<number | undefined>} The provided delay time or undefined if canceled.
+    //  */
+    // async function promptUserForMapDelay() {
+    //     const mapDelayTime = await vscode.window.showInputBox({
+    //         title: SETTINGS.inputBoxTitle,
+    //         placeHolder: "Enter a delay time before opening the map ...",
+    //         prompt: `Or leave blank for default: ${getDefaultMapDelay()}(ms)`,
+    //         validateInput: (text) => {
+    //             // test to see if the provided input is an acceptable number value
+    //             return null; // Return null if the input is valid
+    //         },
+    //     });
+    //     return Number(mapDelayTime);
+    // }
 
     /**
      * Function to create a new page in the map
@@ -336,10 +372,19 @@ function activate(context) {
             return undefined;
         } // exit on 'Esc' key
 
-        const selectedMapDelay = await promptUserForMapDelay();
-        if (selectedMapDelay === undefined) {
-            return undefined;
-        } // exit on 'Esc' key
+
+        // |-----------------------|
+        // |        Feature        |
+        // |-----------------------|
+        // do we really need to prompt the user for this? they can add it to json.
+
+        // const selectedMapDelay = await promptUserForMapDelay();
+        // if (selectedMapDelay === undefined) {
+        //     return undefined;
+        // } // exit on 'Esc' key
+
+
+        const selectedMapDelay = "";
 
         const keybinding = {
             key: selectedKey,
