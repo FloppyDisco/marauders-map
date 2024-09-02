@@ -272,24 +272,27 @@ function saveKeybinding(newKeybinding) {
   const keybindingsPath = getPathToKeybindingsFile();
   const backupPath = keybindingsPath + '.backup';
 
-  try {
+    try {
+        const currentContent = fs.readFileSync(keybindingsPath, "utf8");
+        fs.writeFileSync(backupPath, currentContent);
 
-      const currentContent = fs.readFileSync(keybindingsPath, 'utf8');
-      fs.writeFileSync(backupPath, currentContent);
+        // Parse the JSONC content preserving comments
+        const currentKeybindings = jsonc.parse(currentContent) || [];
+        const edits = jsonc.modify(
+            currentContent,
+            [currentKeybindings.length],
+            newKeybinding,
+            { formattingOptions: { insertSpaces: true, tabSize: 2 } }
+        );
 
-      // Parse the JSONC content preserving comments
-      const currentKeybindings = jsonc.parse(currentContent) || [];
-      const edits = jsonc.modify(currentContent, [currentKeybindings.length], newKeybinding, { formattingOptions: { insertSpaces: true, tabSize: 2 } });
+        // Apply the edits to the original content to get the new content with the comment preserved
+        const newContent = jsonc.applyEdits(currentContent, edits);
 
-      // Apply the edits to the original content to get the new content with the comment preserved
-      const newContent = jsonc.applyEdits(currentContent, edits);
-
-      // Write the updated content back to keybindings.json
-      fs.writeFileSync(keybindingsPath, newContent, 'utf8');
-
-  } catch (error) {
-      console.error('Error writing to keybindings.json:', error);
-  }
+        // Write the updated content back to keybindings.json
+        fs.writeFileSync(keybindingsPath, newContent, "utf8");
+    } catch (error) {
+        console.error("Error writing to keybindings.json:", error);
+    }
 }
 
 // |-----------------------|
