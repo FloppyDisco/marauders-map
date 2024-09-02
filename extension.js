@@ -89,6 +89,7 @@ function activate(context) {
                         label: "$(add) New Spell",
                         command: COMMANDS.saveSpell,
                         args: { mapPage },
+                        alwaysShow: true
                     },
                     ...getSpellsForPage(keybindings, mapPage),
                 ];
