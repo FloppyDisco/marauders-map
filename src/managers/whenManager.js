@@ -5,7 +5,7 @@ const vscode = require('vscode');
  * @param {string} whenContext
  * @returns {null}
  */
-exports.setWhenContext = (whenContext) => {
+exports.setPageWhenContext = (whenContext) => {
     vscode.commands.executeCommand("setContext", whenContext, true);
 }
 
@@ -14,6 +14,24 @@ exports.setWhenContext = (whenContext) => {
  * @param {string} whenContext
  * @returns {null}
  */
-exports.removeWhenContext = (whenContext) => {
+exports.removePageWhenContext = (whenContext) => {
     vscode.commands.executeCommand("setContext", whenContext, undefined);
+}
+
+
+const mapOpenContext = "MaraudersMapIsOpen"
+/**
+ * Function to set then map open when clause context
+ * @returns {null}
+ */
+exports.setMapOpenContext = () => {
+    vscode.commands.executeCommand("setContext", mapOpenContext, true);
+}
+
+/**
+ * Function to remove the mapOpen when clause context
+ * @returns {null}
+ */
+exports.removeMapOpenContext = () => {
+    vscode.commands.executeCommand("setContext", mapOpenContext, undefined);
 }
