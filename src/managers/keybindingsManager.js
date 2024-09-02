@@ -1,22 +1,21 @@
-const fs = require('fs');
-const os = require('os');
-const path = require('path');
-const vscode = require('vscode');
-const jsonc = require('jsonc-parser');
-const {maraudersMapPrefix, COMMANDS} = require('../constants');
+const fs = require("fs");
+const os = require("os");
+const path = require("path");
+const vscode = require("vscode");
+const jsonc = require("jsonc-parser");
+const { maraudersMapPrefix, COMMANDS, SETTINGS } = require("../constants");
 
 /**
  * Function to determine if the extension is running in VSCodium or VS Code.
  * @returns {boolean} true if running in VSCodium, false if running in VS Code.
  */
 function isVSCodium() {
-  return vscode.env.appName.includes('VSCodium');
+    return vscode.env.appName.includes("VSCodium");
 }
 
-
 function getPathToKeybindingsFile() {
-  const platform = os.platform();
-  const baseFolder = isVSCodium() ? 'VSCodium' : 'Code';  // change directory name based on application
+    const platform = os.platform();
+    const baseFolder = isVSCodium() ? "VSCodium" : "Code"; // change directory name based on application
 
     // console.log('---------------');
     // console.log('platform',platform);
@@ -41,22 +40,20 @@ function getPathToKeybindingsFile() {
   }
 }
 
-
 /**
  * Function to get all keybindings from keybindings.json
  * @returns {array} - a array of all keybindings.
-*/
+ */
 function getKeybindings() {
-  try {
-    const data = fs.readFileSync(getPathToKeybindingsFile(), 'utf8');
-    const keybindings = jsonc.parse(data);
-    return keybindings;
-  } catch (error) {
-    console.error('Error reading keybindings.json:', error);
-    return [];
-  }
+    try {
+        const data = fs.readFileSync(getPathToKeybindingsFile(), "utf8");
+        const keybindings = jsonc.parse(data);
+        return keybindings;
+    } catch (error) {
+        console.error("Error reading keybindings.json:", error);
+        return [];
+    }
 }
-
 
 /**
  * Function to filter an array of keybindings by the provided mapPage
@@ -65,13 +62,18 @@ function getKeybindings() {
  * @returns {array} the filtered keybindings
  */
 function getSpellsForPage(keybindings, mapPage) {
-        return keybindings.filter(kb => {
-					return kb.when && kb.when.startsWith(maraudersMapPrefix) && kb.when.endsWith(mapPage.replace(" ","_"))
-				}).map(kb => {
-					return createSpellFromKeyBinding(kb);
-				})
+    return keybindings
+        .filter((kb) => {
+            return (
+                kb.when &&
+                kb.when.startsWith(maraudersMapPrefix) &&
+                kb.when.endsWith(mapPage.replace(" ", "_"))
+            );
+        })
+        .map((kb) => {
+            return createSpellFromKeyBinding(kb);
+        });
 }
-
 
 /**
  * Function to take a json keybinding code and return a human friendly display version
@@ -108,9 +110,7 @@ function createSpellFromKeyBinding(kb) {
  * @param {string} mapPage the page to find the keybinding for
  * @returns {object} the keybinding obj saved for this mapPage
  */
-function getPageKeybinding(keybindings, mapPage) {
-
-}
+function getPageKeybinding(keybindings, mapPage) {}
 
 /**
  * Function to gather all mapPages created by the user
@@ -273,8 +273,8 @@ function createNestedPage(pageKeybinding) {
  * @param {Object} newKeybinding - The new keybinding object to add.
  */
 function saveKeybinding(newKeybinding) {
-  const keybindingsPath = getPathToKeybindingsFile();
-  const backupPath = keybindingsPath + '.backup';
+    const keybindingsPath = getPathToKeybindingsFile();
+    const backupPath = keybindingsPath + ".backup";
 
     try {
         const currentContent = fs.readFileSync(keybindingsPath, "utf8");
@@ -304,8 +304,6 @@ function saveKeybinding(newKeybinding) {
 // |-----------------------|
 
 // update keybinding function
-
-
 
 module.exports = {
     getKeybindings,
