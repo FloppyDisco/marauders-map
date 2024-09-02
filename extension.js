@@ -338,6 +338,7 @@ function activate(context) {
         const keybinding = {
             key: selectedKey,
             command: COMMANDS.openMap,
+            when: `!${SETTINGS.mapOpenContext}`,
             args: {
                 mapPage,
                 mapDelay: selectedMapDelay ? selectedMapDelay : undefined,
