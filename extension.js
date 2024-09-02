@@ -194,10 +194,9 @@ function activate(context) {
             COMMANDS.saveSpell,
             async ({ mapPage } = {}) => {
                 if (!mapPage) {
+                    // get the page that this command will be stored on
                     mapPage = await promptUserForPage();
-                    if (mapPage === undefined) {
-                        return;
-                    } // exit on 'Esc' key
+                    if (mapPage === undefined) {return} // exit on 'Esc' key
                 }
 
                 // |-------------------|
@@ -213,6 +212,7 @@ function activate(context) {
                 const isNestedPage = selectedCommand === COMMANDS.openMap;
                 let nestedPage;
                 if (isNestedPage) {
+                    // get the page that this command will go to =>
                     nestedPage = await promptUserForPage(isNestedPage);
                     if (nestedPage === undefined) {
                         return;
