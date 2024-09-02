@@ -44,18 +44,15 @@ function activate(context) {
                     pagePrompt.hide();
                 } // cancel the previous call to openMap if a specific mapPage is called
 
-                let selectedPageManually = false
+                let selectedPageManually = false;
                 if (!mapPage) {
                     mapPage = await promptUserForPage();
-                    if (mapPage === undefined) {return} // exit on 'Esc' key
-                    selectedPageManually = true
+                    if (mapPage === undefined) {
+                        return; // exit on 'Esc' key
+                    }
+                    selectedPageManually = true;
                 }
-                // |-------------------|
-                // |        BUG        |
-                // |-------------------|
 
-                // space in when context messes up scoping
-                // may be fixed with .replace()
                 whenContext = `${maraudersMapPrefix}.${mapPage.replace(
                     " ",
                     "_"
@@ -63,6 +60,10 @@ function activate(context) {
                 setPageWhenContext(whenContext);
 
                 const keybindings = getKeybindings();
+
+
+                //   Create the Status Bar
+                // -------------------------
 
                 if (pageStatusBar) {
                     pageStatusBar.dispose();
@@ -76,6 +77,9 @@ function activate(context) {
                     "Sometimes spells go wonky, click to close!";
                 pageStatusBar.command = COMMANDS.closeMap;
                 pageStatusBar.show();
+
+                //   Create the Map!
+                // -------------------
 
                 if (maraudersMap) {
                     maraudersMap.dispose();
@@ -176,10 +180,12 @@ function activate(context) {
                 // these MUST be called directly in function
                 removePageWhenContext(whenContext);
                 maraudersMap.dispose();
+
                 // |-----------------------|
                 // |        Feature        |
                 // |-----------------------|
                 // briefly show mischief managed when spell is cast
+
                 pageStatusBar.dispose();
                 if (command) {
                     vscode.commands.executeCommand(command, args);
@@ -200,37 +206,32 @@ function activate(context) {
                     if (mapPage === undefined) {return} // exit on 'Esc' key
                 }
 
-                // |-------------------|
-                // |        BUG        |
-                // |-------------------|
-                // saving a new page from the menu for a nested page does not nest the page
-
                 const selectedCommand = await promptUserForCommand();
                 if (selectedCommand === undefined) {
                     return;
                 } // exit on 'Esc' key
 
                 const isNestedPage = selectedCommand === COMMANDS.openMap;
-                let nestedPage;
+                let nestedPage; // exist for scope
                 if (isNestedPage) {
                     // get the page that this command will go to =>
                     nestedPage = await promptUserForPage(isNestedPage);
                     if (nestedPage === undefined) {
-                        return;
-                    } // exit on 'Esc' key
+                        return; // exit on 'Esc' key
+                    }
                 }
 
                 const selectedKey = await promptUserForKey();
                 if (selectedKey === undefined) {
-                    return;
-                } // exit on 'Esc' key
+                    return; // exit on 'Esc' key
+                }
 
                 const selectedLabel = isNestedPage
                     ? `${SETTINGS.subpagesIcon} Go to ${nestedPage} spells ...`
                     : await promptUserForLabel(selectedCommand, selectedKey);
                 if (selectedLabel === undefined) {
-                    return;
-                } // exit on 'Esc' key
+                    return; // exit on 'Esc' key
+                }
 
                 // |-----------------------|
                 // |        Feature        |
@@ -342,8 +343,6 @@ function activate(context) {
      * @returns {Promise<string | undefined>} The provided keybinding or undefined if canceled.
      */
     async function promptUserForKey() {
-        console.log("prompting user for a key binding");
-
         return await vscode.window.showInputBox({
             title: SETTINGS.inputBoxTitle,
             placeHolder: "ctrl+shift+r or cmd+l",
@@ -354,6 +353,7 @@ function activate(context) {
             },
         });
     }
+
 
     /**
      * Function to prompt the user to enter a label.
@@ -371,10 +371,13 @@ function activate(context) {
         });
     }
 
+
+
     /**
-     * Function to create a new page in the map
+     * Function to create a new page on the map
      * @param {string} mapPage the name of the page to be created
-     * @returns {Promise<string | undefined>} the create Map Page name or undefined if canceled.
+     * @param {string} selectedKey the keybinding for the new page
+     * @returns {Promise<string | undefined>} the name of the Map Page that was created, or undefined if canceled.
      */
     function createNewMapPage(mapPage, selectedKey) {
         if (mapPage && selectedKey) {
@@ -397,7 +400,7 @@ function activate(context) {
     }
 
     /**
-     * Function to prompt the user to enter a mapPage
+     * Function to prompt the user to select a Page
      * @returns {Promise<string | undefined>} The provided page name or undefined if canceled.
      */
     async function promptUserForPage(isNestedPage = false) {
@@ -422,8 +425,11 @@ function activate(context) {
 
         return new Promise((resolve) => {
             pagePrompt.onDidAccept(async () => {
+
                 pagePrompt.hide();
+
                 const [selectedOption] = pagePrompt.selectedItems;
+
                 if (selectedOption.label === addMapPage.label) {
                     // Selected to create a new page
                     if (isNestedPage) {
