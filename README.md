@@ -39,6 +39,11 @@ it has to do with the particular when clause and focus of the editor.
 you can fix this by putting "!MaraudersMapIsOpen" the when clause of the global "toggle bookmark" command.
 then vscode will not select this command once a page is opened.
 
+## BUGS
+
+- if you set a command for a page to be something with the escape key, (cmd+escape) or some like variation, it will work as expected, UNTIL the map opens. Once the map is open the escape key gets slaved to closing the quickPicker, and while pressing (cmd+escape) will not close the picker, it also will not run your command. The command can still be run by selecting it manually in the picker and pressing "Enter". I do not know of a fix for this, sorry.
+
+
 ### The Problem
 Honestly, the organization of keybindings in vscode pretty much sucks by default.
 
