@@ -301,10 +301,9 @@ function saveKeybinding(newKeybinding) {
 
 
 module.exports = {
-  getKeybindings,
-  getSpellsForPage,
-  getPageKeybinding,
-  getAllMapPages,
-  saveKeybinding,
-  prettifyKey
+    getKeybindings,
+    getSpellsForPage,
+    getPageKeybinding,
+    getAllPagesFromMap,
+    saveKeybinding,
 };
