@@ -91,7 +91,7 @@ function activate(context) {
                         args: { mapPage },
                         alwaysShow: true
                     },
-                    ...getSpellsForPage(keybindings, mapPage),
+                    ...getSpellsForPage(keybindings, whenContext),
                 ];
 
                 // |-----------------------|

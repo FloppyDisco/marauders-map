@@ -78,14 +78,13 @@ function getKeybindings() {
  * @param {string} mapPage the value to filter the keybindings by
  * @returns {array} the filtered keybindings
  */
-function getSpellsForPage(keybindings, mapPage) {
+function getSpellsForPage(keybindings, whenContext) {
     return keybindings
         .filter((kb) => {
             const whenClause = kb.when;
             return (
                 whenClause &&
-                whenClause.startsWith(maraudersMapPrefix) &&
-                whenClause.endsWith(mapPage.replace(" ", "_"))
+                whenClause === whenContext
             );
         })
         .map((kb) => {
