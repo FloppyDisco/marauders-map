@@ -66,7 +66,7 @@ function getKeybindings() {
  */
 function getSpellsForPage(keybindings, mapPage) {
         return keybindings.filter(kb => {
-					return kb.when && kb.when.startsWith(maraudersMapPrefix) && kb.when.endsWith(mapPage)
+					return kb.when && kb.when.startsWith(maraudersMapPrefix) && kb.when.endsWith(mapPage.replace(" ","_"))
 				}).map(kb => {
 					return createSpellFromKeyBinding(kb);
 				})

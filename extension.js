@@ -44,7 +44,13 @@ function activate(context) {
                     vscode.commands.executeCommand(COMMANDS.saveSpell);
                 } else {
 
-                    whenContext = `${maraudersMapPrefix}.${mapPage}`;
+
+                    // |-------------------|
+                    // |        BUG        |
+                    // |-------------------|
+
+                    // space in when context messes up scoping
+                    whenContext = `${maraudersMapPrefix}.${mapPage.replace(" ","_")}`;
                     setPageWhenContext(whenContext);
 
                     const keybindings = getKeybindings();
@@ -199,7 +205,7 @@ function activate(context) {
                 const newKeybinding = {
                     key: selectedKey ? selectedKey : undefined,
                     command: COMMANDS.closeMap,
-                    when: `${maraudersMapPrefix}.${mapPage}`,
+                    when: `${maraudersMapPrefix}.${mapPage.replace(" ","_")}`,
                     args: {
                         command: selectedCommand,
                         label: selectedLabel ? selectedLabel : undefined,
