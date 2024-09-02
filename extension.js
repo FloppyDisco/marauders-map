@@ -307,7 +307,8 @@ function activate(context) {
         if (selectedOption.label === addCustomCommand.label) {
             selectedOption.command = await vscode.window.showInputBox({
                 title: SETTINGS.inputBoxTitle,
-                placeHolder: "Enter your command ...",
+                placeHolder: "editor.action.blockComment",
+                prompt: "A Command ... ",
                 validateInput: (text) =>
                     text.trim() === "" ? "Command cannot be empty" : null,
             });
@@ -325,7 +326,8 @@ function activate(context) {
 
         return await vscode.window.showInputBox({
             title: SETTINGS.inputBoxTitle,
-            placeHolder: "Enter a keybinding: cmd+h or ctrl+p ...",
+            placeHolder: "ctrl+shift+r or cmd+l",
+            prompt:"A keybinding ... ",
             validateInput: (text) => {
                 // test to see if the provided input is a keybinding
                 return null; // Return null if the input is valid
@@ -340,8 +342,8 @@ function activate(context) {
     async function promptUserForLabel(selectedCommand, selectedKey) {
         return await vscode.window.showInputBox({
             title: SETTINGS.inputBoxTitle,
-            placeHolder: "Enter a custom label ...",
-            prompt: `Or leave blank for default: ${selectedCommand} (${selectedKey})`,
+            placeHolder: `Or leave blank for default: ${selectedCommand} (${selectedKey})`,
+            prompt: "A Label ...",
             validateInput: (text) => {
                 // test to see if the provided input is a keybinding
                 return null; // Return null if the input is valid
@@ -413,8 +415,9 @@ function activate(context) {
                             await vscode.window.showInputBox({
                                 title: SETTINGS.inputBoxTitle,
                                 placeHolder:
-                                    "Enter a title for the new page of the map ...",
+                                    "The Room of Requirement",
                                 value: userInput, // Pre-fill with the captured user input
+                                prompt:"A Name ...",
                                 validateInput: (text) =>
                                     text.trim() === ""
                                         ? "Command cannot be empty"
@@ -422,13 +425,21 @@ function activate(context) {
                             })
                         ); // Resolve to the new page name
                     } else {
+
+
+                        // |-------------------|
+                        // |        BUG        |
+                        // |-------------------|
+
+                        
                         resolve(
                             await createNewMapPage(
                                 await vscode.window.showInputBox({
                                     title: SETTINGS.inputBoxTitle,
                                     placeHolder:
-                                        "Enter a title for the new page of the map ...",
+                                        "The Cupboard under the Stairs",
                                     value: userInput, // Pre-fill with the captured user input
+                                    prompt:"A Name ...",
                                     validateInput: (text) =>
                                         text.trim() === ""
                                             ? "Command cannot be empty"
