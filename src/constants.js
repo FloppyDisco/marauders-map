@@ -10,6 +10,8 @@ const SETTINGS = {
     mapOpenContext: "MaraudersMapIsOpen",
     inputBoxTitle:`The Marauders Map ${mapIcon}`,
     mapIcon: mapIcon,
+    pagesIcon: "$(files)",
+    subpagesIcon: "$(arrow-right)",
 }
 
 const COMMANDS = {
