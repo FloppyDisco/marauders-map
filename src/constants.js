@@ -8,7 +8,7 @@ const SETTINGS = {
         value: 1500
     },
     mapOpenContext: "MaraudersMapIsOpen",
-    inputBoxTitle:`${mapIcon} I solemnly swear that I am up to no good...`,
+    inputBoxTitle:`The Marauders Map ${mapIcon}`,
     mapIcon: mapIcon,
 }
 
