@@ -238,6 +238,7 @@ function activate(context) {
                 // |-----------------------|
                 // give the user the ability to provide args for command
                 //
+
                 const selectedArgs = isNestedPage
                     ? {
                           mapPage: nestedPage,
@@ -259,6 +260,25 @@ function activate(context) {
                 saveKeybinding(newKeybinding);
             }
         ),
+
+
+        // |-------------------------|
+        // |        Obliviate        |
+        // |-------------------------|
+
+        // create the delete spell command
+
+        /*
+
+
+
+
+                        !
+
+
+
+
+        */
 
         // |---------------------|
         // |        Lumos        |
