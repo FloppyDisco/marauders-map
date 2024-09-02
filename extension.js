@@ -317,6 +317,26 @@ function activate(context) {
         return selectedOption.command.trim();
     }
 
+
+    /**
+     * Function to prompt the user to enter a name for a new Page.
+     * @returns {Promise<string | undefined>} The provided name or undefined if canceled.
+     */
+    async function promptUserForName(userInput='') {
+        return await vscode.window.showInputBox({
+            title: SETTINGS.inputBoxTitle,
+            placeHolder:
+                "The Room of Requirement",
+            value: userInput, // Pre-fill with the captured user input
+            prompt:"A Name ...",
+            validateInput: (text) =>
+                text.trim() === ""
+                    ? "Command cannot be empty"
+                    : null,
+        })
+    }
+
+
     /**
      * Function to prompt the user to enter a keybinding.
      * @returns {Promise<string | undefined>} The provided keybinding or undefined if canceled.
