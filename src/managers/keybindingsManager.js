@@ -112,34 +112,156 @@ function getPageKeybinding(keybindings, mapPage) {
  * Function to gather all mapPages created by the user
  * @param {array} keybindings an array of keybindings parsed from keybindings.json
  * @returns {array} - A list of map pages.
+ */
+function getAllPagesFromMap(keybindings) {
+    // Use a Set to store unique mapPage values
+    const setOfAllMapPages = new Set();
+    const mapPages = {};
+    const nestedMapPages = {};
+
+    keybindings.forEach((keybinding) => {
+        // |-----------------------|
+        // |        Feature        |
+        // |-----------------------|
+
+        // return keybindings in such a manner that the "key" property is available to display in the picker
+        // this will only be true for non nested keybindings
+
+        if (
+            keybinding.command === COMMANDS.openMap &&
+            keybinding.args !== undefined
+        ) {
+            const mapPage = keybinding.args.mapPage;
+            if (mapPage) {
+                // openMap command with a mapPage
+                /*
+          keybinding:
+
+          {
+            "key": "cmd+e",
+            "command": "MaraudersMap.iSolemnlySwearThatIAmUpToNoGood",
+            "when": "!MaraudersMapIsOpen",
+            "args": {
+                "mapPage": "Editor",
+                "mapDelay": 300, // if a number is set it will be used if not, default will be used
+            }
+        },
+        */
+                setOfAllMapPages.add(mapPage);
+                mapPages[mapPage] = createPage(keybinding);
+            }
+        } else if (
+            keybinding.command === COMMANDS.closeMap &&
+            keybinding.args !== undefined &&
+            keybinding.args.command === COMMANDS.openMap
+        ) {
+            const nestedArgs = keybinding.args.args;
+            if (nestedArgs && nestedArgs.mapPage) {
+                // nested mapPage
+                /*
+            keybinding:
+            {
+              "key": "cmd+g",
+              "command": "MaraudersMap.mischiefManaged",
+              "when" : "MaraudersMap.Editor",
+              "args": {
+                  "command": "MaraudersMap.iSolemnlySwearThatIAmUpToNoGood",
+                  "args": {
+                      "mapPage": "Git",
+                      "mapDelay": 0
+                  }
+              }
+            */
+                const mapPage = nestedArgs.mapPage;
+                setOfAllMapPages.add(mapPage);
+                nestedMapPages[mapPage] = createNestedPage(keybinding);
+            }
+        }
+    });
+
+    const AllPages = Array.from(setOfAllMapPages).map((page) => {
+        return mapPages.hasOwnProperty(page)
+            ? mapPages[page]
+            : nestedMapPages[page];
+    });
+
+    return AllPages;
+
+    /*
+  {
+    "mapPage": "thisPage",
+    "key": "cmd+f",
+    "nestedUnder": "otherPage", // if this is undefined it wont show.
+    "label": "${SETTINGS.pagesIcon} ThisPage (cmd+f)", => generate with pretifyKey
+  }
 */
-function getAllMapPages(keybindings) {
-  // Use a Set to store unique mapPage values
-  const mapPages = new Set();
-  keybindings.forEach(keybinding => {
-
-    if (keybinding.command === COMMANDS.openMap) {
-          if (keybinding.args?.mapPage) {
-              mapPages.add(keybinding.args.mapPage);
-
-              // |-----------------------|
-              // |        Feature        |
-              // |-----------------------|
-
-              // return keybindings in such a manner that the "key" property is available to display in the picker
-              // this will only be true for non nested keybindings
-
-          }
-      } else if(keybinding.command === COMMANDS.closeMap && keybinding.args?.command === COMMANDS.openMap){
-          const nestedArgs = keybinding.args.args;
-          if (nestedArgs && nestedArgs.mapPage) {
-              mapPages.add(nestedArgs.mapPage);
-          }
-      }
-  });
-  // Convert the Set back to an array
-  return Array.from(mapPages);
+    /* example keybindings:
+    {
+        "key": "cmd+e",
+        "command": "MaraudersMap.iSolemnlySwearThatIAmUpToNoGood",
+        "when": "!MaraudersMapIsOpen",
+        "args": {
+            "mapPage": "Editor",
+            "mapDelay": 300, // if a number is set it will be used if not, default will be used
+        }
+    },
+    {
+        "key": "cmd+,",
+        "command": "MaraudersMap.mischiefManaged",
+        "when" : "MaraudersMap.editor",
+        "args": {
+            "label": "Split Editor Down"
+            "command": "editor.splitDown",
+        }
+    },
+},
+*/
 }
+
+/**
+ * Function to take a keybinding object and return the display data for the quick Picker
+ * @param {object} pageKeybinding
+ * @returns {object} The page object for the UI quickPicker
+ */
+function createPage(pageKeybinding) {
+  /*
+  {
+    "mapPage": "thisPage",
+    "key": "cmd+f",
+    "nestedUnder": "otherPage", // if this is undefined it wont show.
+    "label": "${SETTINGS.pagesIcon} ThisPage (cmd+f)", => generate with prettifyKey
+  }
+  */
+  const page = pageKeybinding.args.mapPage;
+  const label = `${SETTINGS.pagesIcon} ${page} ${prettifyKey(pageKeybinding.key)}`;
+  return {
+      mapPage: page,
+      label
+    }
+}
+
+/**
+ * Function to take a keybinding object and return the display data for the quick Picker
+ * @param {object} pageKeybinding
+ * @returns {object} The page object for the UI quickPicker
+ */
+function createNestedPage(pageKeybinding) {
+  /*
+  {
+    "mapPage": "thisPage",
+    "nestedUnder": "otherPage", // if this is undefined it wont show.
+    "label": "${SETTINGS.pagesIcon} ThisPage (cmd+f)", => generate with prettifyKey
+  }
+  */
+  const page = pageKeybinding.args.args.mapPage;
+  const label = `  ${SETTINGS.subpagesIcon} ${page}`;
+  return {
+      label,
+      mapPage: page,
+      nestedUnder: pageKeybinding.when.split(".")[1],
+    }
+}
+
 
 
 /**
