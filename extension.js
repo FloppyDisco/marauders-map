@@ -52,7 +52,11 @@ function activate(context) {
                     // |-------------------|
 
                     // space in when context messes up scoping
-                    whenContext = `${maraudersMapPrefix}.${mapPage.replace(" ","_")}`;
+                    // may be fixed with .replace()
+                    whenContext = `${maraudersMapPrefix}.${mapPage.replace(
+                        " ",
+                        "_"
+                    )}`;
                     setPageWhenContext(whenContext);
 
                     const keybindings = getKeybindings();
@@ -201,7 +205,7 @@ function activate(context) {
                 const newKeybinding = {
                     key: selectedKey ? selectedKey : undefined,
                     command: COMMANDS.closeMap,
-                    when: `${maraudersMapPrefix}.${mapPage.replace(" ","_")}`,
+                    when: `${maraudersMapPrefix}.${mapPage.replace(" ", "_")}`,
                     args: {
                         command: selectedCommand,
                         label: selectedLabel ? selectedLabel : undefined,
