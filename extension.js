@@ -431,6 +431,7 @@ function activate(context) {
                         // |        BUG        |
                         // |-------------------|
 
+                        // escaping out of the pick a name prompt still goes to the select a keybinding prompt
                         
                         resolve(
                             await createNewMapPage(
