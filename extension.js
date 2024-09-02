@@ -16,7 +16,7 @@ const {
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
-    let mapIsOpen = false;
+    // let mapIsOpen = false;
     const extensionStatusBar = vscode.window.createStatusBarItem(
         vscode.StatusBarAlignment.Right,
         0
@@ -36,9 +36,11 @@ function activate(context) {
 
         vscode.commands.registerCommand(
             COMMANDS.openMap,
-            ({ mapPage, mapDelay } = {}) => {
-                if (mapIsOpen){return} // exit if command is already running
-                mapIsOpen = true;
+            async ({ mapPage, mapDelay } = {}) => {
+
+                // if(pagePrompt){
+                //     pagePrompt.dispose();
+                // }
 
                 if (!mapPage) {
                     vscode.commands.executeCommand(COMMANDS.saveSpell);
@@ -119,8 +121,6 @@ function activate(context) {
                         // map delay is zero, show map!
                         maraudersMap.show();
                     }
-                }
-                mapIsOpen = false;
             }
         ),
 
@@ -134,7 +134,6 @@ function activate(context) {
                 // these MUST be called directly in function
                 removePageWhenContext(whenContext);
                 maraudersMap.dispose();
-
                 // |-----------------------|
                 // |        Feature        |
                 // |-----------------------|
@@ -153,9 +152,6 @@ function activate(context) {
         vscode.commands.registerCommand(
             COMMANDS.saveSpell,
             async ({ mapPage } = {}) => {
-                if(mapIsOpen){return} // exit
-                mapIsOpen = true;
-
                 if (!mapPage) {
                     mapPage = await promptUserForPage();
                     if (mapPage === undefined) {
@@ -213,7 +209,6 @@ function activate(context) {
                     },
                 };
                 saveKeybinding(newKeybinding);
-                mapIsOpen = false;
             }
         ),
 
