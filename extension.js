@@ -93,6 +93,7 @@ function activate(context) {
                 maraudersMap.placeholder = "Choose your spell...";
 
                 maraudersMap.items = [
+                    ...getSpellsForPage(keybindings, whenContext),
                     {
                         label: "$(add) New Spell",
                         command: COMMANDS.saveSpell,
