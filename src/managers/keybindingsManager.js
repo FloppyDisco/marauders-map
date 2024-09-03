@@ -155,11 +155,19 @@ function createSpellMenuItemFromKeyBinding(kb) {
             args.label ? args.command : ""
         }`;
     }
+    const buttons = [
+        {
+            command: COMMANDS.revealSpell,
+            iconPath: new vscode.ThemeIcon('gear'),
+            tooltip: 'Edit'
+        }
+    ]
 
     return {
         ...kb.args,
         label,
         description,
+        buttons,
     };
 }
 
