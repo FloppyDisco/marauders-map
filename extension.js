@@ -190,7 +190,7 @@ function activate(context) {
                 removePageWhenContext(whenContext);
                 maraudersMap.dispose();
                 pageStatusBar.dispose();
-                //  
+                //
                 if(mischiefStatusBar){ // remove the old one
                     mischiefStatusBar.dispose();
                 }
@@ -316,7 +316,22 @@ function activate(context) {
             if (maraudersMap && !maraudersMap.visible) {
                 maraudersMap.show();
             }
+        }),
+
+
+
+        // |---------------------|
+        // |        Accio        |
+        // |---------------------|
+
+
+
+        vscode.commands.registerCommand(COMMANDS.revealSpell, (spell) => {
+
+
+
         })
+
     ); // end of subscriptions.push()
 
     /**

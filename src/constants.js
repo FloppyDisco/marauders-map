@@ -19,10 +19,10 @@ const COMMANDS = {
     deleteSpell: `${maraudersMapPrefix}.obliviate`,
     openMap:  `${maraudersMapPrefix}.iSolemnlySwearThatIAmUpToNoGood`,
     closeMap:  `${maraudersMapPrefix}.mischiefManaged`,
-    displayMap: `_${maraudersMapPrefix}.lumos`
-    // accio
+    displayMap: `_${maraudersMapPrefix}.lumos`,
+    revealSpell: `${maraudersMapPrefix}.accio`,
     // erecto
-    // prior incantato
+    // prior incantatoAccioAccio
 }
 
 module.exports = {
