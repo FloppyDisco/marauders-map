@@ -191,6 +191,14 @@ function activate(context) {
                 }, 1000);
                 //
                 if (command) {
+
+                    // |---------------------|
+                    // |        *BUG*        |
+                    // |---------------------|
+
+                    // calling a nested page before the map has opened, will immediately cause the map to display on the second page
+                    // it would be better if the delay was maintained to the next page.
+                    
                     vscode.commands.executeCommand(command, args);
                 }
             }
