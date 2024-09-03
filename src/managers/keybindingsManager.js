@@ -3,7 +3,7 @@ const os = require("os");
 const path = require("path");
 const vscode = require("vscode");
 const jsonc = require("jsonc-parser");
-const { COMMANDS, SETTINGS } = require("../constants");
+const { COMMANDS, SETTINGS, BUTTONS } = require("../constants");
 
 /**
  * Function to determine if the extension is running in VSCodium or VS Code.

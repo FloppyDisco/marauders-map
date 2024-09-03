@@ -1,3 +1,4 @@
+const vscode = require('vscode');
 const { revealKeybinding } = require("./managers/keybindingsManager");
 
 const maraudersMapPrefix = "MaraudersMap";
