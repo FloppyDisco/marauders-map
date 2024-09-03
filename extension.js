@@ -109,10 +109,15 @@ function activate(context) {
                 // add buttons to the box
                 // maraudersMap.buttons= [];
                 /*
+                    go page button for nested pages
+                    setting button? what settings tho!?
 
-
-                    */
+                */
                 // add buttons to each item
+                // delete item
+                // edit
+                    // label
+                    // command
                 // move item up
                 // move item down
                 /*
@@ -213,16 +218,17 @@ function activate(context) {
             COMMANDS.saveSpell,
             async ({ mapPage } = {}) => {
                 if (!mapPage) {
-                    // get the page that this command will be stored on
+                    // get the page that this command will be saved on
                     mapPage = await promptUserForPage();
-                    if (mapPage === undefined) {return} // exit on 'Esc' key
+                    if (mapPage === undefined) {
+                        return; // exit on 'Esc' key
+                    }
                 }
 
                 const selectedCommand = await promptUserForCommand();
                 if (selectedCommand === undefined) {
-                    return;
-                } // exit on 'Esc' key
-
+                    return; // exit on 'Esc' key
+                }
                 const isNestedPage = selectedCommand === COMMANDS.openMap;
                 let nestedPage; // exist for scope
                 if (isNestedPage) {
@@ -249,7 +255,7 @@ function activate(context) {
                 // |        Feature        |
                 // |-----------------------|
                 // give the user the ability to provide args for command
-                //
+                // probably not, just do it in json
 
                 const selectedArgs = isNestedPage
                     ? {
@@ -260,12 +266,12 @@ function activate(context) {
                 // : promptUserForArgs();
 
                 const newKeybinding = {
-                    key: selectedKey ? selectedKey : undefined,
+                    key: selectedKey ? selectedKey : undefined, // set to undefined for serialization
                     command: COMMANDS.closeMap,
                     when: `${maraudersMapPrefix}.${mapPage.replace(" ", "_")}`,
                     args: {
                         command: selectedCommand,
-                        label: selectedLabel ? selectedLabel : undefined,
+                        label: selectedLabel ? selectedLabel : undefined, // set to undefined for serialization
                         args: selectedArgs,
                     },
                 };
@@ -278,7 +284,13 @@ function activate(context) {
         // |        Obliviate        |
         // |-------------------------|
 
-        // create the delete spell command
+
+
+        // |-----------------------|
+        // |        Feature        |
+        // |-----------------------|
+
+        // delete spell command
 
         /*
 
@@ -295,6 +307,10 @@ function activate(context) {
         // |---------------------|
         // |        Lumos        |
         // |---------------------|
+
+
+
+        // i don't think this is being used any more...
 
         vscode.commands.registerCommand(COMMANDS.displayMap, () => {
             if (maraudersMap && !maraudersMap.visible) {
