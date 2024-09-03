@@ -99,7 +99,6 @@ function activate(context) {
                         args: { mapPage },
                         alwaysShow: true
                     },
-                    ...getSpellsForPage(keybindings, whenContext),
                 ];
 
                 // |-----------------------|
