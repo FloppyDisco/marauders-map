@@ -29,6 +29,7 @@ function activate(context) {
 
     let maraudersMap;
     let pageStatusBar;
+    let mischiefStatusBar;
     let pagePrompt;
     let whenContext;
 
@@ -43,6 +44,9 @@ function activate(context) {
                 if (pagePrompt) {
                     pagePrompt.hide();
                 } // cancel the previous call to openMap if a specific mapPage is called
+                if(mischiefStatusBar){
+                    mischiefStatusBar.dispose();
+                }
 
                 let selectedPageManually = false;
                 if (!mapPage) {
@@ -180,13 +184,21 @@ function activate(context) {
                 // these MUST be called directly in function
                 removePageWhenContext(whenContext);
                 maraudersMap.dispose();
-
-                // |-----------------------|
-                // |        Feature        |
-                // |-----------------------|
-                // briefly show mischief managed when spell is cast
-
                 pageStatusBar.dispose();
+                //  
+                if(mischiefStatusBar){ // remove the old one
+                    mischiefStatusBar.dispose();
+                }
+                mischiefStatusBar = vscode.window.createStatusBarItem(
+                    vscode.StatusBarAlignment.Left,
+                    0
+                );
+                mischiefStatusBar.text = "$(wand) Mischief Managed...";
+                mischiefStatusBar.show();
+                setTimeout(() => {
+                    mischiefStatusBar.dispose();
+                }, 1000);
+                //
                 if (command) {
                     vscode.commands.executeCommand(command, args);
                 }
