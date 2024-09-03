@@ -211,7 +211,7 @@ items assigned to your home row keys, or 1, 2, 3, 4, etc., whatever you want.
 ----
 
 
-#### Why not "Whick Key"?
+#### Why not "Which Key"?
 It's a vim solution to a vscode problem.
 
 I don't know, it didn't fell whimsical enough for me...
