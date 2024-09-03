@@ -1,6 +1,6 @@
 # The Marauder's Map
 
-The Marauder's Map is a magical guide that can show where everything and everyone is at Hogwarts!
+The Marauder's Map is a magical guide that shows where all your favorite keyboard shortcuts are!
 
 ## Usage
 
@@ -39,7 +39,7 @@ the Marauder's Map will be there to show you the way **!**
 
 ### Using
 
--   Press your keybinding to open a specific Page on you Map.
+-   Press your keybinding to open a specific Page on your Map.
 
 -   The Spells on this Page are immediately available; however, you will notice the Map does not open immediately.
 
@@ -49,7 +49,7 @@ the Marauder's Map will be there to show you the way **!**
 
 ## Implementation
 
-this extension works by reading and writing keybindings from keybindings.json
+This extension works by reading and writing keybindings from keybindings.json
 it doesn't really add much special sauce, it just manages keybindings using dynamic "when" clauses.
 but then again, the best magic tricks are usually the simplest...
 
@@ -115,7 +115,8 @@ example keybindings:
 
 ## Coming Soon
 
-validation on keycode inputs
+- validation on keycode inputs
+- bug fix on nested map delay times
 
 
 
