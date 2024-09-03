@@ -239,7 +239,7 @@ function activate(context) {
                 }
 
                 const selectedLabel = isNestedPage
-                    ? `${SETTINGS.subpagesIcon} Go to ${nestedPage} spells ...`
+                    ? ''
                     : await promptUserForLabel(selectedCommand, selectedKey);
                 if (selectedLabel === undefined) {
                     return; // exit on 'Esc' key
