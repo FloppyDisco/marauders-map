@@ -10,6 +10,7 @@ const {
     getSpellsForPage,
     getAllPagesFromMap,
     saveKeybinding,
+    revealKeybinding
 } = require("./src/managers/keybindingsManager");
 
 /**
@@ -154,7 +155,7 @@ function activate(context) {
                     );
                 });
 
-                maraudersMap.onDidTriggerItemButton(BUTTONS.menuItemButtonTrigger);
+                maraudersMap.onDidTriggerItemButton(menuItemButtonTrigger);
 
                 const mapDelayTime =
                     mapDelay !== undefined ? mapDelay : getDefaultMapDelay();
@@ -298,6 +299,19 @@ function activate(context) {
     ); // end of subscriptions.push()
 
 
+    function menuItemButtonTrigger(event) {
+        const item = event.item;
+        const button = event.button;
+        const keybinding = item.keybinding;
+
+        switch (button.id) {
+            case BUTTONS.edit:
+                revealKeybinding(keybinding);
+                break;
+            // potentially add more buttons in future
+        }
+    }
+
    // |-----------------------|
    // |        Prompts        |
    // |-----------------------|
@@ -415,7 +429,7 @@ function activate(context) {
         pagePrompt.items = options;
         pagePrompt.title = SETTINGS.inputBoxTitle;
         pagePrompt.placeholder = "Select a page ...";
-        pagePrompt.onDidTriggerItemButton(BUTTONS.menuItemButtonTrigger);
+        pagePrompt.onDidTriggerItemButton(menuItemButtonTrigger);
 
         let userInput = "";
         pagePrompt.onDidChangeValue((value) => {

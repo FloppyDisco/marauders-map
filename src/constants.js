@@ -1,6 +1,4 @@
 const vscode = require('vscode');
-const { revealKeybinding } = require("./managers/keybindingsManager");
-
 const maraudersMapPrefix = "MaraudersMap";
 
 const mapIcon = "🗺️";
@@ -33,18 +31,6 @@ const BUTTONS = {
         id: "edit",
         iconPath: new vscode.ThemeIcon("gear"),
         tooltip: "Edit this Spell",
-    },
-    menuItemButtonTrigger: (event) => {
-        const item = event.item;
-        const button = event.button;
-        const keybinding = item.keybinding;
-
-        switch (button.id) {
-            case "edit":
-                revealKeybinding(keybinding);
-                break;
-            // potentially add more buttons in future
-        }
     },
 };
 
