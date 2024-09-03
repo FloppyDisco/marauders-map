@@ -146,19 +146,7 @@ function activate(context) {
                     );
                 });
 
-                maraudersMap.onDidTriggerItemButton((event) => {
-                    const item = event.item;
-                    const button = event.button;
-                    const keybinding = item.keybinding
-
-                    switch (button.id) {
-                        case "edit":
-                            revealKeybinding(keybinding);
-                            break;
-                        // potentially add more buttons in future
-                    }
-                });
-
+                maraudersMap.onDidTriggerItemButton(menuItemButtonTrigger);
 
                 const mapDelayTime =
                     mapDelay !== undefined ? mapDelay : getDefaultMapDelay();
@@ -313,6 +301,20 @@ function activate(context) {
 
     */
 
+
+    const menuItemButtonTrigger = (event) => {
+        const item = event.item;
+        const button = event.button;
+        const keybinding = item.keybinding
+
+        switch (button.id) {
+            case "edit":
+                revealKeybinding(keybinding);
+                break;
+            // potentially add more buttons in future
+        }
+    }
+
    // |-----------------------|
    // |        Prompts        |
    // |-----------------------|
@@ -411,29 +413,6 @@ function activate(context) {
         });
     }
 
-    /**
-     * Function to create a new page on the map
-     * @param {string} mapPage the name of the page to be created
-     * @param {string} selectedKey the keybinding for the new page
-     * @returns {Promise<string | undefined>} the name of the Map Page that was created, or undefined if canceled.
-     */
-    function createNewMapPage(mapPage, selectedKey) {
-        if (mapPage && selectedKey) {
-            const selectedMapDelay = "";
-            const keybinding = {
-                key: selectedKey,
-                command: COMMANDS.openMap,
-                when: `!${SETTINGS.mapOpenContext}`,
-                args: {
-                    mapPage,
-                    mapDelay: selectedMapDelay ? selectedMapDelay : undefined,
-                },
-            };
-            saveKeybinding(keybinding);
-            return mapPage;
-        }
-        return undefined; // exit
-    }
 
     /**
      * Function to prompt the user to select a Page
@@ -453,6 +432,8 @@ function activate(context) {
         pagePrompt.items = options;
         pagePrompt.title = SETTINGS.inputBoxTitle;
         pagePrompt.placeholder = "Select a page ...";
+        pagePrompt.onDidTriggerItemButton(menuItemButtonTrigger);
+
         let userInput = "";
         pagePrompt.onDidChangeValue((value) => {
             userInput = value;
@@ -474,17 +455,7 @@ function activate(context) {
 
 
                         resolve( // the new name for the page after creation
-                            createNewMapPage(
-                                // |---------------------|
-                                // |        *BUG*        |
-                                // |---------------------|
-
-                                // escaping out of the pick a name prompt still goes to the select a keybinding prompt
-                                // would be nice if the first escape cancelled both
-
-                                await promptUserForName(userInput),
-                                await promptUserForKey()
-                            )
+                            await createNewMapPage(userInput)
                         );
                     }
                 } else {
@@ -502,6 +473,41 @@ function activate(context) {
         });
     }
 
+
+
+        /**
+     * Function to create a new page on the map
+     * @param {string} mapPage the name of the page to be created
+     * @param {string} selectedKey the keybinding for the new page
+     * @returns {Promise<string | undefined>} the name of the Map Page that was created, or undefined if canceled.
+     */
+        async function createNewMapPage(userInput) {
+
+            const mapPage = await promptUserForName(userInput)
+            if (mapPage === undefined){
+                return undefined; // exit on 'Esc' key
+            }
+            const selectedKey = await promptUserForKey()
+            if (selectedKey === undefined){
+                return undefined; // exit on 'Esc' key
+            }
+
+            if (mapPage && selectedKey) {
+                const selectedMapDelay = "";
+                const keybinding = {
+                    key: selectedKey,
+                    command: COMMANDS.openMap,
+                    when: `!${SETTINGS.mapOpenContext}`,
+                    args: {
+                        mapPage,
+                        mapDelay: selectedMapDelay ? selectedMapDelay : undefined,
+                    },
+                };
+                saveKeybinding(keybinding);
+                return mapPage;
+            }
+            return undefined; // exit
+        }
 } // end of activate
 
 function deactivate() {}
