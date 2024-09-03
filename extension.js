@@ -26,11 +26,13 @@ function activate(context) {
     );
     extensionStatusBar.text = SETTINGS.mapIcon;
     extensionStatusBar.command = COMMANDS.openMap;
+    extensionStatusBar.tooltip = "I solemnly swear that I am up to no good..."
     extensionStatusBar.show();
 
     let maraudersMap;
     let pageStatusBar;
     let mischiefStatusBar;
+    let solemnlySwearStatusBar;
     let pagePrompt;
     let whenContext;
 
@@ -42,16 +44,29 @@ function activate(context) {
         vscode.commands.registerCommand(
             COMMANDS.openMap,
             async ({ mapPage, mapDelay } = {}) => {
+
+                // remove any old UI elements from previous spells
                 if (pagePrompt) {
                     pagePrompt.hide();
-                } // cancel the previous call to openMap if a specific mapPage is called
+                }
                 if (mischiefStatusBar) {
                     mischiefStatusBar.dispose();
+                }
+                if (solemnlySwearStatusBar) {
+                    solemnlySwearStatusBar.dispose();
                 }
 
                 let selectedPageManually = false;
                 if (!mapPage) {
+                    solemnlySwearStatusBar = vscode.window.createStatusBarItem(
+                        vscode.StatusBarAlignment.Left,
+                        0
+                    );
+                    solemnlySwearStatusBar.text = "$(wand) I solemnly swear ...";
+                    solemnlySwearStatusBar.show();
+                    //
                     mapPage = await promptUserForPage();
+                    solemnlySwearStatusBar.dispose();
                     if (mapPage === undefined) {
                         return; // exit on 'Esc' key
                     }
@@ -429,7 +444,7 @@ function activate(context) {
         const allPages = getAllPagesFromMap(keybindings);
 
         const addMapPage = {
-            label: "$(add) New Page to Map",
+            label: "$(add) New Page",
             alwaysShow: true,
         };
         const options = [...allPages, addMapPage];
