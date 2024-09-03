@@ -213,7 +213,6 @@ items assigned to your home row keys, or 1, 2, 3, 4, etc., whatever you want.
 
 #### Why not "Whick Key"?
 It's a vim solution to a vscode problem.
-also, I don't think it actually manages conflicting keybindings, it says in the docs that you should use "g" instead of "ctrl+g", I don't like this, I
 
 I don't know, it didn't fell whimsical enough for me...
 
