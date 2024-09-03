@@ -298,11 +298,65 @@ function saveKeybinding(newKeybinding) {
 // |        Feature        |
 // |-----------------------|
 
-// update keybinding function
+// update keybinding function?
+
+
+    /**
+     * Function to open the keybindings.json file and reveal a specific keybinding by command.
+     * @param {string} command - The command associated with the keybinding to find.
+     */
+    async function revealKeybinding(keybinding) {
+        console.log('looking for the spell!',);
+        console.log('keybinding',keybinding);
+
+
+        // Open the keybindings.json file
+        await vscode.commands.executeCommand('workbench.action.openGlobalKeybindingsFile');
+
+        // Get the active text editor (which should be keybindings.json)
+        const editor = vscode.window.activeTextEditor;
+
+        if (editor) {
+            // Read the entire content of the keybindings.json file
+            const document = editor.document;
+            const text = document.getText();
+
+            try {
+                // Parse the JSONC content into an array of objects and get the JSON node tree
+                const rootNode = jsonc.parseTree(text);
+
+                if (rootNode) {
+                    // Iterate through child nodes to find a matching keybinding
+                    for (const node of rootNode.children) {
+                        const parsedKeybinding = jsonc.getNodeValue(node);
+                        if (parsedKeybinding && parsedKeybinding.key === keybinding.key &&
+                            parsedKeybinding.command === keybinding.command &&
+                            JSON.stringify(parsedKeybinding.args) === JSON.stringify(keybinding.args)) {
+
+                            // Get the start position of the node
+                            const startPosition = document.positionAt(node.offset);
+
+                            // Reveal and highlight the line in the editor
+                            editor.revealRange(new vscode.Range(startPosition, startPosition ), vscode.TextEditorRevealType.AtTop);
+                            editor.selection = new vscode.Selection(startPosition, startPosition);
+                            return;
+                        }
+                    }
+
+                    vscode.window.showInformationMessage(`Keybinding not found.`);
+                } else {
+                    vscode.window.showErrorMessage('Failed to parse the keybindings.json file.');
+                }
+            } catch (error) {
+                vscode.window.showErrorMessage('Failed to parse keybindings.json: ' + error.message);
+            }
+        }
+    }
 
 module.exports = {
     getKeybindings,
     getSpellsForPage,
     getAllPagesFromMap,
     saveKeybinding,
+    revealKeybinding,
 };

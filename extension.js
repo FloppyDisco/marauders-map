@@ -10,6 +10,7 @@ const {
     getSpellsForPage,
     getAllPagesFromMap,
     saveKeybinding,
+    revealKeybinding
 } = require("./src/managers/keybindingsManager");
 
 /**
@@ -161,6 +162,20 @@ function activate(context) {
                         selection.args
                     );
                 });
+
+                maraudersMap.onDidTriggerItemButton((event) => {
+                    const item = event.item;
+                    const button = event.button;
+                    const keybinding = item.keybinding
+
+                    switch (button.id) {
+                        case "edit":
+                            revealKeybinding(keybinding);
+                            break;
+                        // potentially add more buttons in future
+                    }
+                });
+
 
                 const mapDelayTime =
                     mapDelay !== undefined ? mapDelay : getDefaultMapDelay();
