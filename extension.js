@@ -45,7 +45,7 @@ function activate(context) {
                 if (pagePrompt) {
                     pagePrompt.hide();
                 } // cancel the previous call to openMap if a specific mapPage is called
-                if(mischiefStatusBar){
+                if (mischiefStatusBar) {
                     mischiefStatusBar.dispose();
                 }
 
@@ -65,7 +65,6 @@ function activate(context) {
                 setPageWhenContext(whenContext);
 
                 const keybindings = getKeybindings();
-
 
                 //   Create the Status Bar
                 // -------------------------
@@ -99,7 +98,7 @@ function activate(context) {
                         label: "$(add) New Spell",
                         command: COMMANDS.saveSpell,
                         args: { mapPage },
-                        alwaysShow: true
+                        alwaysShow: true,
                     },
                 ];
 
@@ -110,39 +109,8 @@ function activate(context) {
                 // add buttons to the box
                 // maraudersMap.buttons= [];
                 /*
-                    go page button for nested pages
-                    setting button? what settings tho!?
-
+                    go back page button for nested pages?
                 */
-                // add buttons to each item
-                // delete item
-                // edit
-                    // label
-                    // command
-                // move item up
-                // move item down
-                /*
-                    {
-                        label: 'Item 2',
-                        description: 'Description for item 2',
-                        buttons: [
-                            {
-                                iconPath: new vscode.ThemeIcon('trash'), // Another built-in VS Code icon
-                                tooltip: 'Delete this item'
-                            }
-                        ]
-                    }
-
-
-                    // Event listener for when a button is clicked
-                    quickPick.onDidTriggerItemButton((e) => {
-                        if (e.button.tooltip === 'Edit this item') {
-                            vscode.window.showInformationMessage(`Editing: ${e.item.label}`);
-                        } else if (e.button.tooltip === 'Delete this item') {
-                            vscode.window.showInformationMessage(`Deleting: ${e.item.label}`);
-                        }
-                    });
-                    */
 
                 maraudersMap.onDidHide(() => {
                     // these MUST be called directly in function
@@ -206,7 +174,7 @@ function activate(context) {
                 maraudersMap.dispose();
                 pageStatusBar.dispose();
                 //
-                if(mischiefStatusBar){ // remove the old one
+                if (mischiefStatusBar) { // remove the old one
                     mischiefStatusBar.dispose();
                 }
                 mischiefStatusBar = vscode.window.createStatusBarItem(
@@ -260,17 +228,11 @@ function activate(context) {
                 }
 
                 const selectedLabel = isNestedPage
-                    ? ''
+                    ? ""
                     : await promptUserForLabel(selectedCommand, selectedKey);
                 if (selectedLabel === undefined) {
                     return; // exit on 'Esc' key
                 }
-
-                // |-----------------------|
-                // |        Feature        |
-                // |-----------------------|
-                // give the user the ability to provide args for command
-                // probably not, just do it in json
 
                 const selectedArgs = isNestedPage
                     ? {
@@ -278,7 +240,6 @@ function activate(context) {
                           mapDelay: 0,
                       }
                     : undefined;
-                // : promptUserForArgs();
 
                 const newKeybinding = {
                     key: selectedKey ? selectedKey : undefined, // set to undefined for serialization
@@ -294,12 +255,9 @@ function activate(context) {
             }
         ),
 
-
         // |-------------------------|
         // |        Obliviate        |
         // |-------------------------|
-
-
 
         // |-----------------------|
         // |        Feature        |
@@ -307,32 +265,17 @@ function activate(context) {
 
         // delete spell command
 
-        /*
-
-
-
-
-                        !
-
-
-
-
-        */
 
         // |---------------------|
         // |        Lumos        |
         // |---------------------|
-
-
-
-        // i don't think this is being used any more...
 
         vscode.commands.registerCommand(COMMANDS.displayMap, () => {
             if (maraudersMap && !maraudersMap.visible) {
                 maraudersMap.show();
             }
         }),
-        
+
     ); // end of subscriptions.push()
 
 
@@ -359,7 +302,7 @@ function activate(context) {
    // |        Prompts        |
    // |-----------------------|
 
-    /**
+   /**
      * Function to prompt the user to enter a command.
      * @returns {Promise<string | undefined>} The provided command or undefined if canceled.
      */
@@ -406,25 +349,20 @@ function activate(context) {
         return selectedOption.command.trim();
     }
 
-
     /**
      * Function to prompt the user to enter a name for a new Page.
      * @returns {Promise<string | undefined>} The provided name or undefined if canceled.
      */
-    async function promptUserForName(userInput='') {
+    async function promptUserForName(userInput = "") {
         return await vscode.window.showInputBox({
             title: SETTINGS.inputBoxTitle,
-            placeHolder:
-                "The Room of Requirement",
+            placeHolder: "The Room of Requirement",
             value: userInput, // Pre-fill with the captured user input
-            prompt:"A Name ...",
+            prompt: "A Name ...",
             validateInput: (text) =>
-                text.trim() === ""
-                    ? "Command cannot be empty"
-                    : null,
-        })
+                text.trim() === "" ? "Command cannot be empty" : null,
+        });
     }
-
 
     /**
      * Function to prompt the user to enter a keybinding.
@@ -434,14 +372,13 @@ function activate(context) {
         return await vscode.window.showInputBox({
             title: SETTINGS.inputBoxTitle,
             placeHolder: "ctrl+shift+r or cmd+l",
-            prompt:"A keybinding ... ",
+            prompt: "A keybinding ... ",
             validateInput: (text) => {
                 // test to see if the provided input is a keybinding
                 return null; // Return null if the input is valid
             },
         });
     }
-
 
     /**
      * Function to prompt the user to enter a label.
@@ -459,8 +396,6 @@ function activate(context) {
         });
     }
 
-
-
     /**
      * Function to create a new page on the map
      * @param {string} mapPage the name of the page to be created
@@ -476,15 +411,13 @@ function activate(context) {
                 when: `!${SETTINGS.mapOpenContext}`,
                 args: {
                     mapPage,
-                    mapDelay: selectedMapDelay
-                        ? selectedMapDelay
-                        : undefined,
+                    mapDelay: selectedMapDelay ? selectedMapDelay : undefined,
                 },
             };
             saveKeybinding(keybinding);
-            return mapPage
+            return mapPage;
         }
-        return undefined // exit
+        return undefined; // exit
     }
 
     /**
@@ -492,7 +425,6 @@ function activate(context) {
      * @returns {Promise<string | undefined>} The provided page name or undefined if canceled.
      */
     async function promptUserForPage(isNestedPage = false) {
-
         const keybindings = getKeybindings();
         const allPages = getAllPagesFromMap(keybindings);
 
@@ -513,7 +445,6 @@ function activate(context) {
 
         return new Promise((resolve) => {
             pagePrompt.onDidAccept(async () => {
-
                 pagePrompt.hide();
 
                 const [selectedOption] = pagePrompt.selectedItems;
@@ -529,8 +460,6 @@ function activate(context) {
 
                         resolve( // the new name for the page after creation
                             createNewMapPage(
-
-
                                 // |---------------------|
                                 // |        *BUG*        |
                                 // |---------------------|
@@ -557,6 +486,7 @@ function activate(context) {
             pagePrompt.show();
         });
     }
+
 } // end of activate
 
 function deactivate() {}
@@ -565,36 +495,3 @@ module.exports = {
     activate,
     deactivate,
 };
-
-/* example keybindings:
-    {
-        "key": "cmd+e",
-        "command": "MaraudersMap.iSolemnlySwearThatIAmUpToNoGood",
-        "when": "!MaraudersMapIsOpen",
-        "args": {
-            "mapPage": "Editor",
-            "mapDelay": 300, // if a number is set it will be used if not, default will be used
-        }
-    },
-    {
-        "key": "cmd+,",
-        "command": "MaraudersMap.mischiefManaged",
-        "when" : "MaraudersMap.editor",
-        "args": {
-            "label": "Split Editor Down"
-            "command": "editor.splitDown",
-        }
-    },
-    {
-    "key": "cmd+g",
-    "command": "MaraudersMap.mischiefManaged",
-    "when" : "MaraudersMap.Editor",
-    "args": {
-        "command": "MaraudersMap.iSolemnlySwearThatIAmUpToNoGood",
-        "args": {
-            "mapPage": "Git",
-            "mapDelay": 0
-        }
-    }
-},
-*/
