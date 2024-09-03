@@ -5,7 +5,7 @@
     "icon": "src/media/icon.png",
     "repository": "https://github.com/FloppyDisco/marauders-map",
     "description": "Boost your productivity with a map of everything at Hogwarts",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "engines": {
         "vscode": "^1.91.0"
     },
@@ -21,7 +21,7 @@
             "type": "object",
             "title": "Marauder's Map Configuration",
             "properties": {
-                "MaraudersMap.defaultMapDelay":{
+                "MaraudersMap.defaultMapDelay": {
                     "type": "number",
                     "default": 1000,
                     "description": "Time (ms) to delay opening a map page by default."
@@ -45,7 +45,7 @@
                 "category": "Marauder's Map"
             }
         ],
-        "keybindings":[
+        "keybindings": [
             {
                 "command": "MaraudersMap.iSolemnlySwearThatIAmUpToNoGood",
                 "when": "!MaraudersMapIsOpen",
