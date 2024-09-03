@@ -82,13 +82,39 @@ function getSpellsForPage(keybindings, whenContext) {
     return keybindings
         .filter((kb) => {
             const whenClause = kb.when;
-            return (
-                whenClause &&
-                whenClause === whenContext
-            );
+            return whenClause && whenClause === whenContext;
         })
-        .map((kb) => {
-            return createSpellFromKeyBinding(kb);
+        .map(createSpellMenuItemFromKeyBinding)
+        .sort((a, b) => {
+            // First criteria: check if either object has the command "MaraudersMap.iSolemnlySwearThatIAmUpToNoGood"
+            const commandToCheck =
+                "MaraudersMap.iSolemnlySwearThatIAmUpToNoGood";
+
+            if (a.command === commandToCheck && b.command !== commandToCheck) {
+                return -1; // `a` comes before `b`
+            }
+            if (a.command !== commandToCheck && b.command === commandToCheck) {
+                return 1; // `b` comes before `a`
+            }
+
+            // Second criteria: Check if either object is missing the 'order' property
+            const hasOrderA = "order" in a;
+            const hasOrderB = "order" in b;
+
+            if (hasOrderA && !hasOrderB) {
+                return -1; // `a` with an 'order' property comes before `b` without it
+            }
+            if (!hasOrderA && hasOrderB) {
+                return 1; // `b` with an 'order' property comes before `a` without it
+            }
+
+            // Third criteria: Sort by the 'order' property numerically if both have it
+            if (hasOrderA && hasOrderB) {
+                return a.order - b.order;
+            }
+
+            // Fourth criteria: Alphabetical sort by 'command' if neither has an 'order' property
+            return a.command.localeCompare(b.command);
         });
 }
 
@@ -108,7 +134,7 @@ function prettifyKey(keyCode) {
         .replace("SHIFT", "⇧");
 }
 
-function createSpellFromKeyBinding(kb) {
+function createSpellMenuItemFromKeyBinding(kb) {
     const args = kb.args;
 
     // |-----------------------|
@@ -116,11 +142,19 @@ function createSpellFromKeyBinding(kb) {
     // |-----------------------|
 
     // this function needs to change to create different labels and descriptions for nested pages and spells
-
-    const label = `$(wand) ${args.label ? args.label : args.command}`;
-    const description = `${prettifyKey(kb.key)} ${
-        args.label ? args.command : ""
-    }`;
+    let label;
+    let description;
+    if (args.command === COMMANDS.openMap) {
+        // style as a nested page
+        label = `   ${SETTINGS.subpagesIcon} Go to ${args.args.mapPage} ...`;
+        description = `${prettifyKey(kb.key)}`;
+    } else {
+        // style as a spell
+        label = `$(wand) ${args.label ? args.label : args.command}`;
+        description = `${prettifyKey(kb.key)} ${
+            args.label ? args.command : ""
+        }`;
+    }
 
     return {
         ...kb.args,
@@ -128,7 +162,6 @@ function createSpellFromKeyBinding(kb) {
         description,
     };
 }
-
 
 /**
  * Function to gather all mapPages created by the user
@@ -185,9 +218,7 @@ function getAllPagesFromMap(keybindings) {
 function createPage(pageKeybinding) {
     const mapPage = pageKeybinding.args.mapPage;
     const label = `${SETTINGS.pagesIcon} ${mapPage}`;
-    const description =  prettifyKey(
-        pageKeybinding.key
-    )
+    const description = prettifyKey(pageKeybinding.key);
     return {
         mapPage,
         label,
