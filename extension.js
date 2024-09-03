@@ -301,11 +301,11 @@ function activate(context) {
 
     function menuItemButtonTrigger(event) {
         const item = event.item;
-        const button = event.button;
+        const selectedButton = event.button;
         const keybinding = item.keybinding;
 
-        switch (button.id) {
-            case BUTTONS.edit:
+        switch (selectedButton.id) {
+            case BUTTONS.edit.id:
                 revealKeybinding(keybinding);
                 break;
             // potentially add more buttons in future
