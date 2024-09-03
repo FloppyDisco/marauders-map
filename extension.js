@@ -1,5 +1,5 @@
 const vscode = require("vscode");
-const { maraudersMapPrefix, COMMANDS, SETTINGS } = require("./src/constants");
+const { maraudersMapPrefix, COMMANDS, SETTINGS, BUTTONS } = require("./src/constants");
 const { getDefaultMapDelay } = require("./src/managers/settingsManager");
 const {
     setPageWhenContext,
@@ -10,7 +10,6 @@ const {
     getSpellsForPage,
     getAllPagesFromMap,
     saveKeybinding,
-    revealKeybinding
 } = require("./src/managers/keybindingsManager");
 
 /**
@@ -66,6 +65,15 @@ function activate(context) {
                     solemnlySwearStatusBar.show();
                     //
                     mapPage = await promptUserForPage();
+
+                    // |---------------------|
+                    // |        *BUG*        |
+                    // |---------------------|
+
+                    // clicking away
+                    // or escaping prompt
+                    // from Map does not get rid of the solemnlySwearStatusBar item
+
                     solemnlySwearStatusBar.dispose();
                     if (mapPage === undefined) {
                         return; // exit on 'Esc' key
@@ -146,7 +154,7 @@ function activate(context) {
                     );
                 });
 
-                maraudersMap.onDidTriggerItemButton(menuItemButtonTrigger);
+                maraudersMap.onDidTriggerItemButton(BUTTONS.menuItemButtonTrigger);
 
                 const mapDelayTime =
                     mapDelay !== undefined ? mapDelay : getDefaultMapDelay();
@@ -198,7 +206,7 @@ function activate(context) {
 
                     // calling a nested page before the map has opened, will immediately cause the map to display on the second page
                     // it would be better if the delay was maintained to the next page.
-                    
+
                     vscode.commands.executeCommand(command, args);
                 }
             }
@@ -289,39 +297,6 @@ function activate(context) {
 
     ); // end of subscriptions.push()
 
-
-    /*
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    */
-
-
-    const menuItemButtonTrigger = (event) => {
-        const item = event.item;
-        const button = event.button;
-        const keybinding = item.keybinding
-
-        switch (button.id) {
-            case "edit":
-                revealKeybinding(keybinding);
-                break;
-            // potentially add more buttons in future
-        }
-    }
 
    // |-----------------------|
    // |        Prompts        |
@@ -440,7 +415,7 @@ function activate(context) {
         pagePrompt.items = options;
         pagePrompt.title = SETTINGS.inputBoxTitle;
         pagePrompt.placeholder = "Select a page ...";
-        pagePrompt.onDidTriggerItemButton(menuItemButtonTrigger);
+        pagePrompt.onDidTriggerItemButton(BUTTONS.menuItemButtonTrigger);
 
         let userInput = "";
         pagePrompt.onDidChangeValue((value) => {
@@ -475,6 +450,7 @@ function activate(context) {
             pagePrompt.onDidHide(() => {
                 pagePrompt.dispose();
                 pagePrompt = null;
+                return undefined;
             });
 
             pagePrompt.show();

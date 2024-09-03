@@ -5,14 +5,6 @@ const vscode = require("vscode");
 const jsonc = require("jsonc-parser");
 const { COMMANDS, SETTINGS } = require("../constants");
 
-
-const BUTTONS = {
-    edit: {
-        id: "edit",
-        iconPath: new vscode.ThemeIcon('gear'),
-        tooltip: 'Edit this Spell',
-    }
-}
 /**
  * Function to determine if the extension is running in VSCodium or VS Code.
  * @returns {boolean} true if running in VSCodium, false if running in VS Code.
