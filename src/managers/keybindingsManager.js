@@ -112,9 +112,8 @@ function getSpellsForPage(keybindings, whenContext) {
             if (hasOrderA && hasOrderB) {
                 return a.order - b.order;
             }
-
-            // Fourth criteria: Alphabetical sort by 'command' if neither has an 'order' property
-            return a.command.localeCompare(b.command);
+            
+            return 0
         });
 }
 
