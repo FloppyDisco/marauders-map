@@ -10,8 +10,7 @@ Afterall, the best Witch or Wizard is an organized one!
 
 Give each page a memorable name, and save it to a unique key, so you can open it quickly!
 
-Record your favorite Spells on your pages, and
-Give each spell a unique key to cast them quickly when you need them.
+Record your favorite Spells on your Pages, and give each spell a unique key to cast them quickly when you need them.
 
 But don't worry, should you forget how to perform your favorite wizardings,
 the Marauder's Map will be there to show you the way **!**
@@ -76,8 +75,13 @@ common keycodes
 
 The time delay before the map opens is user customizable.
 
-Setting :`"MaraudersMap.defaultMapDelay": 3000,` in `settings.json`
-Will change the Map Delay Time to 3 secs. (the value is ms)
+Change the "Map Delay Time" in Settings,
+
+or add `"MaraudersMap.defaultMapDelay": <number>,` in `settings.json`
+
+The value is (ms)
+
+Set `3000` for 3 secs
 
 Alternatively you may add a `"mapDelay"` to the `"args"` of any Page keybinding which will only change the delay time for that Page. Maybe you have groups of commands that you would like to have open immediately.
 
@@ -117,30 +121,34 @@ validation on keycode inputs
 
 ## BUGS
 
+#### Cannot change keybingings in keybinding shortcuts UI
+
 Because this extension basically uses a "wrapper" function to work, you will have many keybings in you `keybindings.json` that all point to the same two commands. Because of this, you will not be able to reassign the keybindings using the native "Keyboard Shortcuts" interface, you will have to change them in `keybindings.json` manually. If you want to edit a Spell, click the settings icon for that Spell when the Map is open.
 
 ----
 
+#### Cannot use "Esc" once map opens
 If you set a command for a page to be something with the escape key, (cmd+escape) or some like variation, it will work as expected, UNTIL the map opens. Once the map is open the escape key gets slaved to closing the quickPicker, and while pressing (cmd+escape) will not close the picker, it also will not run your command. The command can still be run by selecting it manually in the picker and pressing "Enter". I do not know of a fix for this, sorry.
 
 ----
+#### Keybinding for Spell not immediately available when opening a Page
 you may notice that some keybindings will not work immediately after opening a page of the map,
-but then the keybinding will work once the map has opened. this is most likely due to a conflicting
+but then the keybinding will work once the map has been displayed. This is most likely due to a conflicting
 global keybinding being called before the focus has shifted.
 
 for example:
 
 -   (⌘E) opens a Page of your Map.
--   (⌘M) calls Maximize editor group inside of that Page.
--   (⌘M) usually toggles bookmarks
+-   (⌘M) on this Page calls command "Maximize editor group".
+-   (⌘M) *usually* toggles bookmarks
 
 ### **If**
-pressing (⌘E) and then immediately pressing (⌘M) before the map opens toggles the bookmark instead of maximizing the editor group.
+pressing (⌘E) and then immediately pressing (⌘M) before the map is displayed toggles the bookmark instead of maximizing the editor group.
 ### **then**
 It has to do with when clause of the conflicting keybinding, it probably is a global keybinding and does not have a when clause.
 
 You can fix this by putting "!MaraudersMapIsOpen" in the when clause of the global "toggle bookmark" command.
-Doing this *should* prevent VS Code from selecting the conflicting keybinding once you open a Page, even befor the Map is actually displayed.
+Doing this *should* prevent VS Code from selecting the conflicting keybinding once you open a Page, even before the Map is actually displayed.
 
 ----
 
@@ -198,6 +206,15 @@ command starts with, or you can always have the menu
 items assigned to your home row keys, or 1, 2, 3, 4, etc., whatever you want.
 
 
+
+----
+
+
+#### Why not "Whick Key"?
+It's a vim solution to a vscode problem.
+also, I don't think it actually manages conflicting keybindings, it says in the docs that you should use "g" instead of "ctrl+g", I don't like this, I
+
+I don't know, it didn't fell whimsical enough for me...
 
 ----
 
