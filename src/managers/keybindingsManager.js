@@ -72,6 +72,8 @@ function getKeybindings() {
     }
 }
 
+
+
 /**
  * Function to filter an array of keybindings by the provided mapPage
  * @param {array} keybindings an array of keybindings parsed from keybindings.json
@@ -156,9 +158,9 @@ function createSpellMenuItemFromKeyBinding(kb) {
     }
     const buttons = [
         {
-            command: COMMANDS.revealSpell,
+            id: "edit",
             iconPath: new vscode.ThemeIcon('gear'),
-            tooltip: 'Edit'
+            tooltip: 'Edit this Spell',
         }
     ]
 
@@ -167,6 +169,7 @@ function createSpellMenuItemFromKeyBinding(kb) {
         label,
         description,
         buttons,
+        keybinding: kb
     };
 }
 
@@ -216,6 +219,8 @@ function getAllPagesFromMap(keybindings) {
 
 
 }
+
+
 
 /**
  * Function to take a keybinding object and return the display data for the quick Picker
