@@ -20,7 +20,7 @@ const COMMANDS = {
     openMap:  `${maraudersMapPrefix}.iSolemnlySwearThatIAmUpToNoGood`,
     closeMap:  `${maraudersMapPrefix}.mischiefManaged`,
     displayMap: `_${maraudersMapPrefix}.lumos`,
-    revealSpell: `${maraudersMapPrefix}.accio`,
+    // revealSpell: `${maraudersMapPrefix}.accio`,
     // erecto
     // prior incantatoAccioAccio
 }

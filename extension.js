@@ -332,22 +332,32 @@ function activate(context) {
                 maraudersMap.show();
             }
         }),
-
-
-
-        // |---------------------|
-        // |        Accio        |
-        // |---------------------|
-
-
-
-        vscode.commands.registerCommand(COMMANDS.revealSpell, (spell) => {
-
-
-
-        })
-
+        
     ); // end of subscriptions.push()
+
+
+    /*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    */
+
+   // |-----------------------|
+   // |        Prompts        |
+   // |-----------------------|
 
     /**
      * Function to prompt the user to enter a command.
