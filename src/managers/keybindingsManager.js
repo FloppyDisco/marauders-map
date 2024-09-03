@@ -5,6 +5,14 @@ const vscode = require("vscode");
 const jsonc = require("jsonc-parser");
 const { COMMANDS, SETTINGS } = require("../constants");
 
+
+const BUTTONS = {
+    edit: {
+        id: "edit",
+        iconPath: new vscode.ThemeIcon('gear'),
+        tooltip: 'Edit this Spell',
+    }
+}
 /**
  * Function to determine if the extension is running in VSCodium or VS Code.
  * @returns {boolean} true if running in VSCodium, false if running in VS Code.
@@ -114,7 +122,7 @@ function getSpellsForPage(keybindings, whenContext) {
             if (hasOrderA && hasOrderB) {
                 return a.order - b.order;
             }
-            
+
             return 0
         });
 }
@@ -156,13 +164,7 @@ function createSpellMenuItemFromKeyBinding(kb) {
             args.label ? args.command : ""
         }`;
     }
-    const buttons = [
-        {
-            id: "edit",
-            iconPath: new vscode.ThemeIcon('gear'),
-            tooltip: 'Edit this Spell',
-        }
-    ]
+    const buttons = [BUTTONS.edit]
 
     return {
         ...kb.args,
@@ -193,7 +195,7 @@ function getAllPagesFromMap(keybindings) {
             if (mapPage) {
                 // openMap command with a mapPage
                 setOfAllMapPages.add(mapPage);
-                mapPages[mapPage] = createPage(keybinding);
+                mapPages[mapPage] = createPageMenuItem(keybinding);
             }
         } else if (
             keybinding.command === COMMANDS.closeMap &&
@@ -204,7 +206,7 @@ function getAllPagesFromMap(keybindings) {
             if (nestedArgs && nestedArgs.mapPage) {
                 const mapPage = nestedArgs.mapPage;
                 setOfAllMapPages.add(mapPage);
-                nestedMapPages[mapPage] = createNestedPage(keybinding);
+                nestedMapPages[mapPage] = createNestedPageMenuItem(keybinding);
             }
         }
     });
@@ -224,17 +226,20 @@ function getAllPagesFromMap(keybindings) {
 
 /**
  * Function to take a keybinding object and return the display data for the quick Picker
- * @param {object} pageKeybinding
+ * @param {object} keybinding
  * @returns {object} The page object for the UI quickPicker
  */
-function createPage(pageKeybinding) {
-    const mapPage = pageKeybinding.args.mapPage;
+function createPageMenuItem(keybinding) {
+    const mapPage = keybinding.args.mapPage;
     const label = `${SETTINGS.pagesIcon} ${mapPage}`;
-    const description = prettifyKey(pageKeybinding.key);
+    const description = prettifyKey(keybinding.key);
+    const buttons = [BUTTONS.edit]
     return {
         mapPage,
         label,
         description,
+        buttons,
+        keybinding,
     };
     /*
         {
@@ -248,16 +253,19 @@ function createPage(pageKeybinding) {
 
 /**
  * Function to take a keybinding object and return the display data for the quick Picker
- * @param {object} pageKeybinding
+ * @param {object} keybinding
  * @returns {object} The page object for the UI quickPicker
  */
-function createNestedPage(pageKeybinding) {
-    const page = pageKeybinding.args.args.mapPage;
+function createNestedPageMenuItem(keybinding) {
+    const page = keybinding.args.args.mapPage;
     const label = `  ${SETTINGS.subpagesIcon} ${page}`;
+    const buttons = [BUTTONS.edit]
     return {
         label,
         mapPage: page,
-        nestedUnder: pageKeybinding.when.split(".")[1],
+        nestedUnder: keybinding.when.split(".")[1],
+        buttons,
+        keybinding,
     };
     /*
         {
