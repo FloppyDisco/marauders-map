@@ -7,8 +7,8 @@ const settings = require("../managers/settingsManager");
  * @returns {Promise<string | undefined>} The provided command or undefined if canceled.
  */
 exports.promptUserForCommand = async () => {
-    const configs = settings.useConfigs();
 
+    const configs = settings.useConfigs();
     const inputBoxTitle = configs.get(settings.keys.displayMapTitle) ? configs.get("inputBoxTitle") : ""
 
     let availableCommands = await vscode.commands.getCommands(true);
