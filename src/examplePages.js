@@ -1,4 +1,7 @@
-exports.keybindings = [
+const {configKeys} = require('./managers/settingsManager');
+const {saveKeybinding} = require('../src/managers/keybindingsManager');
+
+const keybindings = [
     {
         key: "ctrl+e",
         command: "MaraudersMap.iSolemnlySwearThatIAmUpToNoGood",
@@ -177,3 +180,44 @@ exports.keybindings = [
         linux: "ctrl+x",
     },
 ];
+
+/**
+ * A function to install the example Page and Spell keybindings
+ */
+function installExamplePages(){
+    keybindings.forEach((kb) => {
+        saveKeybinding(kb);
+    })
+}
+
+
+
+const examplePagesKey = `${configKeys.maraudersMapPrefix}.${configKeys.examplePagesKey}`
+
+/**
+ * A function to initialize the examplePages module.
+ * @param {vscode.extensionContext} context
+ *
+ * Install example Pages and Spell keybindings for User on first install
+ */
+function  initialize(context) {
+
+    const examplePagesInstalled = context.globalState.get(examplePagesKey);
+
+    // install pages if not previously installed
+    if (!examplePagesInstalled){
+        installExamplePages();
+        context.globalState.update(examplePagesKey, true);
+    }
+
+    // |-----------------------|
+    // |        Feature        |
+    // |-----------------------|
+
+    // register command to install example pages manually?
+
+}
+
+module.exports ={
+    initialize
+}
