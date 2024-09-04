@@ -169,7 +169,7 @@ function convertKeybindingsToQuickPickItems(keybindings) {
                         : ""
                 }`;
             }
-            
+
         } else if (keybinding.command === configKeys.commands.openMap) {
             //   keybinding is a page
             // ------------------------
