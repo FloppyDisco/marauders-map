@@ -4,6 +4,13 @@ const settings = require("../managers/settingsManager");
 const KBmanager = require("../managers/keybindingsManager");
 const whenManager = require("../managers/whenManager");
 
+// components
+const promptUserForPage = require("../prompts/promptUserForPage");
+const promptUserForCommand = require("../prompts/promptUserForCommand");
+const promptUserForKey = require("../prompts/promptUserForKey");
+const promptUserForLabel = require("../prompts/promptUserForLabel");
+
+
 // |--------------------------------|
 // |        Expecto Patronum        |
 // |--------------------------------|
