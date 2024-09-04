@@ -17,8 +17,6 @@ const {
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
-    //   Do something with this
-    // --------------------------
 
     const extensionStatusBar = vscode.window.createStatusBarItem(
         vscode.StatusBarAlignment.Right,
@@ -297,7 +295,6 @@ function activate(context) {
         }),
 
     ); // end of subscriptions.push()
-
 
     function menuItemButtonTrigger(event) {
         const item = event.item;
