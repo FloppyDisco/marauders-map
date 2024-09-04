@@ -1,7 +1,7 @@
 
 
 const vscode = require("vscode");
-const { useConfigs, configKeys } = require("../managers/settingsManager");
+const settings = require("../managers/settingsManager");
 
 let pageStatusBarItem;
 
@@ -11,7 +11,7 @@ let pageStatusBarItem;
  * @returns {vscode.StatusBarItem} The pageStatusBar item
  */
 function create(mapPage) {
-    const configs = useConfigs();
+    const configs = settings.useConfigs();
 
     if (pageStatusBarItem) { // exists remove the old one
         pageStatusBarItem.dispose();
@@ -23,9 +23,9 @@ function create(mapPage) {
     );
     pageStatusBarItem.tooltip =
         "Sometimes spells go wonky, click to close!";
-    pageStatusBarItem.command = configKeys.commads.closeMap;
+    pageStatusBarItem.command = settings.keys.commads.closeMap;
     pageStatusBarItem.text = `${configs.get(
-       configKeys.spellIcon
+       settings.keys.spellIcon
     )} ${mapPage}`;
 
     return pageStatusBarItem;

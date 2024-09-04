@@ -1,5 +1,5 @@
 const vscode = require("vscode");
-const { useConfigs, configKeys } = require("../managers/settingsManager");
+const settings = require("../managers/settingsManager");
 
 let mischiefStatusBarItem;
 
@@ -8,7 +8,7 @@ let mischiefStatusBarItem;
  * @returns {vscode.StatusBarItem} The mischiefStatusBar item
  */
 function create() {
-    const configs = useConfigs();
+    const configs = settings.useConfigs();
 
     if (mischiefStatusBarItem) { // exists remove the old one
         mischiefStatusBarItem.dispose();
@@ -18,7 +18,7 @@ function create() {
         0
     );
     mischiefStatusBarItem.text = `${configs.get(
-       configKeys.spellIcon
+       settings.keys.spellIcon
     )} Mischief Managed...`;
     mischiefStatusBarItem.show();
     setTimeout(() => {

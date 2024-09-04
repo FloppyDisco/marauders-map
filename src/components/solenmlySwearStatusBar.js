@@ -1,5 +1,5 @@
 const vscode = require('vscode');
-const { useConfigs } = require("../managers/settingsManager");
+const settings = require("../managers/settingsManager");
 
 let solemnlySwearStatusBarItem;
 
@@ -8,7 +8,7 @@ let solemnlySwearStatusBarItem;
  * @returns {vscode.StatusBarItem} The mischiefStatusBar item
  */
 function create() {
-    const configs = useConfigs();
+    const configs = settings.useConfigs();
 
     if (solemnlySwearStatusBarItem) { // exists remove the old one
         solemnlySwearStatusBarItem.dispose();
@@ -18,7 +18,7 @@ function create() {
         0
     );
     solemnlySwearStatusBarItem.text = `${configs.get(
-       configKeys.spellIcon
+       settings.keys.spellIcon
     )} I solemnly swear ...`;
     solemnlySwearStatusBarItem.show();
     return solemnlySwearStatusBarItem;
