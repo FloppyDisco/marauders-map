@@ -2,7 +2,7 @@ const vscode = require("vscode");
 
 const mapIcon = "🗺️";
 
-const configKeys = {
+const keys = {
     maraudersMapPrefix: "maraudersMap",
     mapOpenContext: "maraudersMapIsOpen",
     defaultMapDelay: "defaultMapDelay",
@@ -47,9 +47,9 @@ const internalConfigs = {
 
 function getConfigs(){
     return new Map([
-        // contvert to key: value pairs for Map()
+        // convert to (key:value) pairs for Map()
         ...Object.entries(internalConfigs), // internal settings
-        ...Object.entries(vscode.workspace.getConfiguration(configKeys.maraudersMapPrefix)) // workspace settings
+        ...Object.entries(vscode.workspace.getConfiguration(keys.maraudersMapPrefix)) // workspace settings
     ])
 }
 
@@ -63,7 +63,7 @@ let configCache;
 function initialize() {
     configCache = getConfigs();
     vscode.workspace.onDidChangeConfiguration((event) => {
-        if (event.affectsConfiguration(configKeys.maraudersMapPrefix)){
+        if (event.affectsConfiguration(keys.maraudersMapPrefix)){
             configCache = getConfigs();
         }
     })
@@ -83,5 +83,5 @@ function useConfigs() {
 module.exports = {
     initialize,
     useConfigs,
-    configKeys
+    keys
 }

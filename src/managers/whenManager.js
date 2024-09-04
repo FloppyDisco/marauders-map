@@ -1,9 +1,18 @@
 const vscode = require('vscode');
-const {configKeys} = require('../managers/settingsManager');
+const settings = require('../managers/settingsManager');
 
+
+let whenContext;
+let setWhenContext;
+let removeWhenContext;
+
+
+function serializer(mapPage){
+    return `${settings.keys.maraudersMapPrefix}.${mapPage.replaceAll(" ", "_")}`;
+}
 
 /**
- * Creates the necessary "when" clause context functions for the Page in VS Code.
+ * Creates the necessary "when" clause context functions for the Page.
  *
  * This function generates a formatted string for the when context based on the provided page title
  * and returns an object containing the whenContext string, a function to set the whenContext, and
@@ -15,28 +24,44 @@ const {configKeys} = require('../managers/settingsManager');
  *   - `setWhenContext`: A function to set the necessary when contexts in VS Code.
  *   - `removeWhenContext`: A function to remove the necessary when contexts in VS Code.
  */
-function useWhenContext(mapPage) {
-    const whenContext = `${configKeys.maraudersMapPrefix}.${mapPage.replaceAll(" ", "_")}`;
+function initialize(mapPage) {
+
+    whenContext = serializer(mapPage);
 
     /**
      * Sets the page's "when" clause context.
      */
-    function setWhenContext() {
-        vscode.commands.executeCommand("setContext",configKeys.mapOpenContext, true);
+    setWhenContext = () => {
+        vscode.commands.executeCommand("setContext", settings.keys.mapOpenContext, true);
         vscode.commands.executeCommand("setContext", whenContext, true);
     }
 
     /**
      * Removes the page's "when" clause context.
      */
-    function removeWhenContext() {
-        vscode.commands.executeCommand("setContext",configKeys.mapOpenContext, undefined);
+    removeWhenContext = () => {
+        vscode.commands.executeCommand("setContext", settings.keys.mapOpenContext, undefined);
         vscode.commands.executeCommand("setContext", whenContext, undefined);
     }
 
     return { whenContext, setWhenContext, removeWhenContext };
 }
 
+
+/**
+ * Returns the "when" clause context functions for the current Page
+ *
+ * @returns {{whenContext: string, setWhenContext: function, removeWhenContext: function}} - An object containing:
+ *   - `whenContext`: The formatted string to be used as the when context for this page.
+ *   - `setWhenContext`: A function to set the necessary when contexts in VS Code.
+ *   - `removeWhenContext`: A function to remove the necessary when contexts in VS Code.
+ */
+function use() {
+        return whenContext ? { whenContext, setWhenContext, removeWhenContext } : {}
+}
+
 module.exports = {
-    useWhenContext
+    initialize,
+    serializer,
+    use
 }
