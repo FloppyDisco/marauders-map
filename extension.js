@@ -26,13 +26,14 @@ function activate(context) {
     mapStatusBar.initialize(); // display the extension icon
 
     // register commands
-    openMap.register();
-    closeMap.register();
-    saveSpell.register();
-    showMap.register(); // i don't think this command is being used anywhere
+    openMap.register(context);
+    closeMap.register(context);
+    saveSpell.register(context);
+    showMap.register(context); // i don't think this command is being used anywhere
 
     // install default spells
     examplePages.initialize(context);
+    
 
 } // end of activate
 
