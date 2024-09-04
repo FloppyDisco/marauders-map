@@ -1,5 +1,5 @@
 const vscode = require('vscode');
-const maraudersMapPrefix = "MaraudersMap";
+const maraudersMapPrefix = "maraudersMap";
 
 const mapIcon = "🗺️";
 
@@ -8,7 +8,7 @@ const SETTINGS = {
         key: "defaultMapDelay",
         value: 1500,
     },
-    mapOpenContext: "MaraudersMapIsOpen",
+    mapOpenContext: "maraudersMapIsOpen",
     inputBoxTitle: `The Marauders Map ${mapIcon}`,
     mapIcon: mapIcon,
     pagesIcon: "$(files)",
