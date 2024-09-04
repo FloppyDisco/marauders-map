@@ -1,7 +1,8 @@
 const vscode = require("vscode");
 
+const mapIcon = "🗺️";
 
-const keys = {
+const configKeys = {
     maraudersMapPrefix: "maraudersMap",
     mapOpenContext: "maraudersMapIsOpen",
     defaultMapDelay: "defaultMapDelay",
@@ -10,6 +11,8 @@ const keys = {
     spellIcon: "spellIcon",
     displayMapTitle: "displayMapTitle",
     displayCommandId: "displayCommandId",
+    titleIcon: "titleIcon",
+    examplePagesKey:"examplePagesInstalled",
     commands: {
         saveSpell: "expectoPatronum",
         deleteSpell: "obliviate",
@@ -30,7 +33,6 @@ const buttons = {
     },
 };
 
-const mapIcon = "🗺️";
 
 
 // |---------------------------------|
@@ -39,33 +41,47 @@ const mapIcon = "🗺️";
 
 const internalConfigs = {
     inputBoxTitle: `The Marauders Map ${mapIcon}`,
-    mapIcon: mapIcon, // might be able to get rid of this after refactor
+    titleIcon: mapIcon,
     buttons,
-    // pagesIcon: "$(files)",
-    // subpagesIcon: "$(arrow-right)",
 };
+
+function getConfigs(){
+    return new Map([
+        // contvert to key: value pairs for Map()
+        ...Object.entries(internalConfigs), // internal settings
+        ...Object.entries(vscode.workspace.getConfiguration(configKeys.maraudersMapPrefix)) // workspace settings
+    ])
+}
+
 
 
 
 let configCache;
-
-function updateStoredConfigs(){
-    configCache = new Map([
-        // contvert to key: value pairs for Map()
-        ...Object.entries(internalConfigs), // internal settings
-        ...Object.entries(vscode.workspace.getConfiguration(keys.maraudersMapPrefix)) // workspace settings
-    ])
-}
-
-exports.initialize = () => {
-    updateStoredConfigs();
+/**
+ * Function to initialize the workspace configurations
+ */
+function initialize() {
+    configCache = getConfigs();
     vscode.workspace.onDidChangeConfiguration((event) => {
-        if (event.affectsConfiguration(keys.maraudersMapPrefix)){
-            updateStoredConfigs();
+        if (event.affectsConfiguration(configKeys.maraudersMapPrefix)){
+            configCache = getConfigs();
         }
     })
 }
 
-exports.useConfigs = () => {
-    return [ configCache, keys ]
+/**
+ * Function to use the workspace configurations.
+ * Returns the cached configurations or initializes them if they are not set.
+ *
+ * @returns {[Map, {string: string}]} An array where the first element is the configs map, and the second is the keys object.
+ */
+function useConfigs() {
+    const configs = configCache || getConfigs() // return the cache or go get the settings
+    return configs
+}
+
+module.exports = {
+    initialize,
+    useConfigs,
+    configKeys
 }
