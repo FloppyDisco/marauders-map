@@ -52,7 +52,7 @@
                             "default": true,
                             "description": "Whether or not to dispay the Marauder's Map title when the Map is open"
                         },
-                        "displayCommandID": {
+                        "displayCommandId": {
                             "type": "boolean",
                             "default": true,
                             "description": "Whether or not to dispay the VS Code command id next to each Spell"
