@@ -1,11 +1,12 @@
-const {configKeys} = require('./managers/settingsManager');
-const {saveKeybinding} = require('../src/managers/keybindingsManager');
+// managers
+const settings = require('./managers/settingsManager');
+const KBmanager = require('../src/managers/keybindingsManager');
 
 const keybindings = [
     {
         key: "ctrl+e",
-        command: "MaraudersMap.iSolemnlySwearThatIAmUpToNoGood",
-        when: "!MaraudersMapIsOpen",
+        command: "maraudersMap.iSolemnlySwearThatIAmUpToNoGood",
+        when: "!maraudersMapIsOpen",
         args: {
             mapPage: "Editor Spells",
         },
@@ -14,8 +15,8 @@ const keybindings = [
     },
     {
         key: "ctrl+e",
-        command: "MaraudersMap.mischiefManaged",
-        when: "MaraudersMap.Editor_Spells",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Editor_Spells",
         args: {
             command: "workbench.action.focusNextGroup",
             label: "Focus Next Editor Group",
@@ -25,8 +26,8 @@ const keybindings = [
     },
     {
         key: "ctrl+n",
-        command: "MaraudersMap.mischiefManaged",
-        when: "MaraudersMap.Editor_Spells",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Editor_Spells",
         args: {
             command: "workbench.action.moveEditorToNextGroup",
             label: "Move Editor To Next Group",
@@ -36,8 +37,8 @@ const keybindings = [
     },
     {
         key: "ctrl+h",
-        command: "MaraudersMap.mischiefManaged",
-        when: "MaraudersMap.Editor_Spells",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Editor_Spells",
         args: {
             command: "workbench.action.moveEditorToPreviousGroup",
             label: "Move Editor to Previous Group",
@@ -47,8 +48,8 @@ const keybindings = [
     },
     {
         key: "ctrl+,",
-        command: "MaraudersMap.mischiefManaged",
-        when: "MaraudersMap.Editor_Spells",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Editor_Spells",
         args: {
             command: "workbench.action.splitEditorDown",
             label: "Split Down",
@@ -58,8 +59,8 @@ const keybindings = [
     },
     {
         key: "ctrl+l",
-        command: "MaraudersMap.mischiefManaged",
-        when: "MaraudersMap.Editor_Spells",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Editor_Spells",
         args: {
             command: "workbench.action.toggleEditorGroupLayout",
             label: "Toggle Layout",
@@ -69,8 +70,8 @@ const keybindings = [
     },
     {
         key: "ctrl+m",
-        command: "MaraudersMap.mischiefManaged",
-        when: "MaraudersMap.Editor_Spells",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Editor_Spells",
         args: {
             command: "workbench.action.toggleMaximizeEditorGroup",
             label: "Maximize Editor Group",
@@ -80,8 +81,8 @@ const keybindings = [
     },
     {
         key: "ctrl+w",
-        command: "MaraudersMap.mischiefManaged",
-        when: "MaraudersMap.Editor_Spells",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Editor_Spells",
         args: {
             command: "workbench.action.closeEditorsAndGroup",
             label: "Close Group",
@@ -91,8 +92,8 @@ const keybindings = [
     },
     {
         key: "ctrl+o",
-        command: "MaraudersMap.mischiefManaged",
-        when: "MaraudersMap.Editor_Spells",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Editor_Spells",
         args: {
             command: "workbench.action.closeOtherEditors",
             label: "Close Other Editors In Group",
@@ -102,10 +103,10 @@ const keybindings = [
     },
     {
         key: "ctrl+f",
-        command: "MaraudersMap.mischiefManaged",
-        when: "MaraudersMap.Editor_Spells",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Editor_Spells",
         args: {
-            command: "MaraudersMap.iSolemnlySwearThatIAmUpToNoGood",
+            command: "maraudersMap.iSolemnlySwearThatIAmUpToNoGood",
             args: {
                 mapPage: "Fold Spells",
                 mac: "cmd+f",
@@ -115,8 +116,8 @@ const keybindings = [
     },
     {
         key: "ctrl+f",
-        command: "MaraudersMap.mischiefManaged",
-        when: "MaraudersMap.Fold_Commands",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Fold_Commands",
         args: {
             command: "editor.foldRecursively",
             label: "Fold",
@@ -126,8 +127,8 @@ const keybindings = [
     },
     {
         key: "ctrl+a",
-        command: "MaraudersMap.mischiefManaged",
-        when: "MaraudersMap.Fold_Commands",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Fold_Commands",
         args: {
             command: "editor.foldAll",
             label: "Fold All",
@@ -137,8 +138,8 @@ const keybindings = [
     },
     {
         key: "ctrl+e",
-        command: "MaraudersMap.mischiefManaged",
-        when: "MaraudersMap.Fold_Commands",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Fold_Commands",
         args: {
             command: "editor.foldAllExcept",
             label: "Fold All Except",
@@ -148,8 +149,8 @@ const keybindings = [
     },
     {
         key: "ctrl+u",
-        command: "MaraudersMap.mischiefManaged",
-        when: "MaraudersMap.Fold_Commands",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Fold_Commands",
         args: {
             command: "editor.unfoldRecursively",
             label: "Unfold",
@@ -159,8 +160,8 @@ const keybindings = [
     },
     {
         key: "ctrl+n",
-        command: "MaraudersMap.mischiefManaged",
-        when: "MaraudersMap.Fold_Commands",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Fold_Commands",
         args: {
             command: "editor.unfoldAll",
             label: "Unfold All",
@@ -170,8 +171,8 @@ const keybindings = [
     },
     {
         key: "ctrl+x",
-        command: "MaraudersMap.mischiefManaged",
-        when: "MaraudersMap.Fold_Commands",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Fold_Commands",
         args: {
             command: "editor.unfoldAllExcept",
             label: "Unfold All Except",
@@ -186,13 +187,13 @@ const keybindings = [
  */
 function installExamplePages(){
     keybindings.forEach((kb) => {
-        saveKeybinding(kb);
+        KBmanager.saveKeybinding(kb);
     })
 }
 
 
 
-const examplePagesKey = `${configKeys.maraudersMapPrefix}.${configKeys.examplePagesKey}`
+const examplePagesKey = `${settings.keys.maraudersMapPrefix}.${settings.keys.examplePagesKey}`
 
 /**
  * A function to initialize the examplePages module.
@@ -216,6 +217,7 @@ function  initialize(context) {
 
     // register command to install example pages manually?
 
+    // context.globalState.update(examplePagesKey, undefined);
 }
 
 module.exports ={
