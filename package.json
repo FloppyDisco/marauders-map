@@ -65,7 +65,8 @@
             {
                 "command": "maraudersMap.expectoPatronum",
                 "title": "Save a new spell",
-                "category": "Marauder's Map"
+                "category": "Marauder's Map",
+                "isInternal": true
             },
             {
                 "command": "maraudersMap.mischiefManaged",
