@@ -4,7 +4,7 @@ const path = require("path");
 const vscode = require("vscode");
 const jsonc = require("jsonc-parser");
 
-const {configKeys} = require("./settingsManager");
+const settings = require("./settingsManager");
 
 /**
  * Function to determine if the extension is running in VSCodium or VS Code.
@@ -93,7 +93,8 @@ function getKeybindingsForPage(whenContext) {
  * @param {array} keybindings an array of keybindings parsed from keybindings.json
  * @returns {array} - A list of map pages.
  */
-function getAllPages(keybindings) {
+function getAllPages() {
+
     // this function ensures only unique values, and
     // if a map page has a base keybinding and a nested keybinding
     // it returns the base keybinding, which may be different
@@ -102,9 +103,9 @@ function getAllPages(keybindings) {
     const mapPagesKeybindings = {};
     const nestedMapPagesKeybindings = {};
 
-    keybindings.forEach((keybinding) => {
+    getKeybindings().forEach((keybinding) => {
         if (
-            keybinding.command === configKeys.commands.openMap &&
+            keybinding.command === settings.keys.commands.openMap &&
             keybinding.args !== undefined
         ) {
             //   Page keybinding
@@ -116,9 +117,9 @@ function getAllPages(keybindings) {
                 mapPagesKeybindings[mapPage] = keybinding;
             }
         } else if (
-            keybinding.command === configKeys.commands.closeMap &&
+            keybinding.command === settings.keys.commands.closeMap &&
             keybinding.args !== undefined &&
-            keybinding.args.command === configKeys.commands.openMap
+            keybinding.args.command === settings.keys.commands.openMap
         ) {
             //   Nested Page Keybinding
             // --------------------------
