@@ -156,43 +156,38 @@ function prettifyKey(keyCode) {
 }
 
 function convertToItems(keybindings) {
-
     const configs = settings.useConfigs();
 
-    const spells = keybindings
-    .sort(sortKeybindings)
-    .map(convertKeybinding);
+    const spellsTable = keybindings
+        .map(convertKeybinding)
+        .reduce(sortItems, {
+            pages: [],
+            spells: [],
+            orderedSpells: [],
+        });
 
-    return spells
+    const spells = spellsTable.pages.concat(spellsTable.spells);
+    //   place any spells with an "order" property at their specified index
+    // ----------------------------------------------------------------------
+    spellsTable.orderedSpells
+        .sort((a, b) => a.order - b.order) // put them in order
+        .forEach((spell) => {
+            spells.splice(spell.order, 0, spell); // add them to the list
+        });
+    return spells;
 
-    function sortKeybindings(a, b) {
-
-        const commandToCheck = settings.keys.commands.openCommand;
-
-        if (a.command === commandToCheck && b.command !== commandToCheck) {
-            return -1; // `a` comes before `b`
+    function sortItems(itemsTable, item) {
+        const { pages, spells, orderedSpells } = itemsTable;
+        const isOrdered = "order" in item;
+        const isPage = item.command === settings.keys.commands.openMap;
+        if (isOrdered) {
+            orderedSpells.push(item);
+        } else if (isPage) {
+            pages.push(item);
+        } else {
+            spells.push(item);
         }
-        if (a.command !== commandToCheck && b.command === commandToCheck) {
-            return 1; // `b` comes before `a`
-        }
-
-        // Second criteria: Check if either object is missing the 'order' property
-        const hasOrderA = "order" in a;
-        const hasOrderB = "order" in b;
-
-        if (hasOrderA && !hasOrderB) {
-            return -1; // `a` with an 'order' property comes before `b` without it
-        }
-        if (!hasOrderA && hasOrderB) {
-            return 1; // `b` with an 'order' property comes before `a` without it
-        }
-
-        // Third criteria: Sort by the 'order' property numerically if both have it
-        if (hasOrderA && hasOrderB) {
-            return a.order - b.order;
-        }
-
-        return 0;
+        return itemsTable;
     }
 
     function convertKeybinding(keybinding) {
@@ -360,5 +355,5 @@ module.exports = {
     prettifyKey,
     saveKeybinding,
     revealKeybinding,
-    platform
+    platform,
 };
