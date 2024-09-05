@@ -23,7 +23,7 @@ function create(mapPage) {
     );
     pageStatusBarItem.tooltip =
         "Sometimes spells go wonky, click to close!";
-    pageStatusBarItem.command = settings.keys.commads.closeMap;
+    pageStatusBarItem.command = settings.keys.commands.closeMap;
     pageStatusBarItem.text = `${configs.get(
        settings.keys.spellIcon
     )} ${mapPage}`;
