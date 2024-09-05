@@ -49,9 +49,12 @@ the Marauder's Map will be there to show you the way **!**
 
 ## Implementation
 
-This extension works by reading and writing keybindings from keybindings.json
-it doesn't really add much special sauce, it just manages keybindings using dynamic "when" clauses.
-but then again, the best magic tricks are usually the simplest...
+Not much special sauce in this one.
+
+This extension reads and writes keybindings to keybindings.json
+then manages the keybindings with dynamic "when" clauses.
+
+The best magic tricks are usually the simplest.
 
 ## Tips!
 
@@ -113,18 +116,28 @@ example keybindings:
 
 ```
 
+
+## Features
+
+`0.0.8`
+ - the Map now ships with some default keybindings to give the user an idea of how it can be used
+ - bug fix for map delay time for nested page
+ - user configuration added for
+    - spell symbol
+    - page symbol
+    - nested page symbol
+    - displaying the Map title
+    - displaying the command id when a custom label is provided
+
 ## Coming Soon
 
 - validation on keycode inputs
-- bug fix on nested map delay times
 
-
-
-## BUGS
+## Troubleshooting
 
 #### Cannot change keybingings in keybinding shortcuts UI
 
-Because this extension basically uses a "wrapper" function to work, you will have many keybings in you `keybindings.json` that all point to the same two commands. Because of this, you will not be able to reassign the keybindings using the native "Keyboard Shortcuts" interface, you will have to change them in `keybindings.json` manually. If you want to edit a Spell, click the settings icon for that Spell when the Map is open.
+Because this extension basically uses a "wrapper" function to work, you will have a plethora of keybindings in you `keybindings.json` that all point to the same two commands. Because of this, you will not be able to reassign the keybindings using the native "Keyboard Shortcuts" interface, you must change them in `keybindings.json` manually. If you want to edit a Spell, click the settings icon for that Spell when the Map is open.
 
 ----
 
@@ -132,6 +145,7 @@ Because this extension basically uses a "wrapper" function to work, you will hav
 If you set a command for a page to be something with the escape key, (cmd+escape) or some like variation, it will work as expected, UNTIL the map opens. Once the map is open the escape key gets slaved to closing the quickPicker, and while pressing (cmd+escape) will not close the picker, it also will not run your command. The command can still be run by selecting it manually in the picker and pressing "Enter". I do not know of a fix for this, sorry.
 
 ----
+
 #### Keybinding for Spell not immediately available when opening a Page
 you may notice that some keybindings will not work immediately after opening a page of the map,
 but then the keybinding will work once the map has been displayed. This is most likely due to a conflicting
@@ -153,7 +167,7 @@ Doing this *should* prevent VS Code from selecting the conflicting keybinding on
 
 ----
 
-### The Problem
+### Why This Ext?
 
 Honestly, the organization of keybindings in vscode pretty much sucks by default.
 
@@ -190,13 +204,18 @@ Which means:
 -   you can nest your keybindings as deep as you want
 -   you're not limited to just one chord... ** cough ** melody... like the default keybindings
 
-(ctrl+E) opens your "Editor" group and
-(ctrl+F) calls your desired fold command.
+With this extension;
+
+- (ctrl+E) can open your "Editor" group and
+- (ctrl+F) can call your desired fold command.
+
 This means your workflow doesn't really change
 from the default behavior, but with this extension
-you can now nest deeper and be given a
-visual prompt if desired. Maybe you want (ctrl+F)
-to bring up a menu of ALL Fold commands, now it can!
+you can now go more levels in than Leo it the final scene of Inception,
+and you can get a visual reminder to help bring you back out!
+
+Maybe you want (ctrl+F)
+to bring up a menu of ALL the Fold commands, now it can!
 customize your keybindings however you want.
 
 **Keybindings are scoped to each group**
@@ -206,16 +225,6 @@ this means you can always use the letter that the
 command starts with, or you can always have the menu
 items assigned to your home row keys, or 1, 2, 3, 4, etc., whatever you want.
 
-
-
-----
-
-
-#### Why not "Which Key"?
-It's a vim solution to a vscode problem.
-
-I don't know, it didn't fell whimsical enough for me...
-
 ----
 
 This extension doesn't pretend to fix everything about keybindings
@@ -224,6 +233,7 @@ in VS Code, but it tries to provide one new feature.
 Open to any and all contributions/suggestions. I need all the help I can get!
 
 Hope you find using this extension as entertaining as I found creating it.
-Go make the magic happen.
+
+###### Go make some magic happen.
 
 ### _You're a Wizard Harry ..._
