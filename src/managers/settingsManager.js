@@ -1,9 +1,40 @@
 const vscode = require("vscode");
+const path = require("path");
+const fs = require("fs");
 
+let configCache;
+let defaultValues;
+
+/**
+ * Function to initialize the workspace configurations
+ *
+ */
+function initialize() {
+    // get values
+    defaultValues = getDefaultValuesFromPackageJSON();
+    configCache = getConfigs();
+
+    // add event listener for config changes
+    vscode.workspace.onDidChangeConfiguration((event) => {
+        if (event.affectsConfiguration(keys.maraudersMapPrefix)) {
+            configCache = getConfigs();
+        }
+    });
+}
+
+//   Internal Settings
+// ---------------------
 const mapIcon = "🗺️";
-
+const maraudersMapPrefix = "maraudersMap";
+const buttons = { // buttons feels clunky this could be managed better i think
+    edit: {
+        id: "edit",
+        iconPath: new vscode.ThemeIcon("gear"),
+        tooltip: "Edit this Spell",
+    },
+};
 const keys = {
-    maraudersMapPrefix: "maraudersMap",
+    maraudersMapPrefix: maraudersMapPrefix,
     mapOpenContext: "maraudersMapIsOpen",
     defaultMapDelay: "defaultMapDelay",
     pageIcon: "pageIcon",
@@ -12,61 +43,52 @@ const keys = {
     displayMapTitle: "displayMapTitle",
     displayCommandId: "displayCommandId",
     titleIcon: "titleIcon",
-    examplePagesKey:"examplePagesInstalled",
+    inputBoxTitle: "inputBoxTitle",
+    examplePagesKey: "examplePagesInstalled",
     commands: {
-        saveSpell: "expectoPatronum",
-        deleteSpell: "obliviate",
-        openMap: "iSolemnlySwearThatIAmUpToNoGood",
-        closeMap: "mischiefManaged",
-        displayMap: "lumos",
+        saveSpell: `${maraudersMapPrefix}.expectoPatronum`,
+        deleteSpell: `${maraudersMapPrefix}.obliviate`,
+        openMap: `${maraudersMapPrefix}.iSolemnlySwearThatIAmUpToNoGood`,
+        closeMap: `${maraudersMapPrefix}.mischiefManaged`,
+        displayMap: `${maraudersMapPrefix}.lumos`,
         // revealSpell: "accio",
         // erecto
-        // prior incantatoAccioAccio
-    },
-}
-
-const buttons = {
-    edit: {
-        id: "edit",
-        iconPath: new vscode.ThemeIcon("gear"),
-        tooltip: "Edit this Spell",
+        // prior incantato
     },
 };
 
+//   Settings.json
+// -----------------
 
-
-// |---------------------------------|
-// |        Internal Settings        |
-// |---------------------------------|
-
-const internalConfigs = {
-    inputBoxTitle: `The Marauders Map ${mapIcon}`,
-    titleIcon: mapIcon,
-    buttons,
-};
-
-function getConfigs(){
-    return new Map([
-        // convert to (key:value) pairs for Map()
-        ...Object.entries(internalConfigs), // internal settings
-        ...Object.entries(vscode.workspace.getConfiguration(keys.maraudersMapPrefix)) // workspace settings
-    ])
+function getDefaultValuesFromPackageJSON() {
+    const packageJsonPath = path.join(__dirname, "..","..","package.json");
+    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
+    return packageJson.contributes.configuration.properties["maraudersMap"]
+        .properties;
 }
 
+function getConfigValue(workspace, key) {
+    return workspace.get(key, defaultValues[key]);
+}
 
+function getConfigs() {
+    const workspace = vscode.workspace.getConfiguration(
+        keys.maraudersMapPrefix
+    );
 
+    const configs = new Map();
 
-let configCache;
-/**
- * Function to initialize the workspace configurations
- */
-function initialize() {
-    configCache = getConfigs();
-    vscode.workspace.onDidChangeConfiguration((event) => {
-        if (event.affectsConfiguration(keys.maraudersMapPrefix)){
-            configCache = getConfigs();
-        }
-    })
+    // internal settings
+    configs.set(keys.titleIcon, mapIcon);
+    configs.set(keys.inputBoxTitle, `The Marauders Map ${mapIcon}`);
+    configs.set("buttons", buttons);
+
+    // settings.json
+    Object.keys(defaultValues).forEach((key) => {
+        configs.set(key, getConfigValue(workspace, key));
+    });
+
+    return configs;
 }
 
 /**
@@ -76,12 +98,11 @@ function initialize() {
  * @returns {[Map, {string: string}]} An array where the first element is the configs map, and the second is the keys object.
  */
 function useConfigs() {
-    const configs = configCache || getConfigs() // return the cache or go get the settings
-    return configs
+    return configCache || getConfigs(); // return the cache or go get the settings
 }
 
 module.exports = {
     initialize,
     useConfigs,
-    keys
-}
+    keys,
+};
