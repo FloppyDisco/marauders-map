@@ -24,20 +24,21 @@ function register(context) {
 
                 if (command) {
 
-                    // Feature
+                    // |-----------------------|
+                    // |        Feature        |
+                    // |-----------------------|
                     // maybe add a setting to turn this off
                     statusBarMgr.mischief.initialize().show()
+                    // naaaaaaaaaahhhhhh!
 
-                    // |---------------------|
-                    // |        *BUG*        |
-                    // |---------------------|
-
-                    // calling a nested page before the map has opened, will immediately cause the map to display on the second page
-                    // it would be better if the delay was maintained to the next page.
-
-                    // // testing this
-                    if (mapManager.use()._visible){
-                        args.mapDelay = 0
+                    // if opening a nested page
+                    if (command === settings.keys.commands.openMap){
+                        // &&
+                        if(mapManager.use()._visible){ // map is already visible
+                            args.mapDelay = 0
+                        } else { // map is not visible yet, reset timer
+                            mapManager.cancelTimer()
+                        }
                     }
 
                     vscode.commands.executeCommand(command, args);
