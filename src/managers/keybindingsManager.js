@@ -3,19 +3,18 @@ const os = require("os");
 const path = require("path");
 const vscode = require("vscode");
 const jsonc = require("jsonc-parser");
-const { COMMANDS, SETTINGS, BUTTONS } = require("../constants");
+
+const settings = require("./settingsManager");
+
+const platform = os.platform();
+const isVSCodium = vscode.env.appName.includes("VSCodium");
 
 /**
  * Function to determine if the extension is running in VSCodium or VS Code.
  * @returns {boolean} true if running in VSCodium, false if running in VS Code.
  */
-function isVSCodium() {
-    return vscode.env.appName.includes("VSCodium");
-}
-
 function getPathToKeybindingsFile() {
-    const platform = os.platform();
-    const baseFolder = isVSCodium() ? "VSCodium" : "Code"; // change directory name based on application
+    const baseFolder = isVSCodium ? "VSCodium" : "Code"; // change directory name based on application
 
     // console.log('---------------');
     // console.log('platform',platform);
@@ -67,12 +66,11 @@ function getKeybindings() {
         const keybindings = jsonc.parse(data);
         return keybindings;
     } catch (error) {
+        vscode.window.showErrorMessage("Could not parse keybindings.json");
         console.error("Error reading keybindings.json:", error);
         return [];
     }
 }
-
-
 
 /**
  * Function to filter an array of keybindings by the provided mapPage
@@ -80,43 +78,65 @@ function getKeybindings() {
  * @param {string} mapPage the value to filter the keybindings by
  * @returns {array} the filtered keybindings
  */
-function getSpellsForPage(keybindings, whenContext) {
-    return keybindings
-        .filter((kb) => {
-            const whenClause = kb.when;
-            return whenClause && whenClause === whenContext;
-        })
-        .map(createSpellMenuItemFromKeyBinding)
-        .sort((a, b) => {
-            // First criteria: check if either object has the command "MaraudersMap.iSolemnlySwearThatIAmUpToNoGood"
-            const commandToCheck =
-                "MaraudersMap.iSolemnlySwearThatIAmUpToNoGood";
+function getKeybindingsForPage(whenContext) {
+    return getKeybindings().filter((kb) => {
+        const whenClause = kb.when;
+        return whenClause && whenClause === whenContext;
+    });
+}
 
-            if (a.command === commandToCheck && b.command !== commandToCheck) {
-                return -1; // `a` comes before `b`
-            }
-            if (a.command !== commandToCheck && b.command === commandToCheck) {
-                return 1; // `b` comes before `a`
-            }
+/**
+ * Function to gather all mapPages created by the user
+ * @param {array} keybindings an array of keybindings parsed from keybindings.json
+ * @returns {array} - A list of map pages.
+ */
+function getAllPages() {
+    // this function ensures only unique values, and
+    // if a map page has a base keybinding and a nested keybinding
+    // it returns the base keybinding, which may be different
 
-            // Second criteria: Check if either object is missing the 'order' property
-            const hasOrderA = "order" in a;
-            const hasOrderB = "order" in b;
+    const uniqueMapPages = new Set();
+    const mapPagesKeybindings = {};
+    const nestedMapPagesKeybindings = {};
 
-            if (hasOrderA && !hasOrderB) {
-                return -1; // `a` with an 'order' property comes before `b` without it
-            }
-            if (!hasOrderA && hasOrderB) {
-                return 1; // `b` with an 'order' property comes before `a` without it
-            }
+    getKeybindings().forEach((keybinding) => {
+        if (
+            keybinding.command === settings.keys.commands.openMap &&
+            keybinding.args !== undefined
+        ) {
+            //   Page keybinding
+            // -------------------
 
-            // Third criteria: Sort by the 'order' property numerically if both have it
-            if (hasOrderA && hasOrderB) {
-                return a.order - b.order;
+            const mapPage = keybinding.args.mapPage;
+            if (mapPage) {
+                uniqueMapPages.add(mapPage);
+                mapPagesKeybindings[mapPage] = keybinding;
             }
+        } else if (
+            keybinding.command === settings.keys.commands.closeMap &&
+            keybinding.args !== undefined &&
+            keybinding.args.command === settings.keys.commands.openMap
+        ) {
+            //   Nested Page Keybinding
+            // --------------------------
 
-            return 0
-        });
+            const nestedArgs = keybinding.args.args;
+            if (nestedArgs && nestedArgs.mapPage) {
+                const mapPage = nestedArgs.mapPage;
+                uniqueMapPages.add(mapPage);
+                nestedMapPagesKeybindings[mapPage] = keybinding;
+            }
+        }
+    });
+
+    return Array.from(uniqueMapPages).map((page) => {
+        //
+        return mapPagesKeybindings.hasOwnProperty(page)
+            ? //   return page keybindings before nested page keybindings
+              // ----------------------------------------------------------
+              mapPagesKeybindings[page]
+            : nestedMapPagesKeybindings[page];
+    });
 }
 
 /**
@@ -135,137 +155,96 @@ function prettifyKey(keyCode) {
         .replace("SHIFT", "⇧");
 }
 
-function createSpellMenuItemFromKeyBinding(kb) {
-    const args = kb.args;
+function convertToItems(keybindings) {
 
-    // |-----------------------|
-    // |        Feature        |
-    // |-----------------------|
+    const configs = settings.useConfigs();
 
-    // this function needs to change to create different labels and descriptions for nested pages and spells
-    let label;
-    let description;
-    if (args.command === COMMANDS.openMap) {
-        // style as a nested page
-        label = `   ${SETTINGS.subpagesIcon} Go to ${args.args.mapPage} ...`;
-        description = `${prettifyKey(kb.key)}`;
-    } else {
-        // style as a spell
-        label = `$(wand) ${args.label ? args.label : args.command}`;
-        description = `${prettifyKey(kb.key)} ${
-            args.label ? args.command : ""
-        }`;
+    const spells = keybindings
+    .sort(sortKeybindings)
+    .map(convertKeybinding);
+
+    return spells
+
+    function sortKeybindings(a, b) {
+
+        const commandToCheck = settings.keys.commands.openCommand;
+
+        if (a.command === commandToCheck && b.command !== commandToCheck) {
+            return -1; // `a` comes before `b`
+        }
+        if (a.command !== commandToCheck && b.command === commandToCheck) {
+            return 1; // `b` comes before `a`
+        }
+
+        // Second criteria: Check if either object is missing the 'order' property
+        const hasOrderA = "order" in a;
+        const hasOrderB = "order" in b;
+
+        if (hasOrderA && !hasOrderB) {
+            return -1; // `a` with an 'order' property comes before `b` without it
+        }
+        if (!hasOrderA && hasOrderB) {
+            return 1; // `b` with an 'order' property comes before `a` without it
+        }
+
+        // Third criteria: Sort by the 'order' property numerically if both have it
+        if (hasOrderA && hasOrderB) {
+            return a.order - b.order;
+        }
+
+        return 0;
     }
-    const buttons = [BUTTONS.edit]
 
-    return {
-        ...kb.args,
-        label,
-        description,
-        buttons,
-        keybinding: kb
-    };
-}
+    function convertKeybinding(keybinding) {
+        const args = keybinding.args;
+        let label;
+        let description;
 
-/**
- * Function to gather all mapPages created by the user
- * @param {array} keybindings an array of keybindings parsed from keybindings.json
- * @returns {array} - A list of map pages.
- */
-function getAllPagesFromMap(keybindings) {
-    // Use a Set to store unique mapPage values
-    const setOfAllMapPages = new Set();
-    const mapPages = {};
-    const nestedMapPages = {};
+        if (keybinding.command === settings.keys.commands.closeMap) {
+            //   Keybinding is a Spell on a Page
+            // -----------------------------------
 
-    keybindings.forEach((keybinding) => {
-        if (
-            keybinding.command === COMMANDS.openMap &&
-            keybinding.args !== undefined
-        ) {
-            const mapPage = keybinding.args.mapPage;
-            if (mapPage) {
-                // openMap command with a mapPage
-                setOfAllMapPages.add(mapPage);
-                mapPages[mapPage] = createPageMenuItem(keybinding);
+            if (args.command === settings.keys.commands.openMap) {
+                //   Keybinding is a nested Page
+                // -------------------------------
+
+                label = `   ${configs.get(settings.keys.subpageIcon)} Go to ${
+                    args.args.mapPage
+                } ...`;
+                description = `${prettifyKey(keybinding.key)}`;
+            } else {
+                //   keybinding is a spell
+                // -------------------------
+
+                label = `${configs.get(settings.keys.spellIcon)} ${
+                    args.label ? args.label : args.command
+                }`;
+                description = `${prettifyKey(keybinding.key)}  ${
+                    // if displayCommandId and there is a label
+                    configs.get(settings.keys.displayCommandId) && args.label
+                        ? // show the command id
+                          args.command
+                        : ""
+                }`;
             }
-        } else if (
-            keybinding.command === COMMANDS.closeMap &&
-            keybinding.args !== undefined &&
-            keybinding.args.command === COMMANDS.openMap
-        ) {
-            const nestedArgs = keybinding.args.args;
-            if (nestedArgs && nestedArgs.mapPage) {
-                const mapPage = nestedArgs.mapPage;
-                setOfAllMapPages.add(mapPage);
-                nestedMapPages[mapPage] = createNestedPageMenuItem(keybinding);
-            }
+        } else if (keybinding.command === settings.keys.commands.openMap) {
+            //   keybinding is a page
+            // ------------------------
+
+            label = `${configs.get(settings.keys.pageIcon)} ${args.mapPage}`;
+            description = prettifyKey(keybinding.key);
         }
-    });
 
-    const AllPages = Array.from(setOfAllMapPages).map((page) => {
-        return mapPages.hasOwnProperty(page)
-            ? mapPages[page]
-            : nestedMapPages[page];
-    });
+        const buttons = [settings.buttons.edit];
 
-    return AllPages;
-
-
-}
-
-
-
-/**
- * Function to take a keybinding object and return the display data for the quick Picker
- * @param {object} keybinding
- * @returns {object} The page object for the UI quickPicker
- */
-function createPageMenuItem(keybinding) {
-    const mapPage = keybinding.args.mapPage;
-    const label = `${SETTINGS.pagesIcon} ${mapPage}`;
-    const description = prettifyKey(keybinding.key);
-    const buttons = [BUTTONS.edit]
-    return {
-        mapPage,
-        label,
-        description,
-        buttons,
-        keybinding,
-    };
-    /*
-        {
-            "mapPage": "thisPage",
-            "key": "cmd+f",
-            "nestedUnder": "otherPage",
-            "label": "${SETTINGS.pagesIcon} ThisPage (cmd+f)", => generate with prettifyKey
-        }
-    */
-}
-
-/**
- * Function to take a keybinding object and return the display data for the quick Picker
- * @param {object} keybinding
- * @returns {object} The page object for the UI quickPicker
- */
-function createNestedPageMenuItem(keybinding) {
-    const page = keybinding.args.args.mapPage;
-    const label = `  ${SETTINGS.subpagesIcon} ${page}`;
-    const buttons = [BUTTONS.edit]
-    return {
-        label,
-        mapPage: page,
-        nestedUnder: keybinding.when.split(".")[1],
-        buttons,
-        keybinding,
-    };
-    /*
-        {
-            "mapPage": "thisPage",
-            "nestedUnder": "otherPage", // if this is undefined it wont show.
-            "label": "${SETTINGS.pagesIcon} ThisPage (cmd+f)", => generate with prettifyKey
-        }
-    */
+        return {
+            ...keybinding.args,
+            label,
+            description,
+            buttons,
+            keybinding,
+        };
+    }
 }
 
 /**
@@ -273,6 +252,12 @@ function createNestedPageMenuItem(keybinding) {
  * @param {Object} newKeybinding - The new keybinding object to add.
  */
 function saveKeybinding(newKeybinding) {
+    // |---------------------|
+    // |        *BUG*        |
+    // |---------------------|
+
+    // if keybindings.json does not exist it does not get or save any new keybindings
+
     const keybindingsPath = getPathToKeybindingsFile();
     const backupPath = keybindingsPath + ".backup";
 
@@ -305,63 +290,75 @@ function saveKeybinding(newKeybinding) {
 
 // update keybinding function?
 
+/**
+ * Function to open the keybindings.json file and reveal a specific keybinding by command.
+ * @param {string} command - The command associated with the keybinding to find.
+ */
+async function revealKeybinding(keybinding) {
+    // Open the keybindings.json file
+    await vscode.commands.executeCommand(
+        "workbench.action.openGlobalKeybindingsFile"
+    );
 
-    /**
-     * Function to open the keybindings.json file and reveal a specific keybinding by command.
-     * @param {string} command - The command associated with the keybinding to find.
-     */
-    async function revealKeybinding(keybinding) {
-        console.log('looking for the spell!',);
-        console.log('keybinding',keybinding);
+    // Get the active text editor (which should be keybindings.json)
+    const editor = vscode.window.activeTextEditor;
 
+    if (editor) {
+        // Read the entire content of the keybindings.json file
+        const document = editor.document;
+        const text = document.getText();
 
-        // Open the keybindings.json file
-        await vscode.commands.executeCommand('workbench.action.openGlobalKeybindingsFile');
+        try {
+            // Parse the JSONC content into an array of objects and get the JSON node tree
+            const rootNode = jsonc.parseTree(text);
 
-        // Get the active text editor (which should be keybindings.json)
-        const editor = vscode.window.activeTextEditor;
+            if (rootNode) {
+                // Iterate through child nodes to find a matching keybinding
+                for (const node of rootNode.children) {
+                    const parsedKeybinding = jsonc.getNodeValue(node);
+                    if (
+                        parsedKeybinding &&
+                        parsedKeybinding.key === keybinding.key &&
+                        parsedKeybinding.command === keybinding.command &&
+                        JSON.stringify(parsedKeybinding.args) ===
+                            JSON.stringify(keybinding.args)
+                    ) {
+                        // Get the start position of the node
+                        const startPosition = document.positionAt(node.offset);
 
-        if (editor) {
-            // Read the entire content of the keybindings.json file
-            const document = editor.document;
-            const text = document.getText();
-
-            try {
-                // Parse the JSONC content into an array of objects and get the JSON node tree
-                const rootNode = jsonc.parseTree(text);
-
-                if (rootNode) {
-                    // Iterate through child nodes to find a matching keybinding
-                    for (const node of rootNode.children) {
-                        const parsedKeybinding = jsonc.getNodeValue(node);
-                        if (parsedKeybinding && parsedKeybinding.key === keybinding.key &&
-                            parsedKeybinding.command === keybinding.command &&
-                            JSON.stringify(parsedKeybinding.args) === JSON.stringify(keybinding.args)) {
-
-                            // Get the start position of the node
-                            const startPosition = document.positionAt(node.offset);
-
-                            // Reveal and highlight the line in the editor
-                            editor.revealRange(new vscode.Range(startPosition, startPosition ), vscode.TextEditorRevealType.AtTop);
-                            editor.selection = new vscode.Selection(startPosition, startPosition);
-                            return;
-                        }
+                        // Reveal and highlight the line in the editor
+                        editor.revealRange(
+                            new vscode.Range(startPosition, startPosition),
+                            vscode.TextEditorRevealType.AtTop
+                        );
+                        editor.selection = new vscode.Selection(
+                            startPosition,
+                            startPosition
+                        );
+                        return;
                     }
-
-                    vscode.window.showInformationMessage(`Keybinding not found.`);
-                } else {
-                    vscode.window.showErrorMessage('Failed to parse the keybindings.json file.');
                 }
-            } catch (error) {
-                vscode.window.showErrorMessage('Failed to parse keybindings.json: ' + error.message);
+
+                vscode.window.showInformationMessage(`Keybinding not found.`);
+            } else {
+                vscode.window.showErrorMessage(
+                    "Failed to parse the keybindings.json file."
+                );
             }
+        } catch (error) {
+            vscode.window.showErrorMessage(
+                "Failed to parse keybindings.json: " + error.message
+            );
         }
     }
+}
 
 module.exports = {
-    getKeybindings,
-    getSpellsForPage,
-    getAllPagesFromMap,
+    getKeybindingsForPage,
+    getAllPages,
+    convertToItems,
+    prettifyKey,
     saveKeybinding,
     revealKeybinding,
+    platform
 };

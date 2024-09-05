@@ -10,7 +10,9 @@
         "vscode": "^1.91.0"
     },
     "categories": [
-        "Other"
+        "Keybindings",
+        "Keyboard Shortcuts",
+        "Harry Potter references"
     ],
     "activationEvents": [
         "onStartupFinished"
@@ -21,34 +23,95 @@
             "type": "object",
             "title": "Marauder's Map Configuration",
             "properties": {
-                "MaraudersMap.defaultMapDelay": {
+                "maraudersMap": {
+                    "type": "object",
+                    "title": "Marauder's Map Configuration",
+                    "properties": {
+                        "defaultMapDelay": {
+                            "type": "number",
+                            "default": 1000,
+                            "description": "Time (ms) to delay opening a map page by default."
+                        },
+                        "pageIcon": {
+                            "type": "string",
+                            "default": "$(files)",
+                            "description": "Icon to be used for Pages in the Map"
+                        },
+                        "subpageIcon": {
+                            "type": "string",
+                            "default": "$(right-arrow)",
+                            "description": "Icon to be used for nested Pages in the Map"
+                        },
+                        "spellIcon": {
+                            "type": "string",
+                            "default": "$(wand)",
+                            "description": "Icon to be used for Spells in the Map"
+                        },
+                        "displayMapTitle": {
+                            "type": "boolean",
+                            "default": true,
+                            "description": "Whether or not to dispay the Marauder's Map title when the Map is open"
+                        },
+                        "displayCommandId": {
+                            "type": "boolean",
+                            "default": true,
+                            "description": "Whether or not to dispay the VS Code command id next to each Spell"
+                        }
+                    }
+                },
+                "maraudersMap.defaultMapDelay": {
                     "type": "number",
                     "default": 1000,
                     "description": "Time (ms) to delay opening a map page by default."
+                },
+                "maraudersMap.pageIcon": {
+                    "type": "string",
+                    "default": "$(files)",
+                    "description": "Icon to be used for Pages in the Map"
+                },
+                "maraudersMap.subpageIcon": {
+                    "type": "string",
+                    "default": "$(arrow-right)",
+                    "description": "Icon to be used for nested Pages in the Map"
+                },
+                "maraudersMap.spellIcon": {
+                    "type": "string",
+                    "default": "$(wand)",
+                    "description": "Icon to be used for Spells in the Map"
+                },
+                "maraudersMap.displayMapTitle": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Whether or not to dispay the Marauder's Map title when the Map is open"
+                },
+                "maraudersMap.displayCommandId": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Whether or not to dispay the VS Code command id next to each Spell"
                 }
             }
         },
         "commands": [
             {
-                "command": "MaraudersMap.expectoPatronum",
-                "title": "Save a new spell",
+                "command": "maraudersMap.expectoPatronum",
+                "title": "Create a new Page on the Map",
                 "category": "Marauder's Map"
             },
             {
-                "command": "MaraudersMap.mischiefManaged",
+                "command": "maraudersMap.mischiefManaged",
                 "title": "Close the Map && Cast the Spell",
                 "category": "Marauder's Map"
             },
             {
-                "command": "MaraudersMap.iSolemnlySwearThatIAmUpToNoGood",
+                "command": "maraudersMap.iSolemnlySwearThatIAmUpToNoGood",
                 "title": "Open the Map!",
                 "category": "Marauder's Map"
             }
         ],
         "keybindings": [
             {
-                "command": "MaraudersMap.iSolemnlySwearThatIAmUpToNoGood",
-                "when": "!MaraudersMapIsOpen",
+                "command": "maraudersMap.iSolemnlySwearThatIAmUpToNoGood",
+                "when": "!maraudersMapIsOpen",
                 "key": "ctrl+alt+m",
                 "mac": "cmd+alt+m"
             }

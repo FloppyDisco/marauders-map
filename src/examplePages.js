@@ -1,179 +1,341 @@
-exports.keybindings = [
+// managers
+const settings = require('./managers/settingsManager');
+const keybindingsMgr = require('../src/managers/keybindingsManager');
+
+const PCkeybindings = [
     {
         key: "ctrl+e",
-        command: "MaraudersMap.iSolemnlySwearThatIAmUpToNoGood",
-        when: "!MaraudersMapIsOpen",
+        command: "maraudersMap.iSolemnlySwearThatIAmUpToNoGood",
+        when: "!maraudersMapIsOpen",
         args: {
             mapPage: "Editor Spells",
         },
-        mac: "cmd+e",
-        linux: "ctrl+e",
     },
     {
         key: "ctrl+e",
-        command: "MaraudersMap.mischiefManaged",
-        when: "MaraudersMap.Editor_Spells",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Editor_Spells",
         args: {
             command: "workbench.action.focusNextGroup",
             label: "Focus Next Editor Group",
         },
-        mac: "cmd+e",
-        linux: "ctrl+e",
     },
     {
         key: "ctrl+n",
-        command: "MaraudersMap.mischiefManaged",
-        when: "MaraudersMap.Editor_Spells",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Editor_Spells",
         args: {
             command: "workbench.action.moveEditorToNextGroup",
             label: "Move Editor To Next Group",
         },
-        mac: "cmd+n",
-        linux: "ctrl+n",
     },
     {
         key: "ctrl+h",
-        command: "MaraudersMap.mischiefManaged",
-        when: "MaraudersMap.Editor_Spells",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Editor_Spells",
         args: {
             command: "workbench.action.moveEditorToPreviousGroup",
             label: "Move Editor to Previous Group",
         },
-        mac: "cmd+h",
-        linux: "ctrl+h",
     },
     {
         key: "ctrl+,",
-        command: "MaraudersMap.mischiefManaged",
-        when: "MaraudersMap.Editor_Spells",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Editor_Spells",
         args: {
             command: "workbench.action.splitEditorDown",
             label: "Split Down",
         },
-        mac: "cmd+,",
-        linux: "ctrl+,",
     },
     {
         key: "ctrl+l",
-        command: "MaraudersMap.mischiefManaged",
-        when: "MaraudersMap.Editor_Spells",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Editor_Spells",
         args: {
             command: "workbench.action.toggleEditorGroupLayout",
             label: "Toggle Layout",
         },
-        mac: "cmd+l",
-        linux: "ctrl+l",
     },
     {
         key: "ctrl+m",
-        command: "MaraudersMap.mischiefManaged",
-        when: "MaraudersMap.Editor_Spells",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Editor_Spells",
         args: {
             command: "workbench.action.toggleMaximizeEditorGroup",
             label: "Maximize Editor Group",
         },
-        mac: "cmd+m",
-        linux: "ctrl+m",
     },
     {
         key: "ctrl+w",
-        command: "MaraudersMap.mischiefManaged",
-        when: "MaraudersMap.Editor_Spells",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Editor_Spells",
         args: {
             command: "workbench.action.closeEditorsAndGroup",
             label: "Close Group",
         },
-        mac: "cmd+w",
-        linux: "ctrl+w",
     },
     {
         key: "ctrl+o",
-        command: "MaraudersMap.mischiefManaged",
-        when: "MaraudersMap.Editor_Spells",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Editor_Spells",
         args: {
             command: "workbench.action.closeOtherEditors",
             label: "Close Other Editors In Group",
         },
-        mac: "cmd+o",
-        linux: "ctrl+o",
     },
     {
         key: "ctrl+f",
-        command: "MaraudersMap.mischiefManaged",
-        when: "MaraudersMap.Editor_Spells",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Editor_Spells",
         args: {
-            command: "MaraudersMap.iSolemnlySwearThatIAmUpToNoGood",
+            command: "maraudersMap.iSolemnlySwearThatIAmUpToNoGood",
             args: {
                 mapPage: "Fold Spells",
-                mac: "cmd+f",
-                linux: "ctrl+f",
             },
         },
     },
     {
         key: "ctrl+f",
-        command: "MaraudersMap.mischiefManaged",
-        when: "MaraudersMap.Fold_Commands",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Fold_Commands",
         args: {
             command: "editor.foldRecursively",
             label: "Fold",
         },
-        mac: "cmd+f",
-        linux: "ctrl+f",
     },
     {
         key: "ctrl+a",
-        command: "MaraudersMap.mischiefManaged",
-        when: "MaraudersMap.Fold_Commands",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Fold_Commands",
         args: {
             command: "editor.foldAll",
             label: "Fold All",
         },
-        mac: "cmd+a",
-        linux: "ctrl+a",
     },
     {
         key: "ctrl+e",
-        command: "MaraudersMap.mischiefManaged",
-        when: "MaraudersMap.Fold_Commands",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Fold_Commands",
         args: {
             command: "editor.foldAllExcept",
             label: "Fold All Except",
         },
-        mac: "cmd+e",
-        linux: "ctrl+e",
     },
     {
         key: "ctrl+u",
-        command: "MaraudersMap.mischiefManaged",
-        when: "MaraudersMap.Fold_Commands",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Fold_Commands",
         args: {
             command: "editor.unfoldRecursively",
             label: "Unfold",
         },
-        mac: "cmd+u",
-        linux: "ctrl+u",
     },
     {
         key: "ctrl+n",
-        command: "MaraudersMap.mischiefManaged",
-        when: "MaraudersMap.Fold_Commands",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Fold_Commands",
         args: {
             command: "editor.unfoldAll",
             label: "Unfold All",
         },
-        mac: "cmd+n",
-        linux: "ctrl+n",
     },
     {
         key: "ctrl+x",
-        command: "MaraudersMap.mischiefManaged",
-        when: "MaraudersMap.Fold_Commands",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Fold_Commands",
         args: {
             command: "editor.unfoldAllExcept",
             label: "Unfold All Except",
         },
-        mac: "cmd+x",
-        linux: "ctrl+x",
     },
 ];
+const MacKeybindings = [
+    {
+        key: "cmd+e",
+        command: "maraudersMap.iSolemnlySwearThatIAmUpToNoGood",
+        when: "!maraudersMapIsOpen",
+        args: {
+            mapPage: "Editor Spells",
+        },
+    },
+    {
+        key: "cmd+e",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Editor_Spells",
+        args: {
+            command: "workbench.action.focusNextGroup",
+            label: "Focus Next Editor Group",
+        },
+    },
+    {
+        key: "cmd+n",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Editor_Spells",
+        args: {
+            command: "workbench.action.moveEditorToNextGroup",
+            label: "Move Editor To Next Group",
+        },
+    },
+    {
+        key: "cmd+h",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Editor_Spells",
+        args: {
+            command: "workbench.action.moveEditorToPreviousGroup",
+            label: "Move Editor to Previous Group",
+        },
+    },
+    {
+        key: "cmd+,",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Editor_Spells",
+        args: {
+            command: "workbench.action.splitEditorDown",
+            label: "Split Down",
+        },
+    },
+    {
+        key: "cmd+l",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Editor_Spells",
+        args: {
+            command: "workbench.action.toggleEditorGroupLayout",
+            label: "Toggle Layout",
+        },
+    },
+    {
+        key: "cmd+m",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Editor_Spells",
+        args: {
+            command: "workbench.action.toggleMaximizeEditorGroup",
+            label: "Maximize Editor Group",
+        },
+    },
+    {
+        key: "cmd+w",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Editor_Spells",
+        args: {
+            command: "workbench.action.closeEditorsAndGroup",
+            label: "Close Group",
+        },
+    },
+    {
+        key: "cmd+o",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Editor_Spells",
+        args: {
+            command: "workbench.action.closeOtherEditors",
+            label: "Close Other Editors In Group",
+        },
+    },
+    {
+        key: "cmd+f",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Editor_Spells",
+        args: {
+            command: "maraudersMap.iSolemnlySwearThatIAmUpToNoGood",
+            args: {
+                mapPage: "Fold Spells",
+            },
+        },
+    },
+    {
+        key: "cmd+f",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Fold_Commands",
+        args: {
+            command: "editor.foldRecursively",
+            label: "Fold",
+        },
+    },
+    {
+        key: "cmd+a",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Fold_Commands",
+        args: {
+            command: "editor.foldAll",
+            label: "Fold All",
+        },
+    },
+    {
+        key: "cmd+e",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Fold_Commands",
+        args: {
+            command: "editor.foldAllExcept",
+            label: "Fold All Except",
+        },
+    },
+    {
+        key: "cmd+u",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Fold_Commands",
+        args: {
+            command: "editor.unfoldRecursively",
+            label: "Unfold",
+        },
+    },
+    {
+        key: "cmd+n",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Fold_Commands",
+        args: {
+            command: "editor.unfoldAll",
+            label: "Unfold All",
+        },
+    },
+    {
+        key: "cmd+x",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Fold_Commands",
+        args: {
+            command: "editor.unfoldAllExcept",
+            label: "Unfold All Except",
+        },
+    },
+];
+
+/**
+ * A function to install the example Page and Spell keybindings
+ */
+function installExamplePages(){
+    const keybindings = keybindingsMgr.platform === "darwin" ? MacKeybindings : PCkeybindings
+    keybindings.forEach((kb) => {
+        keybindingsMgr.saveKeybinding(kb);
+    })
+}
+
+
+
+const examplePagesKey = `${settings.keys.maraudersMapPrefix}.${settings.keys.examplePagesKey}`
+
+/**
+ * A function to initialize the examplePages module.
+ * @param {vscode.extensionContext} context
+ *
+ * Install example Pages and Spell keybindings for User on first install
+ */
+function  initialize(context) {
+
+    const examplePagesInstalled = context.globalState.get(examplePagesKey);
+
+    // install pages if not previously installed
+    if (!examplePagesInstalled){
+        installExamplePages();
+        context.globalState.update(examplePagesKey, true);
+    }
+
+    // |-----------------------|
+    // |        Feature        |
+    // |-----------------------|
+
+    // register command to install example pages manually?
+
+    // context.globalState.update(examplePagesKey, undefined);
+}
+
+module.exports ={
+    initialize
+}
