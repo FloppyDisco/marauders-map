@@ -30,12 +30,13 @@ let mapStatusBarItem;
  */
 function initMapStatusBar() {
     const configs = settings.useConfigs();
-    return initStatusBarBase(mapStatusBarItem, {
+    mapStatusBarItem = initStatusBarBase(mapStatusBarItem, {
         text: configs.get(settings.keys.titleIcon),
         command: settings.keys.commands.openMap,
         tooltip: "I solemnly swear that I am up to no good...",
         alignment: "Right",
     });
+    return mapStatusBarItem;
 }
 function useMapStatusBar() {
     return mapStatusBarItem;
@@ -53,11 +54,12 @@ let solemnlySwearStatusBarItem;
  */
 function initSolemnlySwearStatusBar() {
     const configs = settings.useConfigs();
-    return initStatusBarBase(solemnlySwearStatusBarItem, {
+    solemnlySwearStatusBarItem = initStatusBarBase(solemnlySwearStatusBarItem, {
         text: `${configs.get(settings.keys.spellIcon)} I solemnly swear ...`,
         command: settings.keys.commands.closeMap, // might cause an issue with no command?
         alignment: "Left",
     });
+    return solemnlySwearStatusBarItem;
 }
 function useSolemnlySwearStatusBar() {
     return solemnlySwearStatusBarItem;
@@ -76,12 +78,13 @@ let pageStatusBarItem;
  */
 function initPageStatus(mapPage) {
     const configs = settings.useConfigs();
-    return initStatusBarBase(pageStatusBarItem, {
+    pageStatusBarItem = initStatusBarBase(pageStatusBarItem, {
         text: `${configs.get(settings.keys.spellIcon)} ${mapPage}`,
         command: settings.keys.commands.closeMap,
         tooltip: "Sometimes spells go wonky, click to close!",
         alignment: "Left",
     });
+    return pageStatusBarItem;
 }
 function usePageStatusBar() {
     return pageStatusBarItem;
@@ -99,16 +102,16 @@ let mischiefStatusBarItem;
  */
 function initMischiefStatusBar() {
     const configs = settings.useConfigs();
-    const statusBar = initStatusBarBase(mischiefStatusBarItem, {
+    mischiefStatusBarItem = initStatusBarBase(mischiefStatusBarItem, {
         text: `${configs.get(settings.keys.spellIcon)} Mischief Managed...`,
         command: settings.keys.commands.closeMap,
         tooltip: "Sometimes spells go wonky, click to close!",
         alignment: "Left",
     });
     setTimeout(() => {
-        statusBar.dispose();
-    }, 1122);
-    return statusBar;
+        mischiefStatusBarItem.dispose();
+    }, 1234);
+    return mischiefStatusBarItem;
 }
 function useMischiefStatusBar() {
     return mischiefStatusBarItem;
@@ -143,4 +146,5 @@ module.exports = {
         initialize: initMapStatusBar,
         use: useMapStatusBar,
     },
+    clean,
 };
