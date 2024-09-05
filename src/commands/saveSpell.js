@@ -1,15 +1,9 @@
 const vscode = require("vscode");
 // managers
 const settings = require("../managers/settingsManager");
-const KBmanager = require("../managers/keybindingsManager");
-const whenManager = require("../managers/whenManager");
-
-// components
-const promptUserForPage = require("../prompts/promptUserForPage");
-const promptUserForCommand = require("../prompts/promptUserForCommand");
-const promptUserForKey = require("../prompts/promptUserForKey");
-const promptUserForLabel = require("../prompts/promptUserForLabel");
-
+const keybindingsMgr = require("../managers/keybindingsManager");
+const whenMgr = require("../managers/whenManager");
+const promptManager = require("../managers/promptManager");
 
 // |--------------------------------|
 // |        Expecto Patronum        |
@@ -22,13 +16,13 @@ function register(context) {
             async ({ mapPage } = {}) => {
                 if (!mapPage) {
                     // get the page that this command will be saved on
-                    mapPage = await promptUserForPage();
+                    mapPage = await promptManager.promptUserForPage();
                     if (mapPage === undefined) {
                         return; // exit on 'Esc' key
                     }
                 }
 
-                const selectedCommand = await promptUserForCommand();
+                const selectedCommand = await promptManager.promptUserForCommand();
                 if (selectedCommand === undefined) {
                     return; // exit on 'Esc' key
                 }
@@ -38,42 +32,41 @@ function register(context) {
                 let nestedPage; // exist for scope
                 if (isNestedPage) {
                     // get the page that this command will go to =>
-                    nestedPage = await promptUserForPage(isNestedPage);
+                    nestedPage = await promptManager.promptUserForPage(isNestedPage);
                     if (nestedPage === undefined) {
                         return; // exit on 'Esc' key
                     }
                 }
 
-                const selectedKey = await promptUserForKey();
+                const selectedKey = await promptManager.promptUserForKey();
                 if (selectedKey === undefined) {
                     return; // exit on 'Esc' key
                 }
 
                 const selectedLabel = isNestedPage
                     ? ""
-                    : await promptUserForLabel(selectedCommand, selectedKey);
+                    : await promptManager.promptUserForLabel(selectedCommand, selectedKey);
                 if (selectedLabel === undefined) {
                     return; // exit on 'Esc' key
                 }
 
                 const selectedArgs = isNestedPage
                     ? {
-                          mapPage: nestedPage,
-                          mapDelay: 0,
+                        mapPage: nestedPage,
                       }
                     : undefined;
 
                 const newKeybinding = {
                     key: selectedKey ? selectedKey : undefined, // set to undefined for serialization
                     command: settings.keys.commands.closeMap,
-                    when: whenManager.serializer(mapPage),
+                    when: whenMgr.serializer(mapPage),
                     args: {
                         command: selectedCommand,
                         label: selectedLabel ? selectedLabel : undefined, // set to undefined for serialization
                         args: selectedArgs,
                     },
                 };
-                KBmanager.saveKeybinding(newKeybinding);
+                keybindingsMgr.saveKeybinding(newKeybinding);
             }
         )
     );
