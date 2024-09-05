@@ -6,17 +6,15 @@ const jsonc = require("jsonc-parser");
 
 const settings = require("./settingsManager");
 
+const platform = os.platform();
+const isVSCodium = vscode.env.appName.includes("VSCodium");
+
 /**
  * Function to determine if the extension is running in VSCodium or VS Code.
  * @returns {boolean} true if running in VSCodium, false if running in VS Code.
  */
-function isVSCodium() {
-    return vscode.env.appName.includes("VSCodium");
-}
-
 function getPathToKeybindingsFile() {
-    const platform = os.platform();
-    const baseFolder = isVSCodium() ? "VSCodium" : "Code"; // change directory name based on application
+    const baseFolder = isVSCodium ? "VSCodium" : "Code"; // change directory name based on application
 
     // console.log('---------------');
     // console.log('platform',platform);
@@ -210,7 +208,7 @@ function convertToItems(keybindings) {
                 //   Keybinding is a nested Page
                 // -------------------------------
 
-                label = `   ${configs.get(settings.keys.subpagesIcon)} Go to ${
+                label = `   ${configs.get(settings.keys.subpageIcon)} Go to ${
                     args.args.mapPage
                 } ...`;
                 description = `${prettifyKey(keybinding.key)}`;
@@ -233,7 +231,7 @@ function convertToItems(keybindings) {
             //   keybinding is a page
             // ------------------------
 
-            label = `${configs.get(settings.keys.pagesIcon)} ${args.mapPage}`;
+            label = `${configs.get(settings.keys.pageIcon)} ${args.mapPage}`;
             description = prettifyKey(keybinding.key);
         }
 
@@ -362,4 +360,5 @@ module.exports = {
     prettifyKey,
     saveKeybinding,
     revealKeybinding,
+    platform
 };
