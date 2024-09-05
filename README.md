@@ -119,6 +119,11 @@ example keybindings:
 
 ## Features
 
+`0.0.9`
+ - support for an "order" argument, to specify the position of Spells on a Page
+
+----
+
 `0.0.8`
  - the Map now ships with some default keybindings to give the user an idea of how it can be used
  - bug fix for map delay time for nested page
