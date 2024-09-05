@@ -2,12 +2,9 @@ const vscode = require('vscode');
 
 // managers
 const settings = require('../managers/settingsManager');
-const whenManager = require('../managers/whenManager');
-
-// components
-const mischiefStatusBar = require('../components/mischiefStatusBar')
-const pageStatusBar = require('../components/pageStatusBar');
-const maraudersMap = require('../components/maraudersMap');
+const whenMgr = require('../managers/whenManager');
+const statusBarMgr = require('../managers/statusBarManager');
+const mapManager = require('../managers/mapManager');
 
     // |--------------------------------|
     // |        Mischief_Managed        |
@@ -19,15 +16,17 @@ function register(context) {
             settings.keys.commands.closeMap,
             ({ command, args } = {}) => {
 
-                const {removeWhenContext} = whenManager.use()
+                const {removeWhenContext} = whenMgr.use()
                 removeWhenContext();
 
-                // these potentially might not work because of stack delay
-                maraudersMap.removeIfExists();
-                pageStatusBar.removeIfExists();
-                mischiefStatusBar.create();
+                mapManager.clean();
+                statusBarMgr.clean();
 
                 if (command) {
+
+                    // Feature
+                    // maybe add a setting to turn this off
+                    statusBarMgr.mischief.initialize().show()
 
                     // |---------------------|
                     // |        *BUG*        |
@@ -36,13 +35,14 @@ function register(context) {
                     // calling a nested page before the map has opened, will immediately cause the map to display on the second page
                     // it would be better if the delay was maintained to the next page.
 
-
-                    // testing this
-                    if (maraudersMap.visible){
+                    // // testing this
+                    if (mapManager.use()._visible){
                         args.mapDelay = 0
                     }
+
                     vscode.commands.executeCommand(command, args);
                 }
+
             }
         )
     )
