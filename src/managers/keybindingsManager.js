@@ -87,14 +87,12 @@ function getKeybindingsForPage(whenContext) {
     });
 }
 
-
 /**
  * Function to gather all mapPages created by the user
  * @param {array} keybindings an array of keybindings parsed from keybindings.json
  * @returns {array} - A list of map pages.
  */
 function getAllPages() {
-
     // this function ensures only unique values, and
     // if a map page has a base keybinding and a nested keybinding
     // it returns the base keybinding, which may be different
@@ -141,6 +139,114 @@ function getAllPages() {
               mapPagesKeybindings[page]
             : nestedMapPagesKeybindings[page];
     });
+}
+
+/**
+ * Function to take a json keybinding code and return a human friendly display version
+ * @param {string} keyCode the json keybinding.key
+ * @returns {string} the prettified keyCode
+ */
+function prettifyKey(keyCode) {
+    //  "cmd+alt+e" => "⌘⌥E"
+    return `(${keyCode})`
+        .toUpperCase()
+        .replaceAll("+", "")
+        .replace("CMD", "⌘")
+        .replace("ALT", "⌥")
+        .replace("CTRL", "^")
+        .replace("SHIFT", "⇧");
+}
+
+function convertToItems(keybindings) {
+
+    const configs = settings.useConfigs();
+
+    const spells = keybindings
+    .sort(sortKeybindings)
+    .map(convertKeybinding);
+
+    return spells
+
+    function sortKeybindings(a, b) {
+
+        const commandToCheck = settings.keys.commands.openCommand;
+
+        if (a.command === commandToCheck && b.command !== commandToCheck) {
+            return -1; // `a` comes before `b`
+        }
+        if (a.command !== commandToCheck && b.command === commandToCheck) {
+            return 1; // `b` comes before `a`
+        }
+
+        // Second criteria: Check if either object is missing the 'order' property
+        const hasOrderA = "order" in a;
+        const hasOrderB = "order" in b;
+
+        if (hasOrderA && !hasOrderB) {
+            return -1; // `a` with an 'order' property comes before `b` without it
+        }
+        if (!hasOrderA && hasOrderB) {
+            return 1; // `b` with an 'order' property comes before `a` without it
+        }
+
+        // Third criteria: Sort by the 'order' property numerically if both have it
+        if (hasOrderA && hasOrderB) {
+            return a.order - b.order;
+        }
+
+        return 0;
+    }
+
+    function convertKeybinding(keybinding) {
+        const args = keybinding.args;
+        let label;
+        let description;
+
+        if (keybinding.command === settings.keys.commands.closeMap) {
+            //   Keybinding is a Spell on a Page
+            // -----------------------------------
+
+            if (args.command === settings.keys.commands.openMap) {
+                //   Keybinding is a nested Page
+                // -------------------------------
+
+                label = `   ${configs.get(settings.keys.subpagesIcon)} Go to ${
+                    args.args.mapPage
+                } ...`;
+                description = `${prettifyKey(keybinding.key)}`;
+            } else {
+                //   keybinding is a spell
+                // -------------------------
+
+                label = `${configs.get(settings.keys.spellIcon)} ${
+                    args.label ? args.label : args.command
+                }`;
+                description = `${prettifyKey(keybinding.key)}  ${
+                    // if displayCommandId and there is a label
+                    configs.get(settings.keys.displayCommandId) && args.label
+                        ? // show the command id
+                          args.command
+                        : ""
+                }`;
+            }
+        } else if (keybinding.command === settings.keys.commands.openMap) {
+            //   keybinding is a page
+            // ------------------------
+
+            label = `${configs.get(settings.keys.pagesIcon)} ${args.mapPage}`;
+            description = prettifyKey(keybinding.key);
+        }
+
+        const buttons = [settings.buttons.edit];
+
+        return {
+            ...keybinding.args,
+            label,
+            description,
+            buttons,
+            keybinding,
+        };
+    }
 }
 
 /**
@@ -252,6 +358,8 @@ async function revealKeybinding(keybinding) {
 module.exports = {
     getKeybindingsForPage,
     getAllPages,
+    convertToItems,
+    prettifyKey,
     saveKeybinding,
     revealKeybinding,
 };
