@@ -56,7 +56,8 @@ function initSolemnlySwearStatusBar() {
     const configs = settings.useConfigs();
     solemnlySwearStatusBarItem = initStatusBarBase(solemnlySwearStatusBarItem, {
         text: `${configs.get(settings.keys.spellIcon)} I solemnly swear ...`,
-        command: settings.keys.commands.closeMap, // might cause an issue with no command?
+        tooltip: "Sometimes spells go wonky, click to close!",
+        command: settings.keys.commands.closeMap,
         alignment: "Left",
     });
     return solemnlySwearStatusBarItem;
