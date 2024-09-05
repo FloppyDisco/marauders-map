@@ -10,9 +10,10 @@
         "vscode": "^1.91.0"
     },
     "categories": [
-        "Keybindings",
-        "Keyboard Shortcuts",
-        "Harry Potter references"
+        "Keymaps",
+        "Visualization",
+        "Education",
+        "Other"
     ],
     "activationEvents": [
         "onStartupFinished"
