@@ -114,6 +114,18 @@ function useMischiefStatusBar() {
     return mischiefStatusBarItem;
 }
 
+function clean() {
+    if (pageStatusBarItem) { // exists
+        pageStatusBarItem.dispose();
+    }
+    if (solemnlySwearStatusBarItem) { // exists
+        solemnlySwearStatusBarItem.dispose();
+    }
+    if (mischiefStatusBarItem) { // exists
+        mischiefStatusBarItem.dispose();
+    }
+}
+
 module.exports = {
     solenmlySwear: {
         initialize: initSolemnlySwearStatusBar,
