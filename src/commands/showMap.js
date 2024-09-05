@@ -1,8 +1,7 @@
 const vscode = require("vscode");
 // managers
 const settings = require("../managers/settingsManager");
-// components
-const maraudersMap = require("../components/maraudersMap");
+const mapManager = require("../managers/mapManager");
 
 // |---------------------|
 // |        Lumos        |
@@ -13,7 +12,8 @@ function register(context) {
         vscode.commands.registerCommand(
             settings.keys.commands.displayMap,
             () => {
-                if (maraudersMap && !maraudersMap.visible) {
+                const maraudersMap = mapManager.use()
+                if (maraudersMap && !maraudersMap.isVisible()) {
                     maraudersMap.show();
                 }
             }
