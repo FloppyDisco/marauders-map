@@ -1,8 +1,8 @@
 // managers
 const settings = require('./managers/settingsManager');
-const KBmanager = require('../src/managers/keybindingsManager');
+const keybindingsMgr = require('../src/managers/keybindingsManager');
 
-const keybindings = [
+const PCkeybindings = [
     {
         key: "ctrl+e",
         command: "maraudersMap.iSolemnlySwearThatIAmUpToNoGood",
@@ -10,8 +10,6 @@ const keybindings = [
         args: {
             mapPage: "Editor Spells",
         },
-        mac: "cmd+e",
-        linux: "ctrl+e",
     },
     {
         key: "ctrl+e",
@@ -21,8 +19,6 @@ const keybindings = [
             command: "workbench.action.focusNextGroup",
             label: "Focus Next Editor Group",
         },
-        mac: "cmd+e",
-        linux: "ctrl+e",
     },
     {
         key: "ctrl+n",
@@ -32,8 +28,6 @@ const keybindings = [
             command: "workbench.action.moveEditorToNextGroup",
             label: "Move Editor To Next Group",
         },
-        mac: "cmd+n",
-        linux: "ctrl+n",
     },
     {
         key: "ctrl+h",
@@ -43,8 +37,6 @@ const keybindings = [
             command: "workbench.action.moveEditorToPreviousGroup",
             label: "Move Editor to Previous Group",
         },
-        mac: "cmd+h",
-        linux: "ctrl+h",
     },
     {
         key: "ctrl+,",
@@ -54,8 +46,6 @@ const keybindings = [
             command: "workbench.action.splitEditorDown",
             label: "Split Down",
         },
-        mac: "cmd+,",
-        linux: "ctrl+,",
     },
     {
         key: "ctrl+l",
@@ -65,8 +55,6 @@ const keybindings = [
             command: "workbench.action.toggleEditorGroupLayout",
             label: "Toggle Layout",
         },
-        mac: "cmd+l",
-        linux: "ctrl+l",
     },
     {
         key: "ctrl+m",
@@ -76,8 +64,6 @@ const keybindings = [
             command: "workbench.action.toggleMaximizeEditorGroup",
             label: "Maximize Editor Group",
         },
-        mac: "cmd+m",
-        linux: "ctrl+m",
     },
     {
         key: "ctrl+w",
@@ -87,8 +73,6 @@ const keybindings = [
             command: "workbench.action.closeEditorsAndGroup",
             label: "Close Group",
         },
-        mac: "cmd+w",
-        linux: "ctrl+w",
     },
     {
         key: "ctrl+o",
@@ -98,8 +82,6 @@ const keybindings = [
             command: "workbench.action.closeOtherEditors",
             label: "Close Other Editors In Group",
         },
-        mac: "cmd+o",
-        linux: "ctrl+o",
     },
     {
         key: "ctrl+f",
@@ -109,8 +91,6 @@ const keybindings = [
             command: "maraudersMap.iSolemnlySwearThatIAmUpToNoGood",
             args: {
                 mapPage: "Fold Spells",
-                mac: "cmd+f",
-                linux: "ctrl+f",
             },
         },
     },
@@ -122,8 +102,6 @@ const keybindings = [
             command: "editor.foldRecursively",
             label: "Fold",
         },
-        mac: "cmd+f",
-        linux: "ctrl+f",
     },
     {
         key: "ctrl+a",
@@ -133,8 +111,6 @@ const keybindings = [
             command: "editor.foldAll",
             label: "Fold All",
         },
-        mac: "cmd+a",
-        linux: "ctrl+a",
     },
     {
         key: "ctrl+e",
@@ -144,8 +120,6 @@ const keybindings = [
             command: "editor.foldAllExcept",
             label: "Fold All Except",
         },
-        mac: "cmd+e",
-        linux: "ctrl+e",
     },
     {
         key: "ctrl+u",
@@ -155,8 +129,6 @@ const keybindings = [
             command: "editor.unfoldRecursively",
             label: "Unfold",
         },
-        mac: "cmd+u",
-        linux: "ctrl+u",
     },
     {
         key: "ctrl+n",
@@ -166,8 +138,6 @@ const keybindings = [
             command: "editor.unfoldAll",
             label: "Unfold All",
         },
-        mac: "cmd+n",
-        linux: "ctrl+n",
     },
     {
         key: "ctrl+x",
@@ -177,8 +147,153 @@ const keybindings = [
             command: "editor.unfoldAllExcept",
             label: "Unfold All Except",
         },
-        mac: "cmd+x",
-        linux: "ctrl+x",
+    },
+];
+const MacKeybindings = [
+    {
+        key: "cmd+e",
+        command: "maraudersMap.iSolemnlySwearThatIAmUpToNoGood",
+        when: "!maraudersMapIsOpen",
+        args: {
+            mapPage: "Editor Spells",
+        },
+    },
+    {
+        key: "cmd+e",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Editor_Spells",
+        args: {
+            command: "workbench.action.focusNextGroup",
+            label: "Focus Next Editor Group",
+        },
+    },
+    {
+        key: "cmd+n",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Editor_Spells",
+        args: {
+            command: "workbench.action.moveEditorToNextGroup",
+            label: "Move Editor To Next Group",
+        },
+    },
+    {
+        key: "cmd+h",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Editor_Spells",
+        args: {
+            command: "workbench.action.moveEditorToPreviousGroup",
+            label: "Move Editor to Previous Group",
+        },
+    },
+    {
+        key: "cmd+,",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Editor_Spells",
+        args: {
+            command: "workbench.action.splitEditorDown",
+            label: "Split Down",
+        },
+    },
+    {
+        key: "cmd+l",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Editor_Spells",
+        args: {
+            command: "workbench.action.toggleEditorGroupLayout",
+            label: "Toggle Layout",
+        },
+    },
+    {
+        key: "cmd+m",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Editor_Spells",
+        args: {
+            command: "workbench.action.toggleMaximizeEditorGroup",
+            label: "Maximize Editor Group",
+        },
+    },
+    {
+        key: "cmd+w",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Editor_Spells",
+        args: {
+            command: "workbench.action.closeEditorsAndGroup",
+            label: "Close Group",
+        },
+    },
+    {
+        key: "cmd+o",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Editor_Spells",
+        args: {
+            command: "workbench.action.closeOtherEditors",
+            label: "Close Other Editors In Group",
+        },
+    },
+    {
+        key: "cmd+f",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Editor_Spells",
+        args: {
+            command: "maraudersMap.iSolemnlySwearThatIAmUpToNoGood",
+            args: {
+                mapPage: "Fold Spells",
+            },
+        },
+    },
+    {
+        key: "cmd+f",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Fold_Commands",
+        args: {
+            command: "editor.foldRecursively",
+            label: "Fold",
+        },
+    },
+    {
+        key: "cmd+a",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Fold_Commands",
+        args: {
+            command: "editor.foldAll",
+            label: "Fold All",
+        },
+    },
+    {
+        key: "cmd+e",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Fold_Commands",
+        args: {
+            command: "editor.foldAllExcept",
+            label: "Fold All Except",
+        },
+    },
+    {
+        key: "cmd+u",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Fold_Commands",
+        args: {
+            command: "editor.unfoldRecursively",
+            label: "Unfold",
+        },
+    },
+    {
+        key: "cmd+n",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Fold_Commands",
+        args: {
+            command: "editor.unfoldAll",
+            label: "Unfold All",
+        },
+    },
+    {
+        key: "cmd+x",
+        command: "maraudersMap.mischiefManaged",
+        when: "maraudersMap.Fold_Commands",
+        args: {
+            command: "editor.unfoldAllExcept",
+            label: "Unfold All Except",
+        },
     },
 ];
 
@@ -186,8 +301,9 @@ const keybindings = [
  * A function to install the example Page and Spell keybindings
  */
 function installExamplePages(){
+    const keybindings = keybindingsMgr.platform === "darwin" ? MacKeybindings : PCkeybindings
     keybindings.forEach((kb) => {
-        KBmanager.saveKeybinding(kb);
+        keybindingsMgr.saveKeybinding(kb);
     })
 }
 
