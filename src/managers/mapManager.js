@@ -21,8 +21,7 @@ function initialize({ mapDelay, mapPage, selectedPageManually, whenContext, remo
     }
 
     const configs = settings.useConfigs();
-
-
+    
     //   Create Map
     // --------------
 
@@ -35,7 +34,6 @@ function initialize({ mapDelay, mapPage, selectedPageManually, whenContext, remo
         )} ${mapPage}`;
     }
     maraudersMap.placeholder = "Choose your spell...";
-
     maraudersMap.onDidTriggerItemButton(promptsMgr.menuItemButtonTrigger);
 
     // |-----------------------|
