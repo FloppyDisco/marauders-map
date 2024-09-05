@@ -121,7 +121,8 @@ example keybindings:
 
 `0.0.9`
  - support for an "order" argument, to specify the position of Spells on a Page
-
+ - bug fix on default pages
+ 
 ----
 
 `0.0.8`
