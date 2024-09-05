@@ -90,7 +90,7 @@ const PCkeybindings = [
         args: {
             command: "maraudersMap.iSolemnlySwearThatIAmUpToNoGood",
             args: {
-                mapPage: "Fold Spells",
+                mapPage: "Fold Commands",
             },
         },
     },
@@ -237,7 +237,7 @@ const MacKeybindings = [
         args: {
             command: "maraudersMap.iSolemnlySwearThatIAmUpToNoGood",
             args: {
-                mapPage: "Fold Spells",
+                mapPage: "Fold Commands",
             },
         },
     },
