@@ -33,7 +33,7 @@ function initialize(mapPage) {
      */
     setWhenContext = () => {
         vscode.commands.executeCommand("setContext", settings.keys.mapOpenContext, true);
-        vscode.commands.executeCommand("setContext", whenContext, true);
+        vscode.commands.executeCommand("setContext", whenContext? whenContext : '', true);
     }
 
     /**
@@ -41,7 +41,7 @@ function initialize(mapPage) {
      */
     removeWhenContext = () => {
         vscode.commands.executeCommand("setContext", settings.keys.mapOpenContext, undefined);
-        vscode.commands.executeCommand("setContext", whenContext, undefined);
+        vscode.commands.executeCommand("setContext", whenContext? whenContext : '', undefined);
     }
 
     return { whenContext, setWhenContext, removeWhenContext };
@@ -57,7 +57,7 @@ function initialize(mapPage) {
  *   - `removeWhenContext`: A function to remove the necessary when contexts in VS Code.
  */
 function use() {
-        return whenContext ? { whenContext, setWhenContext, removeWhenContext } : {}
+        return { whenContext, setWhenContext, removeWhenContext }
 }
 
 module.exports = {
