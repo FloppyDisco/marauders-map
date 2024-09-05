@@ -6,7 +6,7 @@ const keybindingsMgr = require("./keybindingsManager");
 const statusBarMgr = require("./statusBarManager");
 
 let maraudersMap;
-let visible;
+let mapOpenTimer;
 
 /**
  * Function to create and return the maraudersMap
@@ -109,7 +109,7 @@ function initialize({ mapDelay, mapPage, selectedPageManually, whenContext, remo
             : configs.get(settings.keys.defaultMapDelay);
 
     if (!selectedPageManually && mapDelayTime) {
-        setTimeout(() => {
+        mapOpenTimer = setTimeout(() => {
             // show map after delay
             if (maraudersMap && !maraudersMap.isVisible) {
                 maraudersMap.open();
@@ -125,8 +125,21 @@ function use() {
     return maraudersMap;
 }
 
+function clean() {
+    if(maraudersMap){
+        maraudersMap.dispose();
+    }
+}
+
+function cancelTimer(){
+    console.log('cancelling timer:',mapOpenTimer);
+
+    clearTimeout(mapOpenTimer);
+}
 
 module.exports = {
     initialize,
     use,
+    clean,
+    cancelTimer,
 };
