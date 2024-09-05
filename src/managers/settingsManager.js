@@ -26,7 +26,8 @@ function initialize() {
 // ---------------------
 const mapIcon = "🗺️";
 const maraudersMapPrefix = "maraudersMap";
-const buttons = { // buttons feels clunky this could be managed better i think
+
+const buttons = {
     edit: {
         id: "edit",
         iconPath: new vscode.ThemeIcon("gear"),
@@ -81,7 +82,6 @@ function getConfigs() {
     // internal settings
     configs.set(keys.titleIcon, mapIcon);
     configs.set(keys.inputBoxTitle, `The Marauders Map ${mapIcon}`);
-    configs.set("buttons", buttons);
 
     // settings.json
     Object.keys(defaultValues).forEach((key) => {
@@ -105,4 +105,14 @@ module.exports = {
     initialize,
     useConfigs,
     keys,
+    buttons
 };
+
+
+// |-----------------------|
+// |        Feature        |
+// |-----------------------|
+
+// possible future settings:
+
+// maraudersMap.ImADirtyMuggle: true => turn the Harry PotterNess off.
