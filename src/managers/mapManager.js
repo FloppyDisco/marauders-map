@@ -4,6 +4,7 @@ const vscode = require("vscode");
 const settings = require("./settingsManager");
 const keybindingsMgr = require("./keybindingsManager");
 const statusBarMgr = require("./statusBarManager");
+const promptsMgr = require("./promptManager");
 
 let maraudersMap;
 let mapOpenTimer;
@@ -13,6 +14,7 @@ let mapOpenTimer;
  * @returns {vscode.QuickPick} The maraudersMap quick pick
  */
 function initialize({ mapDelay, mapPage, selectedPageManually, whenContext, removeWhenContext }) {
+
     if (maraudersMap) {
         // exists
         maraudersMap.dispose();
@@ -25,7 +27,6 @@ function initialize({ mapDelay, mapPage, selectedPageManually, whenContext, remo
     // --------------
 
     maraudersMap = vscode.window.createQuickPick();
-    visible = false;
 
     const displayTitle = configs.get(settings.keys.displayMapTitle);
     if (displayTitle) {
@@ -35,23 +36,7 @@ function initialize({ mapDelay, mapPage, selectedPageManually, whenContext, remo
     }
     maraudersMap.placeholder = "Choose your spell...";
 
-    maraudersMap.open = () => {
-        visible = true;
-        maraudersMap.show();
-    };
-
-    maraudersMap.onDidTriggerItemButton((event) => {
-        const item = event.item;
-        const selectedButton = event.button;
-        const keybinding = item.keybinding;
-
-        switch (selectedButton.id) {
-            case settings.buttons.edit.id:
-                keybindingsMgr.revealKeybinding(keybinding);
-                break;
-            // potentially add more buttons in future
-        }
-    });
+    maraudersMap.onDidTriggerItemButton(promptsMgr.menuItemButtonTrigger);
 
     // |-----------------------|
     // |        Feature        |
@@ -59,26 +44,21 @@ function initialize({ mapDelay, mapPage, selectedPageManually, whenContext, remo
     // go back page button for nested pages?
     // maraudersMap.buttons= [];
 
-    maraudersMap.isVisible = () => {
-        return visible;
-    };
 
 
     maraudersMap.onDidHide(() => {
+        removeWhenContext();
         maraudersMap.dispose();
         statusBarMgr.page.use().dispose();
-        removeWhenContext();
-        visible = null;
     });
 
     maraudersMap.onDidChangeSelection(([selection]) => {
         //   Magic Sauce Is HERE
         // -----------------------
+        removeWhenContext();
         maraudersMap.dispose();
         statusBarMgr.page.use().dispose();
-        removeWhenContext();
-        visible = null;
-        vscode.commands.executeCommand(
+        vscode.commands.executeCommand( // well ok, it's here...
             selection.command,
             selection.args
         );
@@ -92,16 +72,15 @@ function initialize({ mapDelay, mapPage, selectedPageManually, whenContext, remo
 
     const spells = keybindingsMgr.convertToItems(keybindings);
 
-    maraudersMap.items = spells
-
-    maraudersMap.items.push(
+    maraudersMap.items = [
+        ...spells,
         {
             label: "$(add) New Spell",
             command: settings.keys.commands.saveSpell,
             args: { mapPage },
             alwaysShow: true,
         },
-    );
+    ]
 
     const mapDelayTime =
         mapDelay !== undefined
@@ -111,13 +90,13 @@ function initialize({ mapDelay, mapPage, selectedPageManually, whenContext, remo
     if (!selectedPageManually && mapDelayTime) {
         mapOpenTimer = setTimeout(() => {
             // show map after delay
-            if (maraudersMap && !maraudersMap.isVisible) {
-                maraudersMap.open();
+            if (maraudersMap && !maraudersMap._visible) {
+                maraudersMap.show();
             }
         }, mapDelayTime);
     } else {
         // map delay is zero, show map!
-        maraudersMap.open();
+        maraudersMap.show();
     }
 }
 
