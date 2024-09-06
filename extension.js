@@ -17,9 +17,10 @@ const examplePages = require("./src/examplePages");
  */
 function activate(context) {
     // get configs
-    settings.initialize(); // must initialize to register the event listener
+    settings.initialize(context); // must initialize to register the event listener
 
     // create UI
+    statusBarMgr.register(context);
     statusBarMgr.mapIcon.initialize().show() // display the extension icon
 
     // register commands
