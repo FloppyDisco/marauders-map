@@ -73,6 +73,7 @@ common keycodes
 - `enter`
 - `backspace`
 
+----
 
 ### Map Delay Time
 
@@ -89,6 +90,8 @@ Set `3000` for 3 secs
 Alternatively you may add a `"mapDelay"` to the `"args"` of any Page keybinding which will only change the delay time for that Page. Maybe you have groups of commands that you would like to have open immediately.
 
 setting any `"mapDelay"` to `0` will open the Map immediately.
+
+----
 
 example keybindings:
 
@@ -122,7 +125,7 @@ example keybindings:
 `0.0.9`
  - support for an "order" argument, to specify the position of Spells on a Page
  - bug fix on default pages
- 
+
 ----
 
 `0.0.8`
