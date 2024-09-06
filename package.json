@@ -30,7 +30,7 @@
                     "properties": {
                         "defaultMapDelay": {
                             "type": "number",
-                            "default": 1000,
+                            "default": 350,
                             "description": "Time (ms) to delay opening a map page by default."
                         },
                         "pageIcon": {
@@ -62,7 +62,7 @@
                 },
                 "maraudersMap.defaultMapDelay": {
                     "type": "number",
-                    "default": 1000,
+                    "default": 350,
                     "description": "Time (ms) to delay opening a map page by default."
                 },
                 "maraudersMap.pageIcon": {
