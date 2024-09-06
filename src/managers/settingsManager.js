@@ -9,17 +9,19 @@ let defaultValues;
  * Function to initialize the workspace configurations
  *
  */
-function initialize() {
+function initialize(context) {
     // get values
     defaultValues = getDefaultValuesFromPackageJSON();
     configCache = getConfigs();
 
     // add event listener for config changes
-    vscode.workspace.onDidChangeConfiguration((event) => {
-        if (event.affectsConfiguration(keys.maraudersMapPrefix)) {
-            configCache = getConfigs();
-        }
-    });
+    context.subscriptions.push([
+        vscode.workspace.onDidChangeConfiguration((event) => {
+            if (event.affectsConfiguration(keys.maraudersMapPrefix)) {
+                configCache = getConfigs();
+            }
+        })
+    ])
 }
 
 //   Internal Settings
