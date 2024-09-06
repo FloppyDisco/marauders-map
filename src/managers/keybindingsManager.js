@@ -207,6 +207,13 @@ function convertToItems(keybindings) {
                     args.args.mapPage
                 } ...`;
                 description = `${prettifyKey(keybinding.key)}`;
+
+            } else if(args.separator){
+                //   keybinding is a separator
+                // -----------------------------
+                
+                label = args.label
+                args.kind = vscode.QuickPickItemKind.Separator
             } else {
                 //   keybinding is a spell
                 // -------------------------
