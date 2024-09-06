@@ -208,10 +208,10 @@ function convertToItems(keybindings) {
                 } ...`;
                 description = `${prettifyKey(keybinding.key)}`;
 
-            } else if(args.separator){
-                //   keybinding is a separator
-                // -----------------------------
-                
+            } else if(args.command === "separator"){
+                //   keybinding is a divider
+                // ---------------------------
+
                 label = args.label
                 args.kind = vscode.QuickPickItemKind.Separator
             } else {
