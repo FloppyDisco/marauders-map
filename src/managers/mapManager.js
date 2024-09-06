@@ -21,7 +21,7 @@ function initialize({ mapDelay, mapPage, selectedPageManually, whenContext, remo
     }
 
     const configs = settings.useConfigs();
-    
+
     //   Create Map
     // --------------
 
@@ -72,6 +72,9 @@ function initialize({ mapDelay, mapPage, selectedPageManually, whenContext, remo
 
     maraudersMap.items = [
         ...spells,
+        {
+            kind: vscode.QuickPickItemKind.Separator
+        },
         {
             label: "$(add) New Spell",
             command: settings.keys.commands.saveSpell,

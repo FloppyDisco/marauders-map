@@ -174,7 +174,13 @@ async function promptUserForPage(isNestedPage = false) {
         label: "$(add) New Page",
         alwaysShow: true,
     };
-    pagePrompt.items = [...convertedItems, addPageItem];
+    pagePrompt.items = [
+        ...convertedItems,
+        {
+            kind: vscode.QuickPickItemKind.Separator
+        },
+        addPageItem
+    ];
 
     return new Promise((resolve) => {
         pagePrompt.onDidHide(() => {
