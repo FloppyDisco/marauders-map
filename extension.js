@@ -20,6 +20,7 @@ function activate(context) {
     settings.initialize(context); // must initialize to register the event listener
 
     // create UI
+    statusBarMgr.register(context);
     statusBarMgr.mapIcon.initialize().show() // display the extension icon
 
     // register commands

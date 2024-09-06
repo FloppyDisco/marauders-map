@@ -118,6 +118,15 @@ function useMischiefStatusBar() {
     return mischiefStatusBarItem;
 }
 
+function register(context) {
+    context.subscriptions.push([
+        pageStatusBarItem,
+        solemnlySwearStatusBarItem,
+        mischiefStatusBarItem,
+        mapStatusBarItem,
+    ])
+}
+
 function clean() {
     if (pageStatusBarItem) { // exists
         pageStatusBarItem.dispose();
@@ -147,5 +156,6 @@ module.exports = {
         initialize: initMapStatusBar,
         use: useMapStatusBar,
     },
+    register,
     clean,
 };
