@@ -94,6 +94,14 @@ async function promptUserForKey() {
  * @returns {Promise<string | undefined>} The provided label or undefined if canceled.
  */
 async function promptUserForLabel(selectedCommand, selectedKey) {
+
+    // |----------------------|
+    // |        Update        |
+    // |----------------------|
+
+    // this command needs to be used for creating a separator as well
+    // change the placeholder based on the command value?
+
     const configs = settings.useConfigs();
     const inputBoxTitle = configs.get(settings.keys.displayMapTitle)
         ? configs.get(settings.keys.inputBoxTitle)
@@ -138,7 +146,7 @@ let pagePrompt;
  * Function to prompt the user to select a Page
  * @returns {Promise<string | undefined>} The provided page name or undefined if canceled.
  */
-async function promptUserForPage(isNestedPage = false) {
+async function promptUserForPage({isNestedPage=false}) {
     // |---------------------|
     // |        *BUG*        |
     // |---------------------|
