@@ -48,12 +48,15 @@ function register(context) {
                 statusBarMgr.page.initialize(mapPage).show();
 
                 mapManager.initialize({
-                    mapDelay,
                     mapPage,
-                    selectedPageManually,
                     whenContext,
                     removeWhenContext
+                })
+                mapManager.callMap({
+                    mapDelay,
+                    selectedPageManually,
                 });
+
             }
         )
     );
