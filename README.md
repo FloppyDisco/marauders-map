@@ -72,24 +72,7 @@ common keycodes
 - `escape`
 - `enter`
 - `backspace`
-
-----
-
-### Map Delay Time
-
-The time delay before the map opens is user customizable.
-
-Change the "Map Delay Time" in Settings,
-
-or add `"MaraudersMap.defaultMapDelay": <number>,` in `settings.json`
-
-The value is (ms)
-
-Set `3000` for 3 secs
-
-Alternatively you may add a `"mapDelay"` to the `"args"` of any Page keybinding which will only change the delay time for that Page. Maybe you have groups of commands that you would like to have open immediately.
-
-setting any `"mapDelay"` to `0` will open the Map immediately.
+- `left`,`right`, etc...
 
 ----
 
@@ -119,8 +102,41 @@ example keybindings:
 
 ```
 
+----
+
+### Map Delay Time
+
+The time delay before the map opens is user customizable.
+
+Change the "Map Delay Time" in Settings,
+
+or add `"MaraudersMap.defaultMapDelay": <number>,` in `settings.json`
+
+The value is (ms)
+
+Set `3000` for 3 secs
+
+Alternatively you may add a `"mapDelay"` to the `"args"` of any Page keybinding which will only change the delay time for that Page. Maybe you have groups of commands that you would like to have open immediately.
+
+setting any `"mapDelay"` to `0` will open the Map immediately.
+
+----
+
+### Separators
+
+To keep your map organized, you can add a separator to any page
+- Select `+ New Spell` then `+ Add a Separator`.
+- Provide an optional labe for the separator
+- Choose where you want the separator to go by selecting a Spell, the separator wil go above this Spell
+
+Separators are great for organization, please note this default keyboard shortcut:
+
+`⌘↓` "QuickInput.nextSeparator" Which is great for moving through the menu quickly.
 
 ## Features
+
+`0.0.10`
+ - support for adding custom separators to the map
 
 `0.0.9`
  - support for an "order" argument, to specify the position of Spells on a Page
