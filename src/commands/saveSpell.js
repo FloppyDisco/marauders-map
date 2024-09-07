@@ -4,6 +4,7 @@ const settings = require("../managers/settingsManager");
 const keybindingsMgr = require("../managers/keybindingsManager");
 const whenMgr = require("../managers/whenManager");
 const promptManager = require("../managers/promptManager");
+const mapManager = require("../managers/mapManager");
 
 // |--------------------------------|
 // |        Expecto Patronum        |
@@ -23,38 +24,82 @@ function register(context) {
                 }
 
                 const selectedCommand = await promptManager.promptUserForCommand();
-                if (selectedCommand === undefined) {
-                    return; // exit on 'Esc' key
-                }
 
-                const isNestedPage =
-                    selectedCommand === settings.keys.commands.openMap;
-                let nestedPage; // exist for scope
-                if (isNestedPage) {
-                    // get the page that this command will go to =>
-                    nestedPage = await promptManager.promptUserForPage(isNestedPage);
-                    if (nestedPage === undefined) {
-                        return; // exit on 'Esc' key
-                    }
-                }
+                let selectedArgs = undefined;
+                let nestedPage;
+                let selectedLabel;
+                let selectedKey;
+                let selectedOrder;
 
-                const selectedKey = await promptManager.promptUserForKey();
-                if (selectedKey === undefined) {
-                    return; // exit on 'Esc' key
-                }
+                switch (selectedCommand) {
+                    case undefined:
+                        // exit on 'Esc' key
+                        return;
+                    case settings.keys.commands.openMap:
+                        //   command is nested page
+                        // --------------------------
 
-                const selectedLabel = isNestedPage
-                    ? ""
-                    : await promptManager.promptUserForLabel(selectedCommand, selectedKey);
-                if (selectedLabel === undefined) {
-                    return; // exit on 'Esc' key
-                }
+                        // get the page that this command will go to =>
+                        nestedPage = await promptManager.promptUserForPage({isNestedPage: true});
+                        if (nestedPage === undefined) {
+                            return; // exit on 'Esc' key
+                        }
 
-                const selectedArgs = isNestedPage
-                    ? {
-                        mapPage: nestedPage,
-                      }
-                    : undefined;
+                        selectedKey = await promptManager.promptUserForKey();
+                        if (selectedKey === undefined) {
+                            return; // exit on 'Esc' key
+                        }
+
+                        selectedLabel = undefined;
+                        selectedArgs = {
+                            mapPage: nestedPage,
+                          }
+                        break;
+                    case "separator":
+                        // command is adding a separator
+
+                        // |-----------------------|
+                        // |        Feature        |
+                        // |-----------------------|
+
+                        // prompt user for label
+                        selectedLabel = await promptManager.promptUserForLabel(selectedCommand);
+                        if (selectedLabel === undefined) {
+                            return; // exit on 'Esc' key
+                        }
+
+                        // ask which command to put the separator above
+                            // populate the page with the spells
+                            // change the on did select to return the index of the selected spell
+                            // assign the "order" arg to the index value
+
+                        // selectedOrder = await promptManager.promptUserForPage(mapPage);
+                        // not page, need to use mapManager to get the spells!!
+                        const whenContext = whenMgr.serializer(mapPage);
+
+                        mapManager.initialize({
+                            mapPage,
+                            whenContext,
+                        })
+                        selectedOrder = await mapManager.selectOrder();
+
+                        if (selectedOrder === undefined){
+                            return; // exit on 'Esc' key
+                        }
+                        break;
+                    default:
+
+                        selectedKey = await promptManager.promptUserForKey();
+                        if (selectedKey === undefined) {
+                            return; // exit on 'Esc' key
+                        }
+
+                        selectedLabel = await promptManager.promptUserForLabel(selectedCommand, selectedKey);
+                        if (selectedLabel === undefined) {
+                            return; // exit on 'Esc' key
+                        }
+                    break;
+                }
 
                 const newKeybinding = {
                     key: selectedKey ? selectedKey : undefined, // set to undefined for serialization
@@ -62,7 +107,8 @@ function register(context) {
                     when: whenMgr.serializer(mapPage),
                     args: {
                         command: selectedCommand,
-                        label: selectedLabel ? selectedLabel : undefined, // set to undefined for serialization
+                        label: selectedLabel,
+                        order: selectedOrder,
                         args: selectedArgs,
                     },
                 };
