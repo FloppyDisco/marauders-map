@@ -163,13 +163,6 @@ let pagePrompt;
  * @returns {Promise<string | undefined>} The provided page name or undefined if canceled.
  */
 async function promptUserForPage({ isNestedPage = false }) {
-  // |---------------------|
-  // |        *BUG*        |
-  // |---------------------|
-
-  // clicking away
-  // or escaping prompt
-  // from Map does not get rid of the solemnlySwearStatusBar item
 
   const configs = settings.useConfigs();
 
