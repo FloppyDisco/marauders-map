@@ -71,7 +71,7 @@ const keybindings = [
     when: "maraudersMap.Editor_Spells",
     args: {
       command: "separator",
-      label: "Closing Editors",
+      label: "Close Editors",
     },
   },
   {
@@ -197,7 +197,7 @@ function initialize(context) {
   // context.globalState.update(examplePagesKey, undefined);
 
 
-  
+
   // |-----------------------|
   // |        Feature        |
   // |-----------------------|
