@@ -137,6 +137,7 @@ Separators are great for organization, please note this default keyboard shortcu
 
 `0.0.10`
  - support for adding custom separators to Map Pages
+ - bug fix for keybinding.json not existing
 
 `0.0.9`
  - support for an "order" argument, to specify the position of Spells on a Page
