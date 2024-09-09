@@ -162,7 +162,7 @@ let pagePrompt;
  * Function to prompt the user to select a Page
  * @returns {Promise<string | undefined>} The provided page name or undefined if canceled.
  */
-async function promptUserForPage({ isNestedPage = false }) {
+async function promptUserForPage({ isNestedPage=false }={}) {
 
   const configs = settings.useConfigs();
 
