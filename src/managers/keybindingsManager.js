@@ -61,11 +61,24 @@ function getPathToKeybindingsFile() {
  * @returns {array} - a array of all keybindings.
  */
 function getKeybindings() {
+
+    const keybindingsPath = getPathToKeybindingsFile();
+
+    let currentContent = "[]"; // Default empty array content if file does not exist
     try {
-        const data = fs.readFileSync(getPathToKeybindingsFile(), "utf8");
-        const keybindings = jsonc.parse(data);
+        if (fs.existsSync(keybindingsPath)) {
+            // Read the current content of the keybindings file if it exists
+            currentContent = fs.readFileSync(keybindingsPath, "utf8");
+
+        } else {
+            fs.writeFileSync(keybindingsPath, currentContent, "utf8");
+        }
+
+        const keybindings = jsonc.parse(currentContent);
         return keybindings;
+
     } catch (error) {
+
         vscode.window.showErrorMessage("Could not parse keybindings.json");
         console.error("Error reading keybindings.json:", error);
         return [];
@@ -249,34 +262,40 @@ function convertToItems(keybindings) {
     }
 }
 
+
 /**
  * Function to write a new keybinding to the keybindings.json file with a backup and preserve comments.
  * @param {Object} newKeybinding - The new keybinding object to add.
  */
 function saveKeybinding(newKeybinding) {
-    // |---------------------|
-    // |        *BUG*        |
-    // |---------------------|
-
-    // if keybindings.json does not exist it does not get or save any new keybindings
-
-    const keybindingsPath = getPathToKeybindingsFile();
+    const keybindingsPath = getPathToKeybindingsFile(); // Replace with the correct path to keybindings.json
     const backupPath = keybindingsPath + ".backup";
 
     try {
-        const currentContent = fs.readFileSync(keybindingsPath, "utf8");
-        fs.writeFileSync(backupPath, currentContent);
+        let currentContent = "[]"; // Default empty array content if file does not exist
+        if (fs.existsSync(keybindingsPath)) {
+            // Read the current content of the keybindings file if it exists
+            currentContent = fs.readFileSync(keybindingsPath, "utf8");
 
-        // Parse the JSONC content preserving comments
+            // Backup the current keybindings.json
+            fs.writeFileSync(backupPath, currentContent);
+        } else {
+            // Create an empty keybindings.json file with an empty array if it doesn't exist
+            fs.writeFileSync(keybindingsPath, currentContent, "utf8");
+        }
+
+        // Parse the JSONC content preserving comments (or use empty array if content is empty)
         const currentKeybindings = jsonc.parse(currentContent) || [];
+
+        // Use jsonc.modify to prepare the edits to add the new keybinding
         const edits = jsonc.modify(
             currentContent,
-            [currentKeybindings.length],
+            [currentKeybindings.length], // Add the new keybinding at the end of the array
             newKeybinding,
             { formattingOptions: { insertSpaces: true, tabSize: 2 } }
         );
 
-        // Apply the edits to the original content to get the new content with the comment preserved
+        // Apply the edits to the original content to get the new content with the comments preserved
         const newContent = jsonc.applyEdits(currentContent, edits);
 
         // Write the updated content back to keybindings.json
@@ -286,11 +305,13 @@ function saveKeybinding(newKeybinding) {
     }
 }
 
+
 // |-----------------------|
 // |        Feature        |
 // |-----------------------|
 
 // update keybinding function?
+//  not necessary, just edit them in json
 
 /**
  * Function to open the keybindings.json file and reveal a specific keybinding by command.
