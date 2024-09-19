@@ -76,7 +76,7 @@ function initialize({ mapPage, whenContext, removeWhenContext }) {
   ];
 }
 
-function callMap({ mapDelay, selectedPageManually }) {
+function openMap({ mapDelay, selectedPageManually }) {
   const configs = settings.useConfigs();
 
   const mapDelayTime =
@@ -134,7 +134,7 @@ function cancelTimer() {
 
 module.exports = {
   initialize,
-  callMap,
+  openMap,
   use,
   selectOrder,
   clean,

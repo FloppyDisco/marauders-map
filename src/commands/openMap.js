@@ -52,11 +52,10 @@ function register(context) {
                     whenContext,
                     removeWhenContext
                 })
-                mapManager.callMap({
+                mapManager.openMap({
                     mapDelay,
                     selectedPageManually,
                 });
-
             }
         )
     );
