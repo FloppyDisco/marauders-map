@@ -232,7 +232,6 @@ function convertToItems(keybindings) {
                 ...settings.buttons.editSpell,
                 trigger: () => {revealKeybinding(keybinding)},
             }
-            // add button to diff file
         ];
 
         const menuItem = {
