@@ -13,7 +13,7 @@ function register(context) {
             settings.keys.commands.displayMap,
             () => {
                 const maraudersMap = mapManager.use()
-                if (maraudersMap && !maraudersMap.isVisible()) {
+                if (maraudersMap && !maraudersMap._visible) {
                     maraudersMap.show();
                 }
             }
