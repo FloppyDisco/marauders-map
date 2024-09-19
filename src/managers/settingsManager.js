@@ -1,9 +1,15 @@
 const vscode = require("vscode");
+const os = require("os");
 const path = require("path");
 const fs = require("fs");
 
 let configCache;
 let defaultValues;
+
+
+const platform = os.platform();
+const isVSCodium = vscode.env.appName.includes("VSCodium");
+
 
 /**
  * Function to initialize the workspace configurations
@@ -22,6 +28,25 @@ function initialize(context) {
             }
         })
     ])
+}
+
+
+/**
+ * Function to take a json keybinding code and return a human friendly display version
+ * @param {string} keyCode the json keybinding.key
+ * @returns {string} the prettified keyCode
+ */
+function prettifyKey(keyCode) {
+    //  "cmd+alt+e" => "⌘⌥E"
+    return keyCode
+        ? `(${keyCode})`
+            .toUpperCase()
+            .replaceAll("+", "")
+            .replace("CMD", "⌘")
+            .replace("ALT", "⌥")
+            .replace("CTRL", "^")
+            .replace("SHIFT", "⇧")
+        : ""
 }
 
 //   Internal Settings
@@ -107,7 +132,10 @@ module.exports = {
     initialize,
     useConfigs,
     keys,
-    buttons
+    buttons,
+    prettifyKey,
+    platform,
+    isVSCodium
 };
 
 

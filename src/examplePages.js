@@ -172,7 +172,7 @@ const MacKeybindings = keybindings.map((kb) => ({
  */
 function installExamplePages() {
   const keybindings =
-    keybindingsMgr.platform === "darwin" ? MacKeybindings : PCkeybindings;
+    settings.platform === "darwin" ? MacKeybindings : PCkeybindings;
   keybindings.forEach((kb) => {
     keybindingsMgr.saveKeybinding(kb);
   });

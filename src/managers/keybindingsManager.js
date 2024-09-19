@@ -6,22 +6,14 @@ const jsonc = require("jsonc-parser");
 
 const settings = require("./settingsManager");
 
-const platform = os.platform();
-const isVSCodium = vscode.env.appName.includes("VSCodium");
-
 /**
  * Function to determine if the extension is running in VSCodium or VS Code.
  * @returns {boolean} true if running in VSCodium, false if running in VS Code.
  */
 function getPathToKeybindingsFile() {
-    const baseFolder = isVSCodium ? "VSCodium" : "Code"; // change directory name based on application
+    const baseFolder = settings.isVSCodium ? "VSCodium" : "Code"; // change directory name based on application
 
-    // console.log('---------------');
-    // console.log('platform',platform);
-    // console.log('isVSCodium',isVSCodium());
-    // console.log('baseFolder',baseFolder);
-
-    switch (platform) {
+    switch (settings.platform) {
         case "darwin": // macOS
             return path.join(
                 os.homedir(),
@@ -52,7 +44,7 @@ function getPathToKeybindingsFile() {
             // |-----------------------|
             // add setting for user to provide path to keybindings.json
 
-            throw new Error(`Unsupported platform: ${platform}`);
+            throw new Error(`Unsupported platform: ${settings.platform}`);
     }
 }
 
@@ -152,23 +144,6 @@ function getAllPages() {
     });
 }
 
-/**
- * Function to take a json keybinding code and return a human friendly display version
- * @param {string} keyCode the json keybinding.key
- * @returns {string} the prettified keyCode
- */
-function prettifyKey(keyCode) {
-    //  "cmd+alt+e" => "⌘⌥E"
-    return keyCode
-        ? `(${keyCode})`
-            .toUpperCase()
-            .replaceAll("+", "")
-            .replace("CMD", "⌘")
-            .replace("ALT", "⌥")
-            .replace("CTRL", "^")
-            .replace("SHIFT", "⇧")
-        : ""
-}
 
 function convertToItems(keybindings) {
     const configs = settings.useConfigs();
@@ -221,7 +196,7 @@ function convertToItems(keybindings) {
                 label = `   ${configs.get(settings.keys.subpageIcon)} Go to ${
                     args.args.mapPage
                 } ...`;
-                description = `${prettifyKey(keybinding.key)}`;
+                description = `${settings.prettifyKey(keybinding.key)}`;
 
             } else if(args.command === "separator"){
                 //   keybinding is a divider
@@ -236,7 +211,7 @@ function convertToItems(keybindings) {
                 label = `${configs.get(settings.keys.spellIcon)} ${
                     args.label ? args.label : args.command
                 }`;
-                description = `${prettifyKey(keybinding.key)}  ${
+                description = `${settings.prettifyKey(keybinding.key)}  ${
                     // if displayCommandId and there is a label
                     configs.get(settings.keys.displayCommandId) && args.label
                         ? // show the command id
@@ -249,7 +224,7 @@ function convertToItems(keybindings) {
             // ------------------------
 
             label = `${configs.get(settings.keys.pageIcon)} ${args.mapPage}`;
-            description = prettifyKey(keybinding.key);
+            description = settings.prettifyKey(keybinding.key);
         }
 
         const buttons = [settings.buttons.edit];
@@ -382,8 +357,6 @@ module.exports = {
     getKeybindingsForPage,
     getAllPages,
     convertToItems,
-    prettifyKey,
     saveKeybinding,
     revealKeybinding,
-    platform,
 };

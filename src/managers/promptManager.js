@@ -122,7 +122,7 @@ async function promptUserForLabel(selectedCommand, selectedKey) {
   const placeHolder =
     selectedCommand === "separator"
       ? "Provide a label for the separator (may be blank)"
-      : `Or leave blank for default: ${selectedCommand} (${keybindingsMgr.prettifyKey(
+      : `Or leave blank for default: ${selectedCommand} (${settings.prettifyKey(
           selectedKey
         )})`;
 
