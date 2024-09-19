@@ -2,18 +2,9 @@ const vscode = require("vscode");
 const settings = require("../managers/settingsManager");
 const keybindingsMgr = require("../managers/keybindingsManager");
 
-function menuItemButtonTrigger(event) {
-  const item = event.item;
-  const selectedButton = event.button;
-  const keybinding = item.keybinding;
 
-  switch (selectedButton.id) {
-    case settings.buttons.edit.id:
-      keybindingsMgr.revealKeybinding(keybinding);
-      break;
-    // potentially add more buttons in future
-  }
-}
+const whenMgr = require("../managers/whenManager");
+
 
 /**
  * Function to prompt the user to enter a command.
@@ -165,10 +156,12 @@ let pagePrompt;
 async function promptUserForPage({ isNestedPage=false }={}) {
 
   const configs = settings.useConfigs();
+  const { setGetMapPageContext, removeGetMapPageContext} = whenMgr.useGetMapPageContext();
 
   //   Create
   // ----------
   pagePrompt = vscode.window.createQuickPick();
+  setGetMapPageContext();
 
   //   Decorate
   // ------------
@@ -202,16 +195,13 @@ async function promptUserForPage({ isNestedPage=false }={}) {
   return new Promise((resolve) => {
     pagePrompt.onDidHide(() => {
       pagePrompt.dispose();
+      removeGetMapPageContext();
       resolve(undefined);
     });
     pagePrompt.onDidAccept(async () => {
-      console.log("page was selected");
-
       pagePrompt.hide();
 
       const [selectedOption] = pagePrompt.selectedItems;
-      console.log("selectedOption", selectedOption);
-
       if (selectedOption.label === addPageItem.label) {
         // Selected to create a new page
         if (isNestedPage) {
@@ -245,7 +235,13 @@ async function promptUserForPage({ isNestedPage=false }={}) {
 
 function clean() {
   if (pagePrompt) {
-    pagePrompt.dispose();
+    pagePrompt.hide();
+  }
+}
+
+function usePagePrompt() {
+  if (pagePrompt){
+    return pagePrompt;
   }
 }
 
@@ -288,4 +284,5 @@ module.exports = {
   promptUserForName,
   promptUserForPage,
   clean,
+  usePagePrompt,
 };

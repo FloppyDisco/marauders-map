@@ -60,8 +60,25 @@ function use() {
         return { whenContext, setWhenContext, removeWhenContext }
 }
 
+
+
+function useGetMapPageContext() {
+
+    function setGetMapPageContext(){
+        vscode.commands.executeCommand("setContext", settings.keys.getMapPageContext, true);
+    }
+    function removeGetMapPageContext() {
+        vscode.commands.executeCommand("setContext", settings.keys.getMapPageContext, undefined);   
+    }
+    return {
+        setGetMapPageContext,
+        removeGetMapPageContext
+    }
+}
+
 module.exports = {
     initialize,
     serializer,
-    use
+    use,
+    useGetMapPageContext,
 }
