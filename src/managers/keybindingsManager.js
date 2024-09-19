@@ -159,13 +159,15 @@ function getAllPages() {
  */
 function prettifyKey(keyCode) {
     //  "cmd+alt+e" => "⌘⌥E"
-    return `(${keyCode})`
-        .toUpperCase()
-        .replaceAll("+", "")
-        .replace("CMD", "⌘")
-        .replace("ALT", "⌥")
-        .replace("CTRL", "^")
-        .replace("SHIFT", "⇧");
+    return keyCode
+        ? `(${keyCode})`
+            .toUpperCase()
+            .replaceAll("+", "")
+            .replace("CMD", "⌘")
+            .replace("ALT", "⌥")
+            .replace("CTRL", "^")
+            .replace("SHIFT", "⇧")
+        : ""
 }
 
 function convertToItems(keybindings) {
