@@ -137,9 +137,9 @@ function getAllPages() {
     return Array.from(uniqueMapPages).map((page) => {
         //
         return mapPagesKeybindings.hasOwnProperty(page)
-            ? //   return page keybindings before nested page keybindings
-              // ----------------------------------------------------------
-              mapPagesKeybindings[page]
+            //   return page keybindings before nested page keybindings
+            // ----------------------------------------------------------
+            ? mapPagesKeybindings[page]
             : nestedMapPagesKeybindings[page];
     });
 }
@@ -227,15 +227,22 @@ function convertToItems(keybindings) {
             description = settings.prettifyKey(keybinding.key);
         }
 
-        const buttons = [settings.buttons.edit];
+        const buttons = [
+            {
+                ...settings.buttons.editSpell,
+                trigger: () => {revealKeybinding(keybinding)},
+            }
+            // add button to diff file
+        ];
 
-        return {
+        const menuItem = {
             ...keybinding.args,
             label,
             description,
             buttons,
-            keybinding,
         };
+
+        return menuItem
     }
 }
 

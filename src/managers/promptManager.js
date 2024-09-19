@@ -170,7 +170,7 @@ async function promptUserForPage({ isNestedPage=false }={}) {
     pagePrompt.title = `${configs.get(settings.keys.titleIcon)}`;
   }
   pagePrompt.placeholder = "Select a page ...";
-  pagePrompt.onDidTriggerItemButton(menuItemButtonTrigger);
+  pagePrompt.onDidTriggerItemButton((event) => {event.button.trigger()});
   let userInput = "";
   pagePrompt.onDidChangeValue((value) => {
     userInput = value;
@@ -277,7 +277,6 @@ async function createNewMapPage(userInput) {
 }
 
 module.exports = {
-  menuItemButtonTrigger,
   promptUserForCommand,
   promptUserForKey,
   promptUserForLabel,

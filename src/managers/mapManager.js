@@ -4,7 +4,6 @@ const vscode = require("vscode");
 const settings = require("./settingsManager");
 const keybindingsMgr = require("./keybindingsManager");
 const statusBarMgr = require("./statusBarManager");
-const promptsMgr = require("./promptManager");
 
 let maraudersMap;
 let mapOpenTimer;
@@ -26,12 +25,30 @@ function initialize({ mapPage, whenContext, removeWhenContext }) {
 
   maraudersMap = vscode.window.createQuickPick();
 
+  maraudersMap.placeholder = "Choose your spell...";
+
+  // call trigger functions when buttonr are clicked
+  maraudersMap.onDidTriggerItemButton((event) => event.button.trigger());
+  maraudersMap.onDidTriggerButton((event) => event.trigger());
+
+  const mapPages = keybindingsMgr.getAllPages()
+  const keybinding = mapPages.find((kb) => kb.args.mapPage === mapPage)
+
+  // save trigger function to map so button trigger may be called even if button is no visible
+  maraudersMap.editPageButtonTrigger = () => {keybindingsMgr.revealKeybinding(keybinding)}
+
   const displayTitle = configs.get(settings.keys.displayMapTitle);
   if (displayTitle) {
     maraudersMap.title = `${configs.get(settings.keys.titleIcon)} ${mapPage}`;
+    // button will not be visible if displayTitle is false
+    maraudersMap.buttons = [
+      {
+        ...settings.buttons.editPage,
+        // add trigger function to button
+        trigger: () => {maraudersMap.editPageButtonTrigger()},
+      }
+    ]
   }
-  maraudersMap.placeholder = "Choose your spell...";
-  maraudersMap.onDidTriggerItemButton(promptsMgr.menuItemButtonTrigger);
 
   // |-----------------------|
   // |        Feature        |
