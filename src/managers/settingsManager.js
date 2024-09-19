@@ -55,15 +55,27 @@ const mapIcon = "🗺️";
 const maraudersMapPrefix = "maraudersMap";
 
 const buttons = {
-    edit: {
+    editSpell: {
         id: "edit",
         iconPath: new vscode.ThemeIcon("gear"),
-        tooltip: "Edit this Spell",
+        tooltip: `Edit this Spell ${prettifyKey(platform === "darwin"
+            ? "cmd+alt+'"
+            : "ctrl+alt+'"
+        )}`,
+    },
+    editPage: {
+        id: "edit",
+        iconPath: new vscode.ThemeIcon("gear"),
+        tooltip: `Edit this Page ${prettifyKey(platform === "darwin"
+            ? "cmd+alt+shift+'"
+            : "ctrl+alt+shift+'"
+        )}`,
     },
 };
 const keys = {
     maraudersMapPrefix: maraudersMapPrefix,
     mapOpenContext: "maraudersMapIsOpen",
+    getMapPageContext: "getMapPage",
     defaultMapDelay: "defaultMapDelay",
     pageIcon: "pageIcon",
     subpageIcon: "subpageIcon",
@@ -79,8 +91,8 @@ const keys = {
         openMap: `${maraudersMapPrefix}.iSolemnlySwearThatIAmUpToNoGood`,
         closeMap: `${maraudersMapPrefix}.mischiefManaged`,
         displayMap: `${maraudersMapPrefix}.lumos`,
-        // revealSpell: "accio",
-        // erecto
+        editPage: `${maraudersMapPrefix}.erecto`,
+        editSpell: `${maraudersMapPrefix}.accio`,
         // prior incantato
     },
 };
