@@ -5,6 +5,8 @@ const statusBarMgr = require("./src/managers/statusBarManager");
 // commands
 const openMap = require("./src/commands/openMap");
 const closeMap = require("./src/commands/closeMap");
+const editPage = require("./src/commands/editPage");
+const editSpell = require("./src/commands/editSpell");
 const showMap = require("./src/commands/showMap");
 const saveSpell = require("./src/commands/saveSpell");
 
@@ -27,7 +29,10 @@ function activate(context) {
     openMap.register(context);
     closeMap.register(context);
     saveSpell.register(context);
-    showMap.register(context); // i don't think this command is being used anywhere
+    editPage.register(context);
+    editSpell.register(context);
+
+    // showMap.register(context); // i don't think this command is being used anywhere
 
     // install default spells
     examplePages.initialize(context);

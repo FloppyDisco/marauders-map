@@ -115,6 +115,18 @@
                 "when": "!maraudersMapIsOpen",
                 "key": "ctrl+alt+m",
                 "mac": "cmd+alt+m"
+            },
+            {
+                "command": "maraudersMap.erecto",
+                "when": "maraudersMapIsOpen",
+                "key": "ctrl+alt+shift+'",
+                "mac": "cmd+alt+shift+'"
+            },
+            {
+                "command": "maraudersMap.accio",
+                "when": "maraudersMapIsOpen || getMapPage",
+                "key": "ctrl+alt+'",
+                "mac": "cmd+alt+'"
             }
         ]
     },
