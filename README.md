@@ -102,6 +102,9 @@ example keybindings:
 
 ```
 
+
+Alternatively, when prompted, the keybinding input may be left blank, this will add the Spell to the Page, but it will only be useable by navigating to it and pressing `Enter` once the Map has opened.
+
 ----
 
 ### Map Delay Time
@@ -133,11 +136,21 @@ Separators are great for organization, please note this default keyboard shortcu
 
 `⌘↓` "QuickInput.nextSeparator" Which is great for moving through the menu quickly.
 
-## Features
+----
+### updates:
+
+`0.0.11`
+ - bud fix for displaying menu items that do not have keybindings
+ - added a button to reveal the json for the Map Page
+ - keybindings for selecting menu item buttons
+
+----
 
 `0.0.10`
  - support for adding custom separators to Map Pages
  - bug fix for keybinding.json not existing
+
+----
 
 `0.0.9`
  - support for an "order" argument, to specify the position of Spells on a Page
