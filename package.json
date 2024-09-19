@@ -30,7 +30,7 @@
                     "properties": {
                         "defaultMapDelay": {
                             "type": "number",
-                            "default": 350,
+                            "default": 500,
                             "description": "Time (ms) to delay opening a map page by default."
                         },
                         "pageIcon": {
