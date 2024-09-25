@@ -1,7 +1,7 @@
 const vscode = require("vscode");
 // managers
-const settings = require("../managers/settingsManager");
-const mapManager = require("../managers/mapManager");
+const Settings = require("../managers/settingsManager");
+const Map = require("../managers/mapManager");
 
 // |----------------------|
 // |        Erecto        |
@@ -10,9 +10,9 @@ const mapManager = require("../managers/mapManager");
 function register(context) {
     context.subscriptions.push(
         vscode.commands.registerCommand(
-            settings.keys.commands.editPage,
+            Settings.keys.commands.editPage,
             () => {
-                const maraudersMap = mapManager.use()
+                const maraudersMap = Map.use()
                 if (maraudersMap) {
                     maraudersMap.editPageButtonTrigger()
                     maraudersMap.dispose()

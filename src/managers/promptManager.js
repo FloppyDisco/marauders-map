@@ -1,35 +1,25 @@
 const vscode = require("vscode");
-const settings = require("../managers/settingsManager");
-const keybindingsMgr = require("../managers/keybindingsManager");
-
-
-const whenMgr = require("../managers/whenManager");
-
+const Settings = require("../managers/settingsManager");
 
 /**
  * Function to prompt the user to enter a command.
  * @returns {Promise<string | undefined>} The provided command or undefined if canceled.
  */
 async function promptUserForCommand() {
-  const configs = settings.useConfigs();
-  const inputBoxTitle = configs.get(settings.keys.displayMapTitle)
-    ? configs.get(settings.keys.inputBoxTitle)
+  const configs = Settings.useConfigs();
+  const inputBoxTitle = configs.get(Settings.keys.displayMapTitle)
+    ? configs.get(Settings.keys.inputBoxTitle)
     : "";
 
   let availableCommands = await vscode.commands.getCommands(true);
   availableCommands = availableCommands.map((cmd) => ({
-    label: `${configs.get(settings.keys.spellIcon)} ${cmd}`,
+    label: `${configs.get(Settings.keys.spellIcon)} ${cmd}`,
     command: cmd,
   }));
 
-  const addCustomCommand = {
-    label: "$(pencil) Enter a custom command ...",
-    alwaysShow: true,
-  };
-
   const goToAnotherPage = {
-    label: `${configs.get(settings.keys.subpageIcon)} Go to another Page ...`,
-    command: settings.keys.commands.openMap,
+    label: `${configs.get(Settings.keys.subpageIcon)} Go to another Page ...`,
+    command: Settings.keys.commands.openMap,
     // alwaysShow: true,
   };
 
@@ -38,17 +28,20 @@ async function promptUserForCommand() {
     command: "separator",
   };
 
-  const sep = {
-    kind: vscode.QuickPickItemKind.Separator,
-    label: "commands",
+  const addCustomCommand = {
+    label: "$(pencil) Enter a custom command ...",
+    alwaysShow: true,
   };
 
   const options = [
-    addCustomCommand,
     goToAnotherPage,
     addSeparator,
-    sep,
+    {
+      kind: vscode.QuickPickItemKind.Separator,
+      label: "commands",
+    },
     ...availableCommands,
+    addCustomCommand,
   ];
   const selectedOption = await vscode.window.showQuickPick(options, {
     title: inputBoxTitle,
@@ -78,9 +71,9 @@ async function promptUserForCommand() {
  * @returns {Promise<string | undefined>} The provided keybinding or undefined if canceled.
  */
 async function promptUserForKey() {
-  const configs = settings.useConfigs();
-  const inputBoxTitle = configs.get(settings.keys.displayMapTitle)
-    ? configs.get(settings.keys.inputBoxTitle)
+  const configs = Settings.useConfigs();
+  const inputBoxTitle = configs.get(Settings.keys.displayMapTitle)
+    ? configs.get(Settings.keys.inputBoxTitle)
     : "";
 
   return await vscode.window.showInputBox({
@@ -106,14 +99,14 @@ async function promptUserForLabel(selectedCommand, selectedKey) {
   // this command needs to be used for creating a separator as well
   // change the placeholder based on the command value?
 
-  const configs = settings.useConfigs();
-  const inputBoxTitle = configs.get(settings.keys.displayMapTitle)
-    ? configs.get(settings.keys.inputBoxTitle)
+  const configs = Settings.useConfigs();
+  const inputBoxTitle = configs.get(Settings.keys.displayMapTitle)
+    ? configs.get(Settings.keys.inputBoxTitle)
     : "";
   const placeHolder =
     selectedCommand === "separator"
       ? "Provide a label for the separator (may be blank)"
-      : `Or leave blank for default: ${selectedCommand} (${settings.prettifyKey(
+      : `Or leave blank for default: ${selectedCommand} (${Settings.prettifyKey(
           selectedKey
         )})`;
 
@@ -132,10 +125,10 @@ async function promptUserForLabel(selectedCommand, selectedKey) {
  * Function to prompt the user to enter a name for a new Page.
  * @returns {Promise<string | undefined>} The provided name or undefined if canceled.
  */
-async function promptUserForName(userInput = "") {
-  const configs = settings.useConfigs();
-  const inputBoxTitle = configs.get(settings.keys.displayMapTitle)
-    ? configs.get(settings.keys.inputBoxTitle)
+async function promptUserForNewPageName(userInput = "") {
+  const configs = Settings.useConfigs();
+  const inputBoxTitle = configs.get(Settings.keys.displayMapTitle)
+    ? configs.get(Settings.keys.inputBoxTitle)
     : "";
 
   return await vscode.window.showInputBox({
@@ -153,39 +146,38 @@ let pagePrompt;
  * Function to prompt the user to select a Page
  * @returns {Promise<string | undefined>} The provided page name or undefined if canceled.
  */
-async function promptUserForPage({ isNestedPage=false }={}) {
+async function promptUserToSelectPage({ pageMenuItems }) {
+  const configs = Settings.useConfigs();
 
-  const configs = settings.useConfigs();
-  const { setGetMapPageContext, removeGetMapPageContext} = whenMgr.useGetMapPageContext();
+  // const { setGetMapPageContext, removeGetMapPageContext } =
+  //   When.useGetMapPageContext();
 
   //   Create
   // ----------
   pagePrompt = vscode.window.createQuickPick();
-  setGetMapPageContext();
+  // setGetMapPageContext();
 
   //   Decorate
   // ------------
-  const displayTitle = configs.get(settings.keys.displayMapTitle);
+  const displayTitle = configs.get(Settings.keys.displayMapTitle);
   if (displayTitle) {
-    pagePrompt.title = `${configs.get(settings.keys.titleIcon)}`;
+    pagePrompt.title = `${configs.get(Settings.keys.titleIcon)}`;
   }
   pagePrompt.placeholder = "Select a page ...";
-  pagePrompt.onDidTriggerItemButton((event) => {event.button.trigger()});
+  pagePrompt.onDidTriggerItemButton((event) => {
+    event.button.trigger();
+  });
   let userInput = "";
   pagePrompt.onDidChangeValue((value) => {
     userInput = value;
   });
 
-  //   Add Items
-  // -------------
-  const allPages = keybindingsMgr.getAllPages();
-  const convertedItems = keybindingsMgr.convertToItems(allPages);
   const addPageItem = {
     label: "$(add) New Page",
     alwaysShow: true,
   };
   pagePrompt.items = [
-    ...convertedItems,
+    ...pageMenuItems,
     {
       kind: vscode.QuickPickItemKind.Separator,
     },
@@ -195,37 +187,30 @@ async function promptUserForPage({ isNestedPage=false }={}) {
   return new Promise((resolve) => {
     pagePrompt.onDidHide(() => {
       pagePrompt.dispose();
-      removeGetMapPageContext();
+      // removeGetMapPageContext();
       resolve(undefined);
     });
     pagePrompt.onDidAccept(async () => {
       pagePrompt.hide();
 
       const [selectedOption] = pagePrompt.selectedItems;
+      
       if (selectedOption.label === addPageItem.label) {
         // Selected to create a new page
-        if (isNestedPage) {
-          resolve(
-            // the new name for the page
-            new Promise(async (resolve) => {
-              resolve(await promptUserForName(userInput));
-            })
-          );
-        } else {
-          // is not a nested page
-          resolve(
-            // the new name for the page after creation
-            new Promise(async (resolve) => {
-              resolve(await createNewMapPage(userInput));
-            })
-            // |------------------------------------|
-            // |        What a ClusterFuck!+        |
-            // |------------------------------------|
-          );
-        }
+        resolve(
+          // the new name for the page
+          new Promise(async (resolve) => {
+            resolve(await promptUserForNewPageName(userInput));
+          })
+        );
+        // |------------------------------------|
+        // |        What a ClusterFuck!+        |
+        // |------------------------------------|
       } else {
         //   Selected a pre-existing page
-        resolve(selectedOption.mapPage);
+        resolve(
+          selectedOption.args.mapPage || selectedOption.args.args.mapPage
+        );
       }
       pagePrompt.dispose();
     });
@@ -233,55 +218,25 @@ async function promptUserForPage({ isNestedPage=false }={}) {
   });
 }
 
-function clean() {
+function dispose() {
   if (pagePrompt) {
+    // call hide func
     pagePrompt.hide();
   }
 }
 
 function usePagePrompt() {
-  if (pagePrompt){
+  if (pagePrompt) {
     return pagePrompt;
   }
-}
-
-/**
- * Function to create a new page on the map
- * @param {string} mapPage the name of the page to be created
- * @param {string} selectedKey the keybinding for the new page
- * @returns {Promise<string | undefined>} the name of the Map Page that was created, or undefined if canceled.
- */
-async function createNewMapPage(userInput) {
-  const mapPage = await promptUserForName(userInput);
-  if (mapPage === undefined) {
-    return undefined; // exit on 'Esc' key
-  }
-  const selectedKey = await promptUserForKey();
-  if (selectedKey === undefined) {
-    return undefined; // exit on 'Esc' key
-  }
-
-  if (mapPage && selectedKey) {
-    const keybinding = {
-      key: selectedKey,
-      command: settings.keys.commands.openMap,
-      when: `!${settings.keys.mapOpenContext}`,
-      args: {
-        mapPage,
-      },
-    };
-    keybindingsMgr.saveKeybinding(keybinding);
-    return mapPage;
-  }
-  return undefined; // exit
 }
 
 module.exports = {
   promptUserForCommand,
   promptUserForKey,
   promptUserForLabel,
-  promptUserForName,
-  promptUserForPage,
-  clean,
+  promptUserForNewPageName,
+  promptUserToSelectPage,
+  dispose,
   usePagePrompt,
 };

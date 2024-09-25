@@ -1,66 +1,49 @@
 const vscode = require("vscode");
 // managers
-const settings = require("../managers/settingsManager");
-const whenMgr = require("../managers/whenManager");
-const mapManager = require("../managers/mapManager");
-const statusBarMgr = require("../managers/statusBarManager");
-const promptManager = require("../managers/promptManager");
+const Settings = require("../managers/settingsManager");
+const Map = require("../managers/mapManager");
+const StatusBars = require("../managers/statusBarManager");
+const Prompts = require("../managers/promptManager");
+const When = require("../managers/whenManager");
 
 // |----------------------------------------------------------|
 // |        I Solemnly Swear That I Am Up To No Good ...      |
 // |----------------------------------------------------------|
 
 function register(context) {
-    context.subscriptions.push(
-        vscode.commands.registerCommand(
-            settings.keys.commands.openMap,
-            async ({ mapPage, mapDelay } = {}) => {
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      Settings.keys.commands.openMap,
+      async ({ mapPage, mapDelay, separators } = {}) => {
+        // console.log('openMap()',);
 
-                // remove any old UI elements from previous spells
-                mapManager.clean();
-                promptManager.clean();
-                statusBarMgr.clean();
 
-                let selectedPageManually = false;
-                if (!mapPage) {
+        // remove any old UI elements from previous spells
+        Map.dispose();
+        Prompts.dispose();
+        StatusBars.dispose();
 
-                    // show generic status bar
-                    const solemnlySwearStatusBar =
-                        statusBarMgr.solenmlySwear.initialize();
-                    solemnlySwearStatusBar.show();
+        if (!mapPage) {
+          vscode.commands.executeCommand(Settings.keys.commands.showMap);
+          return; // exit
+        }
 
-                    mapPage = await promptManager.promptUserForPage()
+        //   Set the When Context
+        // ------------------------
+        When.initialize(mapPage).setWhenContext();
 
-                    solemnlySwearStatusBar.dispose();
-                    if (mapPage === undefined) {
-                        return; // exit on 'Esc' key
-                    }
-                    selectedPageManually = true;
-                }
+        StatusBars.page.initialize(mapPage).show();
 
-                //   Set the When Context
-                // ------------------------
-                const { whenContext, setWhenContext, removeWhenContext } =
-                    whenMgr.initialize(mapPage);
-
-                setWhenContext();
-
-                statusBarMgr.page.initialize(mapPage).show();
-
-                mapManager.initialize({
-                    mapPage,
-                    whenContext,
-                    removeWhenContext
-                })
-                mapManager.openMap({
-                    mapDelay,
-                    selectedPageManually,
-                });
-            }
-        )
-    );
+        Map.initialize({
+          mapPage,
+          separators,
+          mapDelay,
+        });
+      }
+    )
+  );
 }
 
 module.exports = {
-    register,
+  register,
 };

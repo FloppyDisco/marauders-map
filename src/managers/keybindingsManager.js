@@ -4,16 +4,20 @@ const path = require("path");
 const vscode = require("vscode");
 const jsonc = require("jsonc-parser");
 
-const settings = require("./settingsManager");
+const Settings = require("./settingsManager");
+
+const keybindingsPath = getPathToKeybindingsFile();
+const backupPath = keybindingsPath + ".backup";
+
 
 /**
  * Function to determine if the extension is running in VSCodium or VS Code.
  * @returns {boolean} true if running in VSCodium, false if running in VS Code.
  */
 function getPathToKeybindingsFile() {
-    const baseFolder = settings.isVSCodium ? "VSCodium" : "Code"; // change directory name based on application
+    const baseFolder = Settings.isVSCodium ? "VSCodium" : "Code"; // change directory name based on application
 
-    switch (settings.platform) {
+    switch (Settings.platform) {
         case "darwin": // macOS
             return path.join(
                 os.homedir(),
@@ -44,7 +48,7 @@ function getPathToKeybindingsFile() {
             // |-----------------------|
             // add setting for user to provide path to keybindings.json
 
-            throw new Error(`Unsupported platform: ${settings.platform}`);
+            throw new Error(`Unsupported platform: ${Settings.platform}`);
     }
 }
 
@@ -53,8 +57,6 @@ function getPathToKeybindingsFile() {
  * @returns {array} - a array of all keybindings.
  */
 function getKeybindings() {
-
-    const keybindingsPath = getPathToKeybindingsFile();
 
     let currentContent = "[]"; // Default empty array content if file does not exist
     try {
@@ -106,7 +108,7 @@ function getAllPages() {
 
     getKeybindings().forEach((keybinding) => {
         if (
-            keybinding.command === settings.keys.commands.openMap &&
+            keybinding.command === Settings.keys.commands.openMap &&
             keybinding.args !== undefined
         ) {
             //   Page keybinding
@@ -118,9 +120,9 @@ function getAllPages() {
                 mapPagesKeybindings[mapPage] = keybinding;
             }
         } else if (
-            keybinding.command === settings.keys.commands.closeMap &&
+            keybinding.command === Settings.keys.commands.closeMap &&
             keybinding.args !== undefined &&
-            keybinding.args.command === settings.keys.commands.openMap
+            keybinding.args.command === Settings.keys.commands.openMap
         ) {
             //   Nested Page Keybinding
             // --------------------------
@@ -145,156 +147,71 @@ function getAllPages() {
 }
 
 
-function convertToItems(keybindings) {
-    const configs = settings.useConfigs();
-
-    const spellsTable = keybindings
-        .map(convertKeybinding)
-        .reduce(sortItems, {
-            pages: [],
-            spells: [],
-            orderedSpells: [],
-        });
-
-    const spells = spellsTable.pages.concat(spellsTable.spells);
-    //   place any spells with an "order" property at their specified index
-    // ----------------------------------------------------------------------
-    spellsTable.orderedSpells
-        .sort((a, b) => a.order - b.order) // put them in order
-        .forEach((spell) => {
-            spells.splice(spell.order, 0, spell); // add them to the list
-        });
-    return spells;
-
-    function sortItems(itemsTable, item) {
-        const { pages, spells, orderedSpells } = itemsTable;
-        const isOrdered = "order" in item;
-        const isPage = item.command === settings.keys.commands.openMap;
-        if (isOrdered) {
-            orderedSpells.push(item);
-        } else if (isPage) {
-            pages.push(item);
-        } else {
-            spells.push(item);
-        }
-        return itemsTable;
-    }
-
-    function convertKeybinding(keybinding) {
-        const args = keybinding.args;
-        let label;
-        let description;
-
-        if (keybinding.command === settings.keys.commands.closeMap) {
-            //   Keybinding is a Spell on a Page
-            // -----------------------------------
-
-            if (args.command === settings.keys.commands.openMap) {
-                //   Keybinding is a nested Page
-                // -------------------------------
-
-                label = `   ${configs.get(settings.keys.subpageIcon)} Go to ${
-                    args.args.mapPage
-                } ...`;
-                description = `${settings.prettifyKey(keybinding.key)}`;
-
-            } else if(args.command === "separator"){
-                //   keybinding is a divider
-                // ---------------------------
-
-                label = args.label
-                args.kind = vscode.QuickPickItemKind.Separator
-            } else {
-                //   keybinding is a spell
-                // -------------------------
-
-                label = `${configs.get(settings.keys.spellIcon)} ${
-                    args.label ? args.label : args.command
-                }`;
-                description = `${settings.prettifyKey(keybinding.key)}  ${
-                    // if displayCommandId and there is a label
-                    configs.get(settings.keys.displayCommandId) && args.label
-                        ? // show the command id
-                          args.command
-                        : ""
-                }`;
-            }
-        } else if (keybinding.command === settings.keys.commands.openMap) {
-            //   keybinding is a page
-            // ------------------------
-
-            label = `${configs.get(settings.keys.pageIcon)} ${args.mapPage}`;
-            description = settings.prettifyKey(keybinding.key);
-        }
-
-        const buttons = [
-            {
-                ...settings.buttons.editSpell,
-                trigger: () => {revealKeybinding(keybinding)},
-            }
-        ];
-
-        const menuItem = {
-            ...keybinding.args,
-            label,
-            description,
-            buttons,
-        };
-
-        return menuItem
-    }
-}
-
 
 /**
- * Function to write a new keybinding to the keybindings.json file with a backup and preserve comments.
- * @param {Object} newKeybinding - The new keybinding object to add.
+ * Function to write new keybindings to the keybindings.json file with a backup and preserve comments.
+ * @param {Array<Object>} newKeybindings - The list of new keybinding objects to add or update.
  */
-function saveKeybinding(newKeybinding) {
-    const keybindingsPath = getPathToKeybindingsFile(); // Replace with the correct path to keybindings.json
-    const backupPath = keybindingsPath + ".backup";
+function saveKeybindings(newKeybindings) {
+  try {
 
-    try {
-        let currentContent = "[]"; // Default empty array content if file does not exist
-        if (fs.existsSync(keybindingsPath)) {
-            // Read the current content of the keybindings file if it exists
-            currentContent = fs.readFileSync(keybindingsPath, "utf8");
+    // Default empty array content if file does not exist
+    let currentContent = "[]";
 
-            // Backup the current keybindings.json
-            fs.writeFileSync(backupPath, currentContent);
-        } else {
-            // Create an empty keybindings.json file with an empty array if it doesn't exist
-            fs.writeFileSync(keybindingsPath, currentContent, "utf8");
-        }
+    if (fs.existsSync(keybindingsPath)) {
+      // Read the current content of the keybindings file if it exists
+      currentContent = fs.readFileSync(keybindingsPath, "utf8");
 
-        // Parse the JSONC content preserving comments (or use empty array if content is empty)
-        const currentKeybindings = jsonc.parse(currentContent) || [];
+      // Backup the current keybindings.json
+      fs.writeFileSync(backupPath, currentContent);
+    } else {
 
-        // Use jsonc.modify to prepare the edits to add the new keybinding
-        const edits = jsonc.modify(
-            currentContent,
-            [currentKeybindings.length], // Add the new keybinding at the end of the array
-            newKeybinding,
-            { formattingOptions: { insertSpaces: true, tabSize: 2 } }
+      // Create an empty keybindings.json file with an empty array if it doesn't exist
+      fs.writeFileSync(keybindingsPath, currentContent, "utf8");
+    }
+
+    let currentKeybindings = jsonc.parse(currentContent) || [];
+
+    newKeybindings.forEach((newKeybinding, index) => {
+
+      // Find if the keybinding already exists
+      const existingIndex = currentKeybindings.findIndex(
+        (kb) => kb.when
+            && kb.when === newKeybinding.when
+            && kb.key === newKeybinding.key
+            && kb.args
+            && kb.args.command === newKeybinding.args.command
         );
 
-        // Apply the edits to the original content to get the new content with the comments preserved
-        const newContent = jsonc.applyEdits(currentContent, edits);
+      if (existingIndex !== -1) { // update keybinding
+        const edits = jsonc.modify(
+          currentContent,
+          [existingIndex],
+          newKeybinding,
+          { formattingOptions: { insertSpaces: true, tabSize: 2 } }
+        );
 
-        // Write the updated content back to keybindings.json
-        fs.writeFileSync(keybindingsPath, newContent, "utf8");
-    } catch (error) {
-        console.error("Error writing to keybindings.json:", error);
-    }
+        currentContent = jsonc.applyEdits(currentContent, edits);
+
+      } else { // Add new keybinding
+        const edits = jsonc.modify(
+          currentContent,
+          [currentKeybindings.length + index],
+          newKeybinding,
+          { formattingOptions: { insertSpaces: true, tabSize: 2 } }
+        );
+
+        currentContent = jsonc.applyEdits(currentContent, edits);
+      }
+    });
+
+    // Write the updated content back to keybindings.json
+    fs.writeFileSync(keybindingsPath, currentContent, "utf8");
+  } catch (error) {
+    console.error("Error writing to keybindings.json:", error);
+  }
 }
 
-
-// |-----------------------|
-// |        Feature        |
-// |-----------------------|
-
-// update keybinding function?
-//  not necessary, just edit them in json
 
 /**
  * Function to open the keybindings.json file and reveal a specific keybinding by command.
@@ -362,7 +279,6 @@ async function revealKeybinding(keybinding) {
 module.exports = {
     getKeybindingsForPage,
     getAllPages,
-    convertToItems,
-    saveKeybinding,
+    saveKeybindings,
     revealKeybinding,
 };

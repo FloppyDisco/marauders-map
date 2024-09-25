@@ -1,5 +1,5 @@
 const vscode = require("vscode");
-const settings = require("../managers/settingsManager");
+const Settings = require("../managers/settingsManager");
 
 function initStatusBarBase(
     statusBar,
@@ -29,10 +29,10 @@ let mapStatusBarItem;
  * A function to initialize the mapStatusBar item
  */
 function initMapStatusBar() {
-    const configs = settings.useConfigs();
+    const configs = Settings.useConfigs();
     mapStatusBarItem = initStatusBarBase(mapStatusBarItem, {
-        text: configs.get(settings.keys.titleIcon),
-        command: settings.keys.commands.openMap,
+        text: configs.get(Settings.keys.titleIcon),
+        command: Settings.keys.commands.openMap,
         tooltip: "I solemnly swear that I am up to no good...",
         alignment: "Right",
     });
@@ -53,11 +53,11 @@ let solemnlySwearStatusBarItem;
  * @returns {vscode.StatusBarItem} The mischiefStatusBar item
  */
 function initSolemnlySwearStatusBar() {
-    const configs = settings.useConfigs();
+    const configs = Settings.useConfigs();
     solemnlySwearStatusBarItem = initStatusBarBase(solemnlySwearStatusBarItem, {
-        text: `${configs.get(settings.keys.spellIcon)} I solemnly swear ...`,
+        text: `${configs.get(Settings.keys.spellIcon)} I solemnly swear ...`,
         tooltip: "Sometimes spells go wonky, click to close!",
-        command: settings.keys.commands.closeMap,
+        command: Settings.keys.commands.closeMap,
         alignment: "Left",
     });
     return solemnlySwearStatusBarItem;
@@ -78,10 +78,10 @@ let pageStatusBarItem;
  * @returns {vscode.StatusBarItem} The pageStatusBar item
  */
 function initPageStatus(mapPage) {
-    const configs = settings.useConfigs();
+    const configs = Settings.useConfigs();
     pageStatusBarItem = initStatusBarBase(pageStatusBarItem, {
-        text: `${configs.get(settings.keys.spellIcon)} ${mapPage}`,
-        command: settings.keys.commands.closeMap,
+        text: `${configs.get(Settings.keys.spellIcon)} ${mapPage}`,
+        command: Settings.keys.commands.closeMap,
         tooltip: "Sometimes spells go wonky, click to close!",
         alignment: "Left",
     });
@@ -102,10 +102,10 @@ let mischiefStatusBarItem;
  * @returns {vscode.StatusBarItem} The mischiefStatusBar item
  */
 function initMischiefStatusBar() {
-    const configs = settings.useConfigs();
+    const configs = Settings.useConfigs();
     mischiefStatusBarItem = initStatusBarBase(mischiefStatusBarItem, {
-        text: `${configs.get(settings.keys.spellIcon)} Mischief Managed...`,
-        command: settings.keys.commands.closeMap,
+        text: `${configs.get(Settings.keys.spellIcon)} Mischief Managed...`,
+        command: Settings.keys.commands.closeMap,
         tooltip: "Sometimes spells go wonky, click to close!",
         alignment: "Left",
     });
@@ -118,7 +118,7 @@ function useMischiefStatusBar() {
     return mischiefStatusBarItem;
 }
 
-function register(context) {
+function initialize(context) {
     context.subscriptions.push([
         pageStatusBarItem,
         solemnlySwearStatusBarItem,
@@ -127,7 +127,7 @@ function register(context) {
     ])
 }
 
-function clean() {
+function dispose() {
     if (pageStatusBarItem) { // exists
         pageStatusBarItem.dispose();
     }
@@ -156,6 +156,6 @@ module.exports = {
         initialize: initMapStatusBar,
         use: useMapStatusBar,
     },
-    register,
-    clean,
+    initialize,
+    dispose,
 };

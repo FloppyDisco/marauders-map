@@ -1,14 +1,14 @@
 // managers
-const settings = require("./src/managers/settingsManager");
-const statusBarMgr = require("./src/managers/statusBarManager");
+const Settings = require("./src/managers/settingsManager");
+const StatusBars = require("./src/managers/statusBarManager");
 
 // commands
+const showMap = require("./src/commands/showMap");
 const openMap = require("./src/commands/openMap");
 const closeMap = require("./src/commands/closeMap");
+const saveSpell = require("./src/commands/saveSpell");
 const editPage = require("./src/commands/editPage");
 const editSpell = require("./src/commands/editSpell");
-const showMap = require("./src/commands/showMap");
-const saveSpell = require("./src/commands/saveSpell");
 
 
 // keybindings
@@ -19,24 +19,26 @@ const examplePages = require("./src/examplePages");
  */
 function activate(context) {
     // get configs
-    settings.initialize(context); // must initialize to register the event listener
+    Settings.initialize(context);
+    StatusBars.initialize(context);
 
     // create UI
-    statusBarMgr.register(context);
-    statusBarMgr.mapIcon.initialize().show() // display the extension icon
+    StatusBars.mapIcon.initialize().show();
 
     // register commands
+    showMap.register(context);
     openMap.register(context);
     closeMap.register(context);
-    saveSpell.register(context);
-    editPage.register(context);
-    editSpell.register(context);
 
-    // showMap.register(context); // i don't think this command is being used anywhere
+    // saveSpell.register(context);
+
+    // editPage.register(context);
+    // editSpell.register(context);
+
 
     // install default spells
     examplePages.initialize(context);
-} // end of activate
+}
 
 function deactivate() {}
 

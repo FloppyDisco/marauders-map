@@ -94,39 +94,17 @@
         },
         "commands": [
             {
-                "command": "maraudersMap.expectoPatronum",
-                "title": "Create a new Page on the Map",
-                "category": "Marauder's Map"
-            },
-            {
-                "command": "maraudersMap.mischiefManaged",
-                "title": "Close the Map && Cast the Spell",
-                "category": "Marauder's Map"
-            },
-            {
-                "command": "maraudersMap.iSolemnlySwearThatIAmUpToNoGood",
-                "title": "Open the Map!",
+                "command": "maraudersMap.lumos",
+                "title": "Open Map",
                 "category": "Marauder's Map"
             }
         ],
         "keybindings": [
             {
-                "command": "maraudersMap.iSolemnlySwearThatIAmUpToNoGood",
+                "command": "maraudersMap.lumos",
                 "when": "!maraudersMapIsOpen",
                 "key": "ctrl+alt+m",
                 "mac": "cmd+alt+m"
-            },
-            {
-                "command": "maraudersMap.erecto",
-                "when": "maraudersMapIsOpen",
-                "key": "ctrl+alt+shift+'",
-                "mac": "cmd+alt+shift+'"
-            },
-            {
-                "command": "maraudersMap.accio",
-                "when": "maraudersMapIsOpen || getMapPage",
-                "key": "ctrl+alt+'",
-                "mac": "cmd+alt+'"
             }
         ]
     },

@@ -1,14 +1,14 @@
 const vscode = require('vscode');
-const settings = require('../managers/settingsManager');
+const Settings = require('../managers/settingsManager');
 
 
 let whenContext;
-let setWhenContext;
-let removeWhenContext;
+let setWhenContext = () => {};
+let removeWhenContext = () => {};
 
 
 function serializer(mapPage){
-    return `${settings.keys.maraudersMapPrefix}.${mapPage.replaceAll(" ", "_")}`;
+    return `${Settings.keys.maraudersMapPrefix}.${mapPage.replaceAll(" ", "_")}`;
 }
 
 /**
@@ -32,7 +32,7 @@ function initialize(mapPage) {
      * Sets the page's "when" clause context.
      */
     setWhenContext = () => {
-        vscode.commands.executeCommand("setContext", settings.keys.mapOpenContext, true);
+        vscode.commands.executeCommand("setContext", Settings.keys.mapOpenContext, true);
         vscode.commands.executeCommand("setContext", whenContext? whenContext : '', true);
     }
 
@@ -40,7 +40,7 @@ function initialize(mapPage) {
      * Removes the page's "when" clause context.
      */
     removeWhenContext = () => {
-        vscode.commands.executeCommand("setContext", settings.keys.mapOpenContext, undefined);
+        vscode.commands.executeCommand("setContext", Settings.keys.mapOpenContext, undefined);
         vscode.commands.executeCommand("setContext", whenContext? whenContext : '', undefined);
     }
 
@@ -65,10 +65,10 @@ function use() {
 function useGetMapPageContext() {
 
     function setGetMapPageContext(){
-        vscode.commands.executeCommand("setContext", settings.keys.getMapPageContext, true);
+        vscode.commands.executeCommand("setContext", Settings.keys.getMapPageContext, true);
     }
     function removeGetMapPageContext() {
-        vscode.commands.executeCommand("setContext", settings.keys.getMapPageContext, undefined);   
+        vscode.commands.executeCommand("setContext", Settings.keys.getMapPageContext, undefined);
     }
     return {
         setGetMapPageContext,

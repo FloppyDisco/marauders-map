@@ -1,8 +1,8 @@
 const vscode = require("vscode");
 // managers
-const settings = require("../managers/settingsManager");
-const mapManager = require("../managers/mapManager");
-const promptManager = require("../managers/promptManager");
+const Settings = require("../managers/settingsManager");
+const Map = require("../managers/mapManager");
+const Prompts = require("../managers/promptManager");
 
 
 // |---------------------|
@@ -11,9 +11,9 @@ const promptManager = require("../managers/promptManager");
 
 function register(context) {
   context.subscriptions.push(
-    vscode.commands.registerCommand(settings.keys.commands.editSpell, () => {
-      const maraudersMap = mapManager.use();
-      const pagePrompt = promptManager.usePagePrompt();
+    vscode.commands.registerCommand(Settings.keys.commands.editSpell, () => {
+      const maraudersMap = Map.use();
+      const pagePrompt = Prompts.usePagePrompt();
       if (maraudersMap) {
         triggerButton(maraudersMap);
       } else if (pagePrompt) {
@@ -25,7 +25,7 @@ function register(context) {
 
 function triggerButton(quickPick) {
   const button = quickPick.activeItems[0].buttons.find(
-    (btn) => (btn.id = settings.buttons.editSpell.id)
+    (btn) => (btn.id = Settings.buttons.editSpell.id)
   );
   button.trigger();
 }

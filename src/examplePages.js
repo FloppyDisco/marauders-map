@@ -1,6 +1,6 @@
 // managers
-const settings = require("./managers/settingsManager");
-const keybindingsMgr = require("../src/managers/keybindingsManager");
+const Settings = require("./managers/settingsManager");
+const Keybindings = require("../src/managers/keybindingsManager");
 
 const keybindings = [
   {
@@ -172,13 +172,13 @@ const MacKeybindings = keybindings.map((kb) => ({
  */
 function installExamplePages() {
   const keybindings =
-    settings.platform === "darwin" ? MacKeybindings : PCkeybindings;
+    Settings.platform === "darwin" ? MacKeybindings : PCkeybindings;
   keybindings.forEach((kb) => {
-    keybindingsMgr.saveKeybinding(kb);
+    Keybindings.saveKeybinding(kb);
   });
 }
 
-const examplePagesKey = `${settings.keys.maraudersMapPrefix}.${settings.keys.examplePagesKey}`;
+const examplePagesKey = `${Settings.keys.maraudersMapPrefix}.${Settings.keys.examplePagesKey}`;
 
 /**
  * A function to initialize the examplePages module.

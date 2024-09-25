@@ -88,6 +88,9 @@ example keybindings:
     "args": {
         "mapPage": "Editor",
         "mapDelay": 300,    // optional arg for per-page mapDelay
+        "separators": {
+            3: "these Spells"
+        }
     }
 },
 {
@@ -97,6 +100,7 @@ example keybindings:
     "args": {
         "label": "Split Editor Down"
         "command": "editor.splitDown",
+        "order": 1
     }
 },
 

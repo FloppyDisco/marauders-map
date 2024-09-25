@@ -56,20 +56,19 @@ const maraudersMapPrefix = "maraudersMap";
 
 const buttons = {
     editSpell: {
-        id: "edit",
+        id: "editSpell",
         iconPath: new vscode.ThemeIcon("gear"),
-        tooltip: `Edit this Spell ${prettifyKey(platform === "darwin"
-            ? "cmd+alt+'"
-            : "ctrl+alt+'"
-        )}`,
+        tooltip: "Edit this Spell",
     },
     editPage: {
-        id: "edit",
+        id: "editPage",
         iconPath: new vscode.ThemeIcon("gear"),
-        tooltip: `Edit this Page ${prettifyKey(platform === "darwin"
-            ? "cmd+alt+shift+'"
-            : "ctrl+alt+shift+'"
-        )}`,
+        tooltip: "Edit this Page",
+    },
+    moveSpell: {
+        id: "order",
+        iconPath: new vscode.ThemeIcon("list-ordered"),
+        tooltip: "Move Spell",
     },
 };
 const keys = {
@@ -86,13 +85,15 @@ const keys = {
     inputBoxTitle: "inputBoxTitle",
     examplePagesKey: "examplePagesInstalled",
     commands: {
-        saveSpell: `${maraudersMapPrefix}.expectoPatronum`,
-        deleteSpell: `${maraudersMapPrefix}.obliviate`,
+        showMap: `${maraudersMapPrefix}.lumos`,
         openMap: `${maraudersMapPrefix}.iSolemnlySwearThatIAmUpToNoGood`,
         closeMap: `${maraudersMapPrefix}.mischiefManaged`,
-        displayMap: `${maraudersMapPrefix}.lumos`,
-        editPage: `${maraudersMapPrefix}.erecto`,
-        editSpell: `${maraudersMapPrefix}.accio`,
+        saveSpell: `${maraudersMapPrefix}.expectoPatronum`,
+
+
+        // deleteSpell: `${maraudersMapPrefix}.obliviate`,
+        // editPage: `${maraudersMapPrefix}.erecto`,
+        // editSpell: `${maraudersMapPrefix}.accio`,
         // prior incantato
     },
 };
