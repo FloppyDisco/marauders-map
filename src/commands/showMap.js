@@ -31,6 +31,21 @@ function register(context) {
         const PagesKeybindings = Keybindings.getAllPages();
         const pageMenuItems = Map.createMenuItems(PagesKeybindings);
 
+
+        // |-----------------------|
+        // |        Feature        |
+        // |-----------------------|
+
+        // create a flag that when set will cause map to show immediately
+        // even if called from keybinding
+        Map.selectedPageManually = true;
+
+        // must determine how to reset the flag after a command is run
+
+
+
+
+
         const mapPage = await Prompts.promptUserToSelectPage({pageMenuItems});
         if (mapPage === undefined) {
           return; // exit on 'Esc' key
@@ -64,6 +79,9 @@ function register(context) {
 
         solemnlySwearStatusBar.dispose();
 
+
+        console.log('Map.selectedPageManually',Map.selectedPageManually);
+        
         vscode.commands.executeCommand(Settings.keys.commands.openMap, {
           mapPage,
           mapDelay: 0,

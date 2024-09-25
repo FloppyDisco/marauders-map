@@ -9,6 +9,7 @@ const When = require("./whenManager");
 
 let maraudersMap;
 let mapOpenTimer;
+let selectedPageManually = false;
 
 let onDidAccept;
 let onDidChangeValue;
@@ -25,6 +26,9 @@ let onDidHide;
  * @returns {vscode.QuickPick} The maraudersMap quick pick
  */
 function initialize({ mapPage, separators, mapDelay }) {
+
+  console.log('selectedPageManually',selectedManually());
+
 
   if (maraudersMap) {
     // exists
@@ -124,7 +128,20 @@ function initialize({ mapPage, separators, mapDelay }) {
       ? mapDelay
       : configs.get(Settings.keys.defaultMapDelay);
 
-  if (mapDelayTime) {
+
+
+  console.log('selectedManually()',selectedManually());
+
+  console.log('mapDelayTime',mapDelayTime);
+
+
+
+
+
+
+  if (!selectedManually() || mapDelayTime) {
+    console.log('setting delay',);
+
     mapOpenTimer = setTimeout(() => {
       // show map after delay
       if (maraudersMap && !maraudersMap._visible) {
@@ -132,6 +149,9 @@ function initialize({ mapPage, separators, mapDelay }) {
       }
     }, mapDelayTime);
   } else {
+    console.log('showing map',);
+
+    selectedPageManually = false;
     // map delay is zero, show map!
     maraudersMap.show();
   }
@@ -484,17 +504,27 @@ function createMenuItems(keybindings) {
 
     const buttons = [
       {
-        ...Settings.buttons.editSpell,
-        trigger: () => {
-          Keybindings.revealKeybinding(keybinding);
-        },
-      },
-      {
         ...Settings.buttons.moveSpell,
         trigger: async () => {
           const orderedSpells = await selectOrder(keybinding)
+          if (orderedSpells === undefined){
+            disposeMap();
+          }
           updatePageSpells(orderedSpells);
+
+          // |-----------------------|
+          // |        Feature        |
+          // |-----------------------|
+          // instead of disposing the map, reset the map to handle more input
+          // this will require abstracting the init interactions to a function that can be called
+
           disposeMap();
+        },
+      },
+      {
+        ...Settings.buttons.editSpell,
+        trigger: () => {
+          Keybindings.revealKeybinding(keybinding);
         },
       },
     ];
@@ -532,8 +562,13 @@ function use() {
   return maraudersMap;
 }
 
+function selectedManually(){
+  return selectedPageManually;
+}
+
 function disposeMap() {
   if (maraudersMap) {
+    cleanMap();
     maraudersMap.dispose();
   }
 
@@ -577,6 +612,7 @@ module.exports = {
   createMenuItems,
   createSeparator,
   use,
+  selectedPageManually,
   dispose: disposeMap,
   cancelTimer,
 };
