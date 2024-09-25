@@ -10,6 +10,21 @@ const keybindingsPath = getPathToKeybindingsFile();
 const backupPath = keybindingsPath + ".backup";
 
 
+// |-----------------------|
+// |        feature        |
+// |-----------------------|
+
+// create a file watcher for keybindings to detect when it is modified
+
+// fetch all keybindings ahead of time to store in memory
+
+// increase the responsiveness of immediate pages
+
+
+
+
+
+
 /**
  * Function to determine if the extension is running in VSCodium or VS Code.
  * @returns {boolean} true if running in VSCodium, false if running in VS Code.
