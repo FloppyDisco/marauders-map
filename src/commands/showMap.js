@@ -19,24 +19,12 @@ function register(context) {
       async () => {
         // console.log("------------- showMap() -----------");
 
-        // |-----------------------|
-        // |        Feature        |
-        // |-----------------------|
-        /*
-          pages should open immediately
-          if called from the keybinding
-          when the selectPage is open
-        */
-
-        // remove any old UI elements from previous spells
-        Picks.dispose();
         StatusBars.dispose();
 
         const solemnlySwearStatusBar = StatusBars.solenmlySwear.initialize();
         solemnlySwearStatusBar.show();
 
         function exit() {
-          Picks.selectPageQuickPick.dispose();
           solemnlySwearStatusBar.dispose();
         }
 
@@ -74,12 +62,11 @@ function register(context) {
             Keybindings.saveKeybindings([keybinding]);
           }
         } else {
-          mapPage = selection.args.mapPage;
+          mapPage = selection.args.mapPage || selection.args.args.mapPage;
         }
 
         //   Page Selected
         // -----------------
-        exit(); // exit and open the selected Page
         vscode.commands.executeCommand(Settings.keys.commands.openMap, {
           mapPage,
           mapDelay: 0,

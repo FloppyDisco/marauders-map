@@ -20,8 +20,6 @@ function register(context) {
       async ({ mapPage, mapDelay } = {}) => {
         // console.log("-------- openMap() --------");
 
-        // remove any old UI elements from previous spells
-        Picks.dispose();
         StatusBars.dispose();
 
         if (!mapPage) {
@@ -29,8 +27,7 @@ function register(context) {
           return; // exit
         }
 
-
-        const {setWhenContext, removeWhenContext} = When.initialize(mapPage);
+        const { whenContext, setWhenContext, removeWhenContext } = When.initialize(mapPage);
         //   Set the When Context
         setWhenContext();
 
@@ -38,14 +35,16 @@ function register(context) {
         const pageStatusBar = StatusBars.page.initialize(mapPage);
         pageStatusBar.show();
 
-        function exit(){
+        function exit() {
           removeWhenContext();
-          Picks.selectSpellQuickPick.dispose();
           pageStatusBar.dispose();
         }
 
-        const spellKeybindings = Keybindings.getSpellKeybindingsForPage(mapPage);
-        const spells = Picks.createSpellMenuItems(spellKeybindings,{mapPage});
+        const spellKeybindings =
+          Keybindings.getSpellKeybindingsForPage(mapPage);
+        const spells = Picks.createSpellMenuItems(spellKeybindings, {
+          mapPage,
+        });
 
         // |-------------------|
         // |        Map        |
@@ -66,29 +65,35 @@ function register(context) {
             return exit();
           }
 
-          const [newSpell] = Picks.createMenuItems({
-            keybindings: [newSpellKeybinding],
+          const [newSpell] = Picks.createSpellMenuItems([newSpellKeybinding], {
             includeButtons: false,
           });
 
           let orderedSpells;
-          if (spells.length > 0){
-            orderedSpells = await Picks.selectOrder({ spells, spellToMove: newSpell, mapPage });
+          if (spells.length > 0) {
+            orderedSpells = await Picks.selectOrder({
+              spells,
+              spellToMove: newSpell,
+              mapPage,
+            });
             if (orderedSpells === undefined) {
               return exit();
             }
           } else {
-            orderedSpells = [newSpell]
+            orderedSpells = [newSpell];
           }
 
-          Picks.updatePageSpells(orderedSpells);
-        } else {
+          Picks.updateSpellsOnPage(orderedSpells);
+          exit();
 
-          vscode.commands.executeCommand(
-            // well ok, it's here...
-            selection.command,
-            selection.args
-          );
+        } else {
+          // command was selected!
+
+          // |---------------------------------|
+          // |        The MAGIC is here        |
+          // |---------------------------------|
+
+          vscode.commands.executeCommand(selection.command, selection.args);
         }
       }
     )

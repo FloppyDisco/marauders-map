@@ -118,32 +118,26 @@ function useMischiefStatusBar() {
 }
 
 
-let savingSpellStatusBarItem;
+let savingSpellsStatusBarItem;
 
 /**
  * Function to create and return the "mischief managed" status bar item
  * @returns {vscode.StatusBarItem} The mischiefStatusBar item
  */
-function initSavingSpellStatusBarItem() {
-    console.log('saving--------------------------------------',);
-
+function initSavingSpellsStatusBarItem() {
     const configs = Settings.useConfigs();
-    savingSpellStatusBarItem = initStatusBarBase(savingSpellStatusBarItem, {
+    savingSpellsStatusBarItem = initStatusBarBase(savingSpellsStatusBarItem, {
         text: `${configs.get(Settings.keys.spellIcon)} Saving Spells...`,
         alignment: "Left",
     });
     setTimeout(() => {
-        savingSpellStatusBarItem.dispose();
+        savingSpellsStatusBarItem.dispose();
     }, 1234);
-    return savingSpellStatusBarItem;
+    return savingSpellsStatusBarItem;
 }
-function useSavingSpellStatusBarItem() {
-    return savingSpellStatusBarItem;
+function useSavingSpellsStatusBarItem() {
+    return savingSpellsStatusBarItem;
 }
-
-
-
-
 
 
 
@@ -152,12 +146,13 @@ function useSavingSpellStatusBarItem() {
 // |--------------------------|
 
 function initialize(context) {
-    context.subscriptions.push([
+    context.subscriptions.push(
         pageStatusBarItem,
         solemnlySwearStatusBarItem,
         mischiefStatusBarItem,
+        savingSpellsStatusBarItem,
         mapStatusBarItem,
-    ])
+    )
 }
 
 function dispose() {
@@ -169,6 +164,9 @@ function dispose() {
     }
     if (mischiefStatusBarItem) { // exists
         mischiefStatusBarItem.dispose();
+    }
+    if (savingSpellsStatusBarItem) { // exists
+        savingSpellsStatusBarItem.dispose();
     }
 }
 
@@ -186,8 +184,8 @@ module.exports = {
         use: useMischiefStatusBar,
     },
     saving: {
-        initialize: initSavingSpellStatusBarItem,
-        use: useSavingSpellStatusBarItem,
+        initialize: initSavingSpellsStatusBarItem,
+        use: useSavingSpellsStatusBarItem,
     },
     mapIcon: {
         initialize: initMapStatusBar,

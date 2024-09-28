@@ -80,7 +80,7 @@ let keybindingsCache = {};
 */
 
 function updateKeybindingsCache() {
-  console.log("---------- updating keybindingsCache ------------");
+  // console.log("---------- updating keybindingsCache ------------");
   const allKeybindings = getKeybindingsFromJson();
 
   const pageKeybindings = keybindingForEachPage(allKeybindings);
@@ -227,13 +227,13 @@ function keybindingForEachPage(keybindings) {
   // it returns the base keybinding, which may be different
 
 
-  // this function is not maintaining the order of the keybindings
-
   // |---------------------|
   // |        *BUG*        |
   // |---------------------|
 
-  // changing the order of the spells on the Pages selection will change the order of nested pages in their respective pages
+  // this function is not maintaining the order of the keybindings
+  // which is breaking the ordering feature for pages
+
 
   const uniqueMapPages = new Set();
   const mapPagesKeybindings = {};

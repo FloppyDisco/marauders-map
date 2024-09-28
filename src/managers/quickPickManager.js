@@ -10,7 +10,6 @@ let selectSpellQuickPick;
 let selectPageQuickPick;
 let selectOrderQuickPick;
 
-
 let mapOpenTimer;
 
 const addSpellItem = {
@@ -18,16 +17,21 @@ const addSpellItem = {
   alwaysShow: true,
 };
 
-
 async function selectSpell({ spells, mapPage, mapDelay }) {
   // console.log("----------- selectSpell()");
 
   const configs = Settings.useConfigs();
 
+  if (selectSpellQuickPick) {
+    selectSpellQuickPick.dispose();
+  }
+
+  const selectingPage = selectPageQuickPick && !selectPageQuickPick._disposed
+
   selectSpellQuickPick = vscode.window.createQuickPick();
 
-  // //   Props
-  // // ---------
+  //   Props
+  // ---------
   selectSpellQuickPick.placeholder = "Choose a Spell ...";
   selectSpellQuickPick.onDidTriggerButton((event) => event.trigger());
   selectSpellQuickPick.onDidTriggerItemButton((event) =>
@@ -53,22 +57,19 @@ async function selectSpell({ spells, mapPage, mapDelay }) {
     }
   }
 
-  // // |-----------------------|
-  // // |        Feature        |
-  // // |-----------------------|
-  // // go back page button for nested pages?
-  // // selectSpellQuickPick.buttons= [];
+  // |-----------------------|
+  // |        Feature        |
+  // |-----------------------|
+  // go back page button for nested pages?
+  // selectSpellQuickPick.buttons= [];
 
-  // //   add Menuitems to QuickPick
-  // // ------------------------------
+  //   add Menuitems to QuickPick
+  // ------------------------------
 
   // must set descripiton at call time to get current icon setting
   addSpellItem.description = `$(add) ${configs.get(Settings.keys.spellIcon)}`;
 
-  selectSpellQuickPick.items = [
-    ...spells,
-    addSpellItem,
-  ];
+  selectSpellQuickPick.items = [...spells, addSpellItem];
 
   //   Map Delay Time
   // ------------------
@@ -77,7 +78,7 @@ async function selectSpell({ spells, mapPage, mapDelay }) {
       ? mapDelay
       : configs.get(Settings.keys.defaultMapDelay);
 
-  if (mapDelayTime) {
+  if ( !selectingPage && mapDelayTime) {
     mapOpenTimer = setTimeout(() => {
       // show map after delay
       if (selectSpellQuickPick && !selectSpellQuickPick._visible) {
@@ -92,13 +93,18 @@ async function selectSpell({ spells, mapPage, mapDelay }) {
   return new Promise((resolve) => {
     selectSpellQuickPick.onDidHide(() => {
       resolve(undefined);
-      // selectSpellQuickPick.dispose();
+
+      // i think technically the selectSpell is not getting disposed() if 'esc' is pressed or clicked away
+
+      // might need to do something similar to When,
+      // create individual instances,
+      // and only give the Close command the ability to dispose them all
+
     });
 
     selectSpellQuickPick.onDidAccept(() => {
       const [selection] = selectSpellQuickPick.activeItems;
       resolve(selection);
-      // selectSpellQuickPick.hide();
     });
   });
 }
@@ -112,6 +118,10 @@ async function selectPage({ pages, mapPage }) {
   // console.log("----------- selectPage()");
 
   const configs = Settings.useConfigs();
+
+  if (selectPageQuickPick) {
+    selectPageQuickPick.dispose();
+  }
 
   selectPageQuickPick = vscode.window.createQuickPick();
 
@@ -144,20 +154,19 @@ async function selectPage({ pages, mapPage }) {
   return new Promise((resolve) => {
     selectPageQuickPick.onDidHide(() => {
       resolve(undefined);
+      selectPageQuickPick.dispose();
     });
     selectPageQuickPick.onDidAccept(() => {
       const [selection] = selectPageQuickPick.activeItems;
       resolve(selection);
-      selectPageQuickPick.hide();
+      selectPageQuickPick.dispose();
     });
   });
 }
 
 async function selectOrder({ spells, spellToMove, mapPage }) {
-
-  // if this is the first spell on a page, don't ask the user for an order
-  if (spells.length === 0) {
-    return [spellToMove];
+  if (selectOrderQuickPick) {
+    selectOrderQuickPick.dispose();
   }
 
   const configs = Settings.useConfigs();
@@ -200,9 +209,11 @@ async function selectOrder({ spells, spellToMove, mapPage }) {
     spellToMove.label = `   $(primitive-dot) ${spellToMove.label}`;
   }
   spells = spells.map((spell) => {
-    if(
+    if (
       // spell is separator
-      spell.kind && spell.kind === vscode.QuickPickItemKind.Separator){
+      spell.kind &&
+      spell.kind === vscode.QuickPickItemKind.Separator
+    ) {
       return spell;
     } else {
       return {
@@ -210,7 +221,7 @@ async function selectOrder({ spells, spellToMove, mapPage }) {
         alwaysShow: true,
         buttons: undefined, // remove buttons
         label: `            $(primitive-dot) ${spell.label}`,
-      }
+      };
     }
   });
 
@@ -301,8 +312,10 @@ async function selectOrder({ spells, spellToMove, mapPage }) {
   });
 }
 
-function updatePageSpells(spells) {
+function updateSpellsOnPage(spells) {
+
   StatusBars.saving.initialize().show();
+
   spells = spells.map((spell) => ({
     key: spell.key,
     command: spell.command,
@@ -312,7 +325,6 @@ function updatePageSpells(spells) {
     },
   }));
   Keybindings.saveKeybindings(spells);
-  // show a statusBar confirming the order change
   return spells;
 }
 
@@ -323,7 +335,7 @@ function createSeparator(label) {
   };
 }
 
-function generateEditButton(spell) {
+function generateEditSpellButton(spell) {
   return {
     ...Settings.buttons.editSpell,
     trigger: () => {
@@ -404,7 +416,7 @@ function createPageMenuItems(
             return; // exit
           }
 
-          updatePageSpells(orderedSpells);
+          updateSpellsOnPage(orderedSpells);
         },
       };
 
@@ -415,7 +427,7 @@ function createPageMenuItems(
       if (!spellIsNestedPage) {
         buttons.push(moveSpellButton);
       }
-      buttons.push(generateEditButton(spell));
+      buttons.push(generateEditSpellButton(spell));
       buttons.push(generateRemoveSpellButton(spell));
 
       return {
@@ -520,27 +532,32 @@ function createSpellMenuItems(keybindings, { mapPage }) {
   spells = spells.map((spell) => {
     //   Add Buttons
     // ---------------
-    const buttons = [
-      {
+
+    const buttons = [];
+
+    if(spells.length > 0){
+      buttons.push({
         ...Settings.buttons.moveSpell,
         trigger: async () => {
+
+          // |--------------------------|
+          // |        Move Spell        |
+          // |--------------------------|
+
           let orderedSpells = await selectOrder({
             spells,
             spellToMove: spell,
             mapPage,
           });
-
           if (orderedSpells === undefined) {
-            disposeQuickPicks();
-            StatusBars.dispose();
             return; // exit
           }
-          updatePageSpells(orderedSpells);
+          updateSpellsOnPage(orderedSpells);
         },
-      },
-      generateEditButton(),
-      generateRemoveSpellButton(),
-    ];
+      });
+    }
+    buttons.push(generateEditSpellButton(spell));
+    buttons.push(generateRemoveSpellButton(spell));
 
     return {
       ...spell,
@@ -588,7 +605,6 @@ module.exports = {
   createPageMenuItems,
   createSpellMenuItems,
   createSeparator,
-  updatePageSpells,
+  updateSpellsOnPage,
   cancelTimer,
-  dispose: disposeQuickPicks,
 };

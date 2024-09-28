@@ -1,9 +1,8 @@
 const vscode = require("vscode");
 const Settings = require("../managers/settingsManager");
 
-let whenContext;
-let setWhenContext;
-let removeWhenContext;
+
+let allWhenContexts = [];
 
 function serializer(mapPage) {
   return `${Settings.keys.maraudersMapPrefix}.${mapPage.replaceAll(" ", "_")}`;
@@ -23,12 +22,17 @@ function serializer(mapPage) {
  *   - `removeWhenContext`: A function to remove the necessary when contexts in VS Code.
  */
 function initialize(mapPage) {
-  whenContext = serializer(mapPage);
+  const whenContext = serializer(mapPage);
 
   /**
    * Sets the page's "when" clause context.
    */
-  setWhenContext = () => {
+  const setWhenContext = () => {
+
+    // |-----------------------------------------------------------|
+    // |        Well ok, TECHNICALLY, this is the MAGIC ...        |
+    // |-----------------------------------------------------------|
+
     vscode.commands.executeCommand(
       "setContext",
       Settings.keys.mapOpenContext,
@@ -44,7 +48,7 @@ function initialize(mapPage) {
   /**
    * Removes the page's "when" clause context.
    */
-  removeWhenContext = () => {
+  const removeWhenContext = () => {
     vscode.commands.executeCommand(
       "setContext",
       Settings.keys.mapOpenContext,
@@ -57,17 +61,18 @@ function initialize(mapPage) {
     );
   };
 
-  return { whenContext, setWhenContext, removeWhenContext };
+  const context = { whenContext, setWhenContext, removeWhenContext };
+  allWhenContexts.push(context)
+  return context
+}
+
+function removeAllContexts(){
+  allWhenContexts.forEach(context => context.removeWhenContext());
 }
 
 
 module.exports = {
   initialize,
   serializer,
-  get removeWhenContext() {
-    return removeWhenContext;
-  },
-  get setWhenContext() {
-    return setWhenContext;
-  },
+  removeAllContexts
 };
