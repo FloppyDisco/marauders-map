@@ -57,32 +57,35 @@ const maraudersMapPrefix = "maraudersMap";
 const buttons = {
     editSpell: {
         id: "editSpell",
-        iconPath: new vscode.ThemeIcon("gear"),
+        iconPath: new vscode.ThemeIcon("go-to-file"),
         tooltip: "Edit this Spell",
     },
     editPage: {
         id: "editPage",
-        iconPath: new vscode.ThemeIcon("gear"),
+        iconPath: new vscode.ThemeIcon("go-to-file"),
         tooltip: "Edit this Page",
     },
     moveSpell: {
         id: "order",
-        iconPath: new vscode.ThemeIcon("list-ordered"),
+        iconPath: new vscode.ThemeIcon("list-unordered"),
         tooltip: "Move Spell",
+    },
+    removeSpell: {
+        id: "remove",
+        iconPath: new vscode.ThemeIcon("close"),
+        tooltip: "Delete Spell",
     },
 };
 const keys = {
     maraudersMapPrefix: maraudersMapPrefix,
     mapOpenContext: "maraudersMapIsOpen",
-    getMapPageContext: "getMapPage",
+    getMapPageContext: "selectingMapPage",
     defaultMapDelay: "defaultMapDelay",
     pageIcon: "pageIcon",
     subpageIcon: "subpageIcon",
     spellIcon: "spellIcon",
     displayMapTitle: "displayMapTitle",
     displayCommandId: "displayCommandId",
-    titleIcon: "titleIcon",
-    inputBoxTitle: "inputBoxTitle",
     examplePagesKey: "examplePagesInstalled",
     commands: {
         showMap: `${maraudersMapPrefix}.lumos`,
@@ -104,26 +107,28 @@ const keys = {
 function getDefaultValuesFromPackageJSON() {
     const packageJsonPath = path.join(__dirname, "..","..","package.json");
     const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
-    return packageJson.contributes.configuration.properties["maraudersMap"]
-        .properties;
+
+    const configs = packageJson.contributes.configuration.properties
+
+    const defaultValues = {};
+    Object.keys(configs).forEach(key => {
+        defaultValues[key.split(".")[1]] = configs[key]
+    })
+
+    return defaultValues;
 }
 
 function getConfigValue(workspace, key) {
-    return workspace.get(key, defaultValues[key]);
+    return workspace.get(key, defaultValues[`${maraudersMapPrefix}.${key}`]);
 }
 
 function getConfigs() {
     const workspace = vscode.workspace.getConfiguration(
-        keys.maraudersMapPrefix
+        maraudersMapPrefix
     );
 
     const configs = new Map();
 
-    // internal settings
-    configs.set(keys.titleIcon, mapIcon);
-    configs.set(keys.inputBoxTitle, `The Marauders Map ${mapIcon}`);
-
-    // settings.json
     Object.keys(defaultValues).forEach((key) => {
         configs.set(key, getConfigValue(workspace, key));
     });
@@ -143,9 +148,12 @@ function useConfigs() {
 
 module.exports = {
     initialize,
+
     useConfigs,
     keys,
     buttons,
+    titleIcon: mapIcon,
+    inputBoxTitle: `The Marauders Map ${mapIcon}`,
     prettifyKey,
     platform,
     isVSCodium
