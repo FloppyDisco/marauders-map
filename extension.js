@@ -2,6 +2,7 @@
 const Settings = require("./src/managers/settingsManager");
 const StatusBars = require("./src/managers/statusBarManager");
 const Keybindings = require("./src/managers/keybindingsManager");
+const Picks = require("./src/managers/quickPickManager");
 
 // commands
 const showMap = require("./src/commands/showMap");
@@ -20,6 +21,7 @@ function activate(context) {
     Settings.initialize(context);
     StatusBars.initialize(context);
     Keybindings.initialize(context);
+    Picks.initialize(context);
 
     // create UI
     StatusBars.mapIcon.initialize().show();

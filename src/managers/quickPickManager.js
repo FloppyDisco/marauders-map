@@ -564,7 +564,16 @@ function cancelTimer() {
   clearTimeout(mapOpenTimer);
 }
 
+function initialize(context){
+  context.subscriptions.push(
+    selectSpellQuickPick,
+    selectPageQuickPick,
+    selectOrderQuickPick
+  )
+}
+
 module.exports = {
+  initialize,
   selectPage,
   get selectPageQuickPick() {
     return selectPageQuickPick;
