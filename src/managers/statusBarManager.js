@@ -29,9 +29,8 @@ let mapStatusBarItem;
  * A function to initialize the mapStatusBar item
  */
 function initMapStatusBar() {
-    const configs = Settings.useConfigs();
     mapStatusBarItem = initStatusBarBase(mapStatusBarItem, {
-        text: configs.get(Settings.keys.titleIcon),
+        text: Settings.titleIcon,
         command: Settings.keys.commands.openMap,
         tooltip: "I solemnly swear that I am up to no good...",
         alignment: "Right",
