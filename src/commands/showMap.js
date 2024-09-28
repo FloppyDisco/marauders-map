@@ -1,10 +1,12 @@
 const vscode = require("vscode");
+
 // managers
 const Settings = require("../managers/settingsManager");
-const Map = require("../managers/mapManager");
+const Picks = require("../managers/quickPickManager");
 const Prompts = require("../managers/promptManager");
 const StatusBars = require("../managers/statusBarManager");
 const Keybindings = require("../managers/keybindingsManager");
+
 
 // |---------------------|
 // |        Lumos        |
@@ -15,73 +17,63 @@ function register(context) {
     vscode.commands.registerCommand(
       Settings.keys.commands.showMap,
       async () => {
-        // console.log('showMap()',);
+        console.log("------------- showMap() -----------");
+
+        // // set flag for opening immediately
+        // Picks.selectedPageManually = true;
 
         // remove any old UI elements from previous spells
-        Map.dispose();
-        Prompts.dispose();
+        Picks.dispose();
         StatusBars.dispose();
-
         const solemnlySwearStatusBar = StatusBars.solenmlySwear.initialize();
-
         solemnlySwearStatusBar.show();
 
-          //   Add Items
-        // -------------
-        const PagesKeybindings = Keybindings.getAllPages();
-        const pageMenuItems = Map.createMenuItems(PagesKeybindings);
-
-
-        // |-----------------------|
-        // |        Feature        |
-        // |-----------------------|
-
-        // create a flag that when set will cause map to show immediately
-        // even if called from keybinding
-        Map.selectedPageManually = true;
-
-        // must determine how to reset the flag after a command is run
-
-
-
-
-
-        const mapPage = await Prompts.promptUserToSelectPage({pageMenuItems});
-        if (mapPage === undefined) {
-          return; // exit on 'Esc' key
+        function exit() {
+          Picks.dispose();
+          solemnlySwearStatusBar.dispose();
         }
 
-        //                                                Page       or        nestedPage
-        const pageNames = PagesKeybindings.map(kb => kb.args.mapPage || kb.args.args.mapPage);
+        const PagesKeybindings = Keybindings.getAllPages();
 
-        if (!pageNames.includes(mapPage)){
+        const pages = Picks.createPageMenuItems(PagesKeybindings);
+
+        let mapPage;
+        const selection = await Picks.selectPage({
+          pages,
+        });
+        if (selection === undefined) {
+          return exit(); // exit on 'Esc' key
+
+        } else if (selection.command === Picks.addPageItem.command) {
           // create a new mapPage keybinding
-          const selectedKey = await Prompts.promptUserForKey();
-          if (selectedKey === undefined) {
-            return undefined; // exit on 'Esc' key
+          mapPage = await Prompts.promptUserForNewPageName();
+          if (mapPage === undefined) {
+            return exit(); // exit on 'Esc' key
           }
 
-          if (mapPage && selectedKey) {
+          const selectedKey = await Prompts.promptUserForKey({mapPage});
+          if (selectedKey === undefined) {
+            return exit(); // exit on 'Esc' key
+          }
+
+          if (mapPage && selectedKey !== undefined) {
             const keybinding = {
-              key: selectedKey,
+              key: selectedKey ? selectedKey : undefined,
               command: Settings.keys.commands.openMap,
               when: `!${Settings.keys.mapOpenContext}`,
               args: {
                 mapPage,
               },
             };
-
             Keybindings.saveKeybindings([keybinding]);
           }
+        } else {
+          mapPage = selection.args.mapPage;
         }
 
-
-
-        solemnlySwearStatusBar.dispose();
-
-
-        console.log('Map.selectedPageManually',Map.selectedPageManually);
-        
+        //   Page Selected
+        // -----------------
+        exit(); // exit and open the selected Page
         vscode.commands.executeCommand(Settings.keys.commands.openMap, {
           mapPage,
           mapDelay: 0,
