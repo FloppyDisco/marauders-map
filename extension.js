@@ -8,11 +8,6 @@ const showMap = require("./src/commands/showMap");
 const openMap = require("./src/commands/openMap");
 const closeMap = require("./src/commands/closeMap");
 
-const saveSpell = require("./src/commands/saveSpell");
-const editPage = require("./src/commands/editPage");
-const editSpell = require("./src/commands/editSpell");
-
-
 // keybindings
 const examplePages = require("./src/examplePages");
 
@@ -34,10 +29,6 @@ function activate(context) {
     openMap.register(context);
     closeMap.register(context);
 
-    // saveSpell.register(context);
-
-    // editPage.register(context);
-    // editSpell.register(context);
 
 
     // install default spells
