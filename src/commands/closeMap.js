@@ -19,10 +19,10 @@ function register(context) {
 
         When.removeAllContexts();
         StatusBars.dispose();
+        
         if (
           Picks.selectSpellQuickPick &&
-          Picks.selectSpellQuickPick._visible &&
-          !Picks.selectSpellQuickPick._disposed
+         !Picks.selectSpellQuickPick._disposed
         ) {
           Picks.selectSpellQuickPick.dispose();
         }
