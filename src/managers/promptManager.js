@@ -141,102 +141,10 @@ async function promptUserForNewPageName(userInput = "") {
   });
 }
 
-let pagePrompt;
-/**
- * Function to prompt the user to select a Page
- * @returns {Promise<string | undefined>} The provided page name or undefined if canceled.
- */
-async function promptUserToSelectPage({ pageMenuItems }) {
-  const configs = Settings.useConfigs();
-
-  // const { setGetMapPageContext, removeGetMapPageContext } =
-  //   When.useGetMapPageContext();
-
-  //   Create
-  // ----------
-  pagePrompt = vscode.window.createQuickPick();
-  // setGetMapPageContext();
-
-  //   Decorate
-  // ------------
-  const displayTitle = configs.get(Settings.keys.displayMapTitle);
-  if (displayTitle) {
-    pagePrompt.title = `${configs.get(Settings.keys.titleIcon)}`;
-  }
-  pagePrompt.placeholder = "Select a page ...";
-  pagePrompt.onDidTriggerItemButton((event) => {
-    event.button.trigger();
-  });
-  let userInput = "";
-  pagePrompt.onDidChangeValue((value) => {
-    userInput = value;
-  });
-
-  const addPageItem = {
-    label: "$(add) New Page",
-    alwaysShow: true,
-  };
-  pagePrompt.items = [
-    ...pageMenuItems,
-    {
-      kind: vscode.QuickPickItemKind.Separator,
-    },
-    addPageItem,
-  ];
-
-  return new Promise((resolve) => {
-    pagePrompt.onDidHide(() => {
-      pagePrompt.dispose();
-      // removeGetMapPageContext();
-      resolve(undefined);
-    });
-    pagePrompt.onDidAccept(async () => {
-      pagePrompt.hide();
-
-      const [selectedOption] = pagePrompt.selectedItems;
-      
-      if (selectedOption.label === addPageItem.label) {
-        // Selected to create a new page
-        resolve(
-          // the new name for the page
-          new Promise(async (resolve) => {
-            resolve(await promptUserForNewPageName(userInput));
-          })
-        );
-        // |------------------------------------|
-        // |        What a ClusterFuck!+        |
-        // |------------------------------------|
-      } else {
-        //   Selected a pre-existing page
-        resolve(
-          selectedOption.args.mapPage || selectedOption.args.args.mapPage
-        );
-      }
-      pagePrompt.dispose();
-    });
-    pagePrompt.show();
-  });
-}
-
-function dispose() {
-  if (pagePrompt) {
-    // call hide func
-    pagePrompt.hide();
-  }
-}
-
-function usePagePrompt() {
-  if (pagePrompt) {
-    return pagePrompt;
-  }
-}
 
 module.exports = {
   promptUserForCommand,
   promptUserForKey,
   promptUserForLabel,
   promptUserForNewPageName,
-  promptUserToSelectPage,
-  dispose,
-  usePagePrompt,
 };
