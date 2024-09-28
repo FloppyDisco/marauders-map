@@ -17,24 +17,30 @@ function register(context) {
     vscode.commands.registerCommand(
       Settings.keys.commands.showMap,
       async () => {
-        console.log("------------- showMap() -----------");
+        // console.log("------------- showMap() -----------");
 
-        // // set flag for opening immediately
-        // Picks.selectedPageManually = true;
+        // |-----------------------|
+        // |        Feature        |
+        // |-----------------------|
+        /*
+          pages should open immediately
+          if called from the keybinding
+          when the selectPage is open
+        */
 
         // remove any old UI elements from previous spells
         Picks.dispose();
         StatusBars.dispose();
+
         const solemnlySwearStatusBar = StatusBars.solenmlySwear.initialize();
         solemnlySwearStatusBar.show();
 
         function exit() {
-          Picks.dispose();
+          Picks.selectPageQuickPick.dispose();
           solemnlySwearStatusBar.dispose();
         }
 
         const PagesKeybindings = Keybindings.getAllPages();
-
         const pages = Picks.createPageMenuItems(PagesKeybindings);
 
         let mapPage;

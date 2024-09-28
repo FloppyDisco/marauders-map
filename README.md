@@ -81,6 +81,8 @@ example keybindings:
 ```
 ...
 
+// Page /openMap
+
 {
     "key": "cmd+e",
     "command": "MaraudersMap.iSolemnlySwearThatIAmUpToNoGood",
@@ -90,32 +92,41 @@ example keybindings:
         "mapDelay": 300    // optional arg for per-page mapDelay
     }
 },
+
+// Spell /closeMap
+
 {
-    "key": "cmd+,",
-    "command": "MaraudersMap.mischiefManaged",
-    "when" : "MaraudersMap.Editor",
-    "args": {
-        "label": "Split Editor Down"
-        "command": "editor.splitDown"
-    }
+  "key": "cmd+,",
+  "command": "MaraudersMap.mischiefManaged",
+  "when" : "MaraudersMap.Editor",
+  "args": {
+      "label": "Split Editor Down"
+      "command": "editor.splitDown"
+  }
 },
-  {
-    "key": "cmd+f",
-    "command": "maraudersMap.mischiefManaged",
-    "when": "maraudersMap.Editor_Spells",
-    "args": {
-      "command": "maraudersMap.iSolemnlySwearThatIAmUpToNoGood",
-      "args": {
-        "mapPage": "Fold Spells"
-      }
-    }
-  },
+
+// Spell /closeMap  command === openMap
+
 {
-    "command": "separator",
-    "when" : "MaraudersMap.Editor",
+  "key": "cmd+f",
+  "command": "maraudersMap.mischiefManaged",
+  "when": "maraudersMap.Editor_Spells",
+  "args": {
+    "command": "maraudersMap.iSolemnlySwearThatIAmUpToNoGood",
     "args": {
-        "label": "Close Editors"
+      "mapPage": "Fold Spells"
     }
+  }
+},
+
+// separator
+
+{
+  "command": "separator",
+  "when" : "MaraudersMap.Editor",
+  "args": {
+      "label": "Close Editors"
+  }
 },
 
 ```
