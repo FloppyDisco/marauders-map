@@ -87,10 +87,7 @@ example keybindings:
     "when": "!MaraudersMapIsOpen",
     "args": {
         "mapPage": "Editor",
-        "mapDelay": 300,    // optional arg for per-page mapDelay
-        "separators": {
-            3: "these Spells"
-        }
+        "mapDelay": 300    // optional arg for per-page mapDelay
     }
 },
 {
@@ -99,8 +96,25 @@ example keybindings:
     "when" : "MaraudersMap.Editor",
     "args": {
         "label": "Split Editor Down"
-        "command": "editor.splitDown",
-        "order": 1
+        "command": "editor.splitDown"
+    }
+},
+  {
+    "key": "cmd+f",
+    "command": "maraudersMap.mischiefManaged",
+    "when": "maraudersMap.Editor_Spells",
+    "args": {
+      "command": "maraudersMap.iSolemnlySwearThatIAmUpToNoGood",
+      "args": {
+        "mapPage": "Fold Spells"
+      }
+    }
+  },
+{
+    "command": "separator",
+    "when" : "MaraudersMap.Editor",
+    "args": {
+        "label": "Close Editors"
     }
 },
 
@@ -132,7 +146,7 @@ setting any `"mapDelay"` to `0` will open the Map immediately.
 ### Separators
 
 To keep your map organized, you can add a separator to any page
-- Select `+ New Spell` then `+ Add a Separator`.
+- Select `+ New Spell` then `+ a Separator`.
 - Provide an optional labe for the separator
 - Choose where you want the separator to go by selecting a Spell, the separator wil go above this Spell
 
