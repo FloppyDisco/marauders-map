@@ -6,7 +6,7 @@ const Picks = require("../managers/quickPickManager");
 const Prompts = require("../managers/promptManager");
 const StatusBars = require("../managers/statusBarManager");
 const Keybindings = require("../managers/keybindingsManager");
-
+const When = require("../managers/whenManager");
 
 // |---------------------|
 // |        Lumos        |
@@ -21,10 +21,13 @@ function register(context) {
 
         StatusBars.dispose();
 
+        When.setSelectingMapPageContext()
+
         const solemnlySwearStatusBar = StatusBars.solenmlySwear.initialize();
         solemnlySwearStatusBar.show();
 
         function exit() {
+          When.removeSelectingMapPageContext()
           solemnlySwearStatusBar.dispose();
         }
 

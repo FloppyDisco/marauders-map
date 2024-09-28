@@ -140,7 +140,7 @@ function getKeybindings() {
   // console.log("getKeybindings()");
   let allKeybindings = keybindingsCache.allKeybindings;
   if (!allKeybindings) {
-    console.log("keybindings were not in cache, fetching");
+    // console.log("keybindings were not in cache, fetching");
     allKeybindings = getKeybindingsFromJson();
   }
   return allKeybindings;
@@ -208,7 +208,7 @@ function getSpellKeybindingsForPage(mapPage) {
 function allSpellKeybindingsForPage(keybindings, whenContext) {
   return keybindings.filter((kb) => {
     const whenClause = kb.when;
-    return whenClause && whenClause === whenContext;
+    return whenClause && (whenClause === whenContext || whenClause.split("||")[0].trim() == whenContext);
   });
 }
 

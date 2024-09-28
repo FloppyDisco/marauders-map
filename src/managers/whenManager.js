@@ -71,8 +71,29 @@ function removeAllContexts(){
 }
 
 
+function setSelectingMapPageContext(){
+  vscode.commands.executeCommand(
+    "setContext",
+    Settings.keys.selectingMapPage,
+    true
+  );
+
+}
+
+function removeSelectingMapPageContext(){
+  vscode.commands.executeCommand(
+    "setContext",
+    Settings.keys.selectingMapPage,
+    undefined
+  );
+
+}
+
+
 module.exports = {
   initialize,
   serializer,
-  removeAllContexts
+  removeAllContexts,
+  setSelectingMapPageContext,
+  removeSelectingMapPageContext
 };

@@ -19,7 +19,7 @@ function register(context) {
 
         When.removeAllContexts();
         StatusBars.dispose();
-        
+
         if (
           Picks.selectSpellQuickPick &&
          !Picks.selectSpellQuickPick._disposed
@@ -33,7 +33,7 @@ function register(context) {
           // if opening a nested page
           if (command === Settings.keys.commands.openMap) {
             // &&
-            if (Picks.selectSpellQuickPick._visible) {
+            if (Picks.selectSpellQuickPick && Picks.selectSpellQuickPick._visible) {
               // map is already visible
               args.mapDelay = 0;
             } else {

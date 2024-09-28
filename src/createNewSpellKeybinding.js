@@ -20,8 +20,9 @@ module.exports = async (mapPage) => {
   let needKey;
   let needPage;
   let isSeparator;
+  let when = When.serializer(mapPage);
 
-  const selectedCommand = await Prompts.promptUserForCommand({mapPage});
+  const selectedCommand = await Prompts.promptUserForCommand({ mapPage });
 
   switch (selectedCommand) {
     case undefined:
@@ -33,6 +34,7 @@ module.exports = async (mapPage) => {
       needPage = true;
       needKey = true;
       selectedLabel = undefined;
+      when = `${when} || ${Settings.keys.selectingMapPage}`;
       break;
 
     case "separator":
@@ -52,24 +54,21 @@ module.exports = async (mapPage) => {
 
   if (needPage) {
     const PagesKeybindings = Keybindings.getAllPages();
-    const pages = Picks.createMenuItems({
-      keybindings: PagesKeybindings,
+    const pages = Picks.createPageMenuItems(PagesKeybindings, {
       includeButtons: false,
-      includeKeybindings: false,
     });
 
     // ask which Page this command will go to =>
     const selection = await Picks.selectPage({ pages, mapPage });
-    switch (selection) {
-      case undefined:
-        return; // exit on 'Esc' key
+    if (selection === undefined) {
+      return; // exit on 'Esc' key
 
-      case selection.command === Picks.addPageItem.command:
-        // prompt user for newPage name
-        nestedPage = await Prompts.promptUserForNewPageName({mapPage});
-        break;
-      default:
-        nestedPage = selection.args.mapPage;
+    } else if (selection.command === Picks.addPageItem.command) {
+      // prompt user for newPage name
+      nestedPage = await Prompts.promptUserForNewPageName({ mapPage });
+
+    } else {
+      nestedPage = selection.args.mapPage;
     }
 
     selectedArgs = {
@@ -85,13 +84,14 @@ module.exports = async (mapPage) => {
   }
 
   if (needLabel) {
-    selectedLabel = await Prompts.promptUserForLabel({selectedCommand, mapPage});
+    selectedLabel = await Prompts.promptUserForLabel({
+      selectedCommand,
+      mapPage,
+    });
     if (selectedLabel === undefined) {
       return; // exit on 'Esc' key
     }
   }
-
-  const when = When.serializer(mapPage);
 
   //   New keybinding
   // ------------------

@@ -79,7 +79,7 @@ const buttons = {
 const keys = {
     maraudersMapPrefix: maraudersMapPrefix,
     mapOpenContext: "maraudersMapIsOpen",
-    getMapPageContext: "selectingMapPage",
+    selectingMapPage: "selectingMapPage",
     defaultMapDelay: "defaultMapDelay",
     pageIcon: "pageIcon",
     subpageIcon: "subpageIcon",

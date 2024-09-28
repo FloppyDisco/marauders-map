@@ -455,7 +455,7 @@ function sortPages(keybindings) {
       pages.push(binding);
     } else {
       // nestedPage
-      const when = binding.when;
+      const when = binding.when.split("||")[0].trim();
       if (!nestedPagesMap[when]) {
         nestedPagesMap[when] = [];
       }
