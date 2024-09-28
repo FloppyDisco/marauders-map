@@ -1,14 +1,12 @@
-const vscode = require('vscode');
-const Settings = require('../managers/settingsManager');
-
+const vscode = require("vscode");
+const Settings = require("../managers/settingsManager");
 
 let whenContext;
-let setWhenContext = () => {};
-let removeWhenContext = () => {};
+let setWhenContext;
+let removeWhenContext;
 
-
-function serializer(mapPage){
-    return `${Settings.keys.maraudersMapPrefix}.${mapPage.replaceAll(" ", "_")}`;
+function serializer(mapPage) {
+  return `${Settings.keys.maraudersMapPrefix}.${mapPage.replaceAll(" ", "_")}`;
 }
 
 /**
@@ -25,60 +23,51 @@ function serializer(mapPage){
  *   - `removeWhenContext`: A function to remove the necessary when contexts in VS Code.
  */
 function initialize(mapPage) {
+  whenContext = serializer(mapPage);
 
-    whenContext = serializer(mapPage);
+  /**
+   * Sets the page's "when" clause context.
+   */
+  setWhenContext = () => {
+    vscode.commands.executeCommand(
+      "setContext",
+      Settings.keys.mapOpenContext,
+      true
+    );
+    vscode.commands.executeCommand(
+      "setContext",
+      whenContext ? whenContext : "",
+      true
+    );
+  };
 
-    /**
-     * Sets the page's "when" clause context.
-     */
-    setWhenContext = () => {
-        vscode.commands.executeCommand("setContext", Settings.keys.mapOpenContext, true);
-        vscode.commands.executeCommand("setContext", whenContext? whenContext : '', true);
-    }
+  /**
+   * Removes the page's "when" clause context.
+   */
+  removeWhenContext = () => {
+    vscode.commands.executeCommand(
+      "setContext",
+      Settings.keys.mapOpenContext,
+      undefined
+    );
+    vscode.commands.executeCommand(
+      "setContext",
+      whenContext ? whenContext : "",
+      undefined
+    );
+  };
 
-    /**
-     * Removes the page's "when" clause context.
-     */
-    removeWhenContext = () => {
-        vscode.commands.executeCommand("setContext", Settings.keys.mapOpenContext, undefined);
-        vscode.commands.executeCommand("setContext", whenContext? whenContext : '', undefined);
-    }
-
-    return { whenContext, setWhenContext, removeWhenContext };
+  return { whenContext, setWhenContext, removeWhenContext };
 }
 
-
-/**
- * Returns the "when" clause context functions for the current Page
- *
- * @returns {{whenContext: string, setWhenContext: function, removeWhenContext: function}} - An object containing:
- *   - `whenContext`: The formatted string to be used as the when context for this page.
- *   - `setWhenContext`: A function to set the necessary when contexts in VS Code.
- *   - `removeWhenContext`: A function to remove the necessary when contexts in VS Code.
- */
-function use() {
-        return { whenContext, setWhenContext, removeWhenContext }
-}
-
-
-
-function useGetMapPageContext() {
-
-    function setGetMapPageContext(){
-        vscode.commands.executeCommand("setContext", Settings.keys.getMapPageContext, true);
-    }
-    function removeGetMapPageContext() {
-        vscode.commands.executeCommand("setContext", Settings.keys.getMapPageContext, undefined);
-    }
-    return {
-        setGetMapPageContext,
-        removeGetMapPageContext
-    }
-}
 
 module.exports = {
-    initialize,
-    serializer,
-    use,
-    useGetMapPageContext,
-}
+  initialize,
+  serializer,
+  get removeWhenContext() {
+    return removeWhenContext;
+  },
+  get setWhenContext() {
+    return setWhenContext;
+  },
+};
