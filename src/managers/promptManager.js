@@ -5,12 +5,21 @@ const Settings = require("../managers/settingsManager");
  * Function to prompt the user to enter a command.
  * @returns {Promise<string | undefined>} The provided command or undefined if canceled.
  */
-async function promptUserForCommand() {
-  const configs = Settings.useConfigs();
-  const inputBoxTitle = configs.get(Settings.keys.displayMapTitle)
-    ? configs.get(Settings.keys.inputBoxTitle)
-    : "";
+async function promptUserForCommand({mapPage}) {
 
+  const configs = Settings.useConfigs();
+  //   TitleBar
+  // ------------
+  const displayTitle = configs.get(Settings.keys.displayMapTitle);
+  let inputBoxTitle;
+  if (displayTitle) {
+    if (mapPage){
+     inputBoxTitle = `${Settings.titleIcon
+      } ${mapPage}`;
+    } else{
+     inputBoxTitle = Settings.inputBoxTitle
+    }
+  }
   let availableCommands = await vscode.commands.getCommands(true);
   availableCommands = availableCommands.map((cmd) => ({
     label: `${configs.get(Settings.keys.spellIcon)} ${cmd}`,
@@ -18,18 +27,19 @@ async function promptUserForCommand() {
   }));
 
   const goToAnotherPage = {
-    label: `${configs.get(Settings.keys.subpageIcon)} Go to another Page ...`,
+    description: `${configs.get(Settings.keys.subpageIcon)} Go to another Page ...`,
     command: Settings.keys.commands.openMap,
     // alwaysShow: true,
   };
 
   const addSeparator = {
-    label: "$(add) Add a Separator",
+    description: "$(add) Separator",
     command: "separator",
   };
 
   const addCustomCommand = {
-    label: "$(pencil) Enter a custom command ...",
+    description: "$(pencil) Enter a custom command ...",
+    command: "customCommand",
     alwaysShow: true,
   };
 
@@ -43,7 +53,7 @@ async function promptUserForCommand() {
     ...availableCommands,
     addCustomCommand,
   ];
-  const selectedOption = await vscode.window.showQuickPick(options, {
+  let selectedOption = await vscode.window.showQuickPick(options, {
     title: inputBoxTitle,
     placeHolder: "Choose a command ...",
   });
@@ -52,7 +62,7 @@ async function promptUserForCommand() {
     return undefined;
   }
 
-  if (selectedOption.label === addCustomCommand.label) {
+  if (selectedOption.command === addCustomCommand.command) {
     // user wants to type in a custom command name
     selectedOption.command = await vscode.window.showInputBox({
       title: inputBoxTitle,
@@ -70,11 +80,21 @@ async function promptUserForCommand() {
  * Function to prompt the user to enter a keybinding.
  * @returns {Promise<string | undefined>} The provided keybinding or undefined if canceled.
  */
-async function promptUserForKey() {
+async function promptUserForKey({mapPage}) {
   const configs = Settings.useConfigs();
-  const inputBoxTitle = configs.get(Settings.keys.displayMapTitle)
-    ? configs.get(Settings.keys.inputBoxTitle)
-    : "";
+  //   TitleBar
+  // ------------
+  const displayTitle = configs.get(Settings.keys.displayMapTitle);
+  let inputBoxTitle;
+  if (displayTitle) {
+    if (mapPage){
+     inputBoxTitle = `${
+      Settings.titleIcon
+      } ${mapPage}`;
+    } else{
+     inputBoxTitle = Settings.inputBoxTitle
+    }
+  }
 
   return await vscode.window.showInputBox({
     title: inputBoxTitle,
@@ -91,7 +111,7 @@ async function promptUserForKey() {
  * Function to prompt the user to enter a label.
  * @returns {Promise<string | undefined>} The provided label or undefined if canceled.
  */
-async function promptUserForLabel(selectedCommand, selectedKey) {
+async function promptUserForLabel({selectedCommand, selectedKey, mapPage }) {
   // |----------------------|
   // |        Update        |
   // |----------------------|
@@ -100,9 +120,20 @@ async function promptUserForLabel(selectedCommand, selectedKey) {
   // change the placeholder based on the command value?
 
   const configs = Settings.useConfigs();
-  const inputBoxTitle = configs.get(Settings.keys.displayMapTitle)
-    ? configs.get(Settings.keys.inputBoxTitle)
-    : "";
+
+  //   TitleBar
+  // ------------
+  const displayTitle = configs.get(Settings.keys.displayMapTitle);
+  let inputBoxTitle;
+  if (displayTitle) {
+    if (mapPage){
+     inputBoxTitle = `${
+      Settings.titleIcon
+      } ${mapPage}`;
+    } else{
+     inputBoxTitle = Settings.inputBoxTitle
+    }
+  }
   const placeHolder =
     selectedCommand === "separator"
       ? "Provide a label for the separator (may be blank)"
@@ -125,11 +156,21 @@ async function promptUserForLabel(selectedCommand, selectedKey) {
  * Function to prompt the user to enter a name for a new Page.
  * @returns {Promise<string | undefined>} The provided name or undefined if canceled.
  */
-async function promptUserForNewPageName(userInput = "") {
+async function promptUserForNewPageName({userInput = "", mapPage}={}) {
   const configs = Settings.useConfigs();
-  const inputBoxTitle = configs.get(Settings.keys.displayMapTitle)
-    ? configs.get(Settings.keys.inputBoxTitle)
-    : "";
+  //   TitleBar
+  // ------------
+  const displayTitle = configs.get(Settings.keys.displayMapTitle);
+  let inputBoxTitle;
+  if (displayTitle) {
+    if (mapPage){
+     inputBoxTitle = `${
+        Settings.titleIcon
+      } ${mapPage}`;
+    } else{
+     inputBoxTitle = Settings.keys.inputBoxTitle
+    }
+  }
 
   return await vscode.window.showInputBox({
     title: inputBoxTitle,
