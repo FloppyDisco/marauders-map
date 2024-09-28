@@ -117,6 +117,40 @@ function useMischiefStatusBar() {
     return mischiefStatusBarItem;
 }
 
+
+let savingSpellStatusBarItem;
+
+/**
+ * Function to create and return the "mischief managed" status bar item
+ * @returns {vscode.StatusBarItem} The mischiefStatusBar item
+ */
+function initSavingSpellStatusBarItem() {
+    console.log('saving--------------------------------------',);
+
+    const configs = Settings.useConfigs();
+    savingSpellStatusBarItem = initStatusBarBase(savingSpellStatusBarItem, {
+        text: `${configs.get(Settings.keys.spellIcon)} Saving Spells...`,
+        alignment: "Left",
+    });
+    setTimeout(() => {
+        savingSpellStatusBarItem.dispose();
+    }, 1234);
+    return savingSpellStatusBarItem;
+}
+function useSavingSpellStatusBarItem() {
+    return savingSpellStatusBarItem;
+}
+
+
+
+
+
+
+
+// |--------------------------|
+// |        Initialize        |
+// |--------------------------|
+
 function initialize(context) {
     context.subscriptions.push([
         pageStatusBarItem,
@@ -150,6 +184,10 @@ module.exports = {
     mischief: {
         initialize: initMischiefStatusBar,
         use: useMischiefStatusBar,
+    },
+    saving: {
+        initialize: initSavingSpellStatusBarItem,
+        use: useSavingSpellStatusBarItem,
     },
     mapIcon: {
         initialize: initMapStatusBar,
