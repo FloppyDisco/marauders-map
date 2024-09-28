@@ -1,11 +1,13 @@
 // managers
 const Settings = require("./src/managers/settingsManager");
 const StatusBars = require("./src/managers/statusBarManager");
+const Keybindings = require("./src/managers/keybindingsManager");
 
 // commands
 const showMap = require("./src/commands/showMap");
 const openMap = require("./src/commands/openMap");
 const closeMap = require("./src/commands/closeMap");
+
 const saveSpell = require("./src/commands/saveSpell");
 const editPage = require("./src/commands/editPage");
 const editSpell = require("./src/commands/editSpell");
@@ -18,9 +20,11 @@ const examplePages = require("./src/examplePages");
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
-    // get configs
+
+    // setup
     Settings.initialize(context);
     StatusBars.initialize(context);
+    Keybindings.initialize(context);
 
     // create UI
     StatusBars.mapIcon.initialize().show();
@@ -37,7 +41,7 @@ function activate(context) {
 
 
     // install default spells
-    examplePages.initialize(context);
+    // examplePages.initialize(context);
 }
 
 function deactivate() {}
