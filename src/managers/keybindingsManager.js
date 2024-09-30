@@ -53,31 +53,23 @@ function getPathToKeybindingsFolder() {
   }
 }
 
-let keybindingsCache = {};
-
-/*
-
-{
-    "allKeybindings": [
-        ...keybindings.json,
-    ],
-    "pages": [
-        ... all page keybindings,
-    ],
-    "pageSpells": {
-        "Editor_Spells": [
-            ... editor spells,
-        ],
-        "Comment_Spells": [
-            ... comment spells,
-        ],
-        ...
-    },
-
-
-}
-
-*/
+let keybindingsCache = {
+//
+//   "allKeybindings": [
+//     ...keybindings.json,
+//    ],
+//   "pages": [
+//     ...all page keybindings,
+//    ],
+//   "pageSpells": {
+//     "Editor_Spells": [
+//        ...editor spells,
+//    ],
+//    "Comment_Spells": [
+//       ...comment spells,
+//    ],
+//    ...
+};
 
 function updateKeybindingsCache() {
   // console.log("---------- updating keybindingsCache ------------");
