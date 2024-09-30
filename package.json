@@ -1,92 +1,104 @@
 {
-    "name": "marauders-map",
-    "displayName": "The Marauder's Map",
-    "publisher": "bs-code",
-    "icon": "src/media/icon.png",
-    "repository": "https://github.com/FloppyDisco/marauders-map",
-    "description": "Boost productivity by saving keybindings in groups. Displays a visual guide of all keybindings in each group.",
-    "version": "0.0.12",
-    "engines": {
-        "vscode": "^1.91.0"
-    },
-    "categories": [
-        "Keymaps",
-        "Visualization",
-        "Education",
-        "Other"
-    ],
-    "activationEvents": [
-        "onStartupFinished"
-    ],
-    "main": "./extension.js",
-    "contributes": {
-        "configuration": {
-            "type": "object",
-            "title": "Marauder's Map Configuration",
-            "properties": {
-                "maraudersMap.defaultMapDelay": {
-                    "type": "number",
-                    "default": 500,
-                    "description": "Time (ms) to delay opening a map page by default."
-                },
-                "maraudersMap.pageIcon": {
-                    "type": "string",
-                    "default": "$(book)",
-                    "description": "Icon to be used for Pages in the Map"
-                },
-                "maraudersMap.subpageIcon": {
-                    "type": "string",
-                    "default": "$(chevron-right)",
-                    "description": "Icon to be used for nested Pages in the Map"
-                },
-                "maraudersMap.spellIcon": {
-                    "type": "string",
-                    "default": "$(wand)",
-                    "description": "Icon to be used for Spells in the Map"
-                },
-                "maraudersMap.displayMapTitle": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Whether or not to dispay the Marauder's Map title when the Map is open"
-                },
-                "maraudersMap.displayCommandId": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Whether or not to dispay the VS Code command id next to each Spell"
-                }
-            }
+  "name": "marauders-map",
+  "displayName": "The Marauder's Map",
+  "publisher": "bs-code",
+  "icon": "src/media/icon.png",
+  "repository": "https://github.com/FloppyDisco/marauders-map",
+  "description": "Boost productivity by saving keybindings in groups. Displays a visual guide of all keybindings in each group.",
+  "version": "0.0.12",
+  "engines": {
+    "vscode": "^1.91.0"
+  },
+  "categories": [
+    "Keymaps",
+    "Visualization",
+    "Education",
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "configuration": {
+      "type": "object",
+      "title": "Marauder's Map Configuration",
+      "properties": {
+        "maraudersMap.defaultMapDelay": {
+          "type": "number",
+          "default": 500,
+          "description": "Time (ms) to delay opening a map page by default."
         },
-        "commands": [
-            {
-                "command": "maraudersMap.lumos",
-                "title": "Open Map",
-                "category": "Marauder's Map"
-            }
-        ],
-        "keybindings": [
-            {
-                "command": "maraudersMap.lumos",
-                "when": "!maraudersMapIsOpen",
-                "key": "ctrl+alt+m",
-                "mac": "cmd+alt+m"
-            }
-        ]
+        "maraudersMap.pageIcon": {
+          "type": "string",
+          "default": "$(book)",
+          "description": "Icon to be used for Pages in the Map"
+        },
+        "maraudersMap.subpageIcon": {
+          "type": "string",
+          "default": "$(chevron-right)",
+          "description": "Icon to be used for nested Pages in the Map"
+        },
+        "maraudersMap.spellIcon": {
+          "type": "string",
+          "default": "$(wand)",
+          "description": "Icon to be used for Spells in the Map"
+        },
+        "maraudersMap.displayMapTitle": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether or not to dispay the Marauder's Map title when the Map is open"
+        },
+        "maraudersMap.displayCommandId": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether or not to dispay the VS Code command id next to each Spell"
+        }
+      }
     },
-    "scripts": {
-        "lint": "eslint .",
-        "pretest": "npm run lint",
-        "test": "vscode-test"
-    },
-    "devDependencies": {
-        "@types/mocha": "^10.0.7",
-        "@types/node": "20.x",
-        "@types/vscode": "^1.91.0",
-        "@vscode/test-cli": "^0.0.9",
-        "@vscode/test-electron": "^2.4.0",
-        "eslint": "^8.57.0",
-        "typescript": "^5.4.5"
-    },
-    "dependencies": {
-        "jsonc-parser": "^3.3.1"
-    }
+    "commands": [
+      {
+        "command": "maraudersMap.lumos",
+        "title": "Open Map",
+        "category": "Marauder's Map"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "maraudersMap.lumos",
+        "when": "!maraudersMapIsOpen",
+        "key": "ctrl+alt+m",
+        "mac": "cmd+alt+m"
+      }
+    ],
+    "whenContexts": [
+      {
+        "key": "maraudersMapIsOpen",
+        "description": "The Marauder's Map is Open",
+        "type": "boolean"
+      },
+      {
+        "key": "selectingMapPage",
+        "description": "Selecting which Map page to open",
+        "type": "boolean"
+      }
+    ]
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "pretest": "npm run lint",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.7",
+    "@types/node": "20.x",
+    "@types/vscode": "^1.91.0",
+    "@vscode/test-cli": "^0.0.9",
+    "@vscode/test-electron": "^2.4.0",
+    "eslint": "^8.57.0",
+    "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "jsonc-parser": "^3.3.1"
+  }
 }
