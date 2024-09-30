@@ -24,7 +24,7 @@ function register(context) {
           Picks.selectSpellQuickPick &&
          !Picks.selectSpellQuickPick._disposed
         ) {
-          Picks.selectSpellQuickPick.dispose();
+          Picks.selectSpellQuickPick.clean();
         }
 
         if (command) {

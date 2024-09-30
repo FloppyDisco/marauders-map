@@ -13,12 +13,12 @@ const createNewSpellKeybinding = require("../createNewSpellKeybinding");
 // |        I Solemnly Swear That I Am Up To No Good ...      |
 // |----------------------------------------------------------|
 
+
 function register(context) {
   context.subscriptions.push(
     vscode.commands.registerCommand(
       Settings.keys.commands.openMap,
       async ({ mapPage, mapDelay } = {}) => {
-        // console.log("-------- openMap() --------");
 
         StatusBars.dispose();
 
@@ -45,9 +45,8 @@ function register(context) {
           mapPage,
         });
 
-        // |-------------------|
-        // |        Map        |
-        // |-------------------|
+        //   Show the map and select a spell
+        // -----------------------------------
 
         const selection = await Picks.selectSpell({
           spells,
@@ -86,12 +85,14 @@ function register(context) {
           exit();
 
         } else {
+
           // command was selected!
 
           // |---------------------------------|
           // |        The MAGIC is here        |
           // |---------------------------------|
 
+          exit();
           vscode.commands.executeCommand(selection.command, selection.args);
         }
       }

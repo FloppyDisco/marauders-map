@@ -91,20 +91,24 @@ async function selectSpell({ spells, mapPage, mapDelay }) {
   }
 
   return new Promise((resolve) => {
-    selectSpellQuickPick.onDidHide(() => {
+
+    selectSpellQuickPick.clean = () => {
+      // disposed from next command keybinding
       resolve(undefined);
+      selectSpellQuickPick.dispose();
+    }
 
-      // i think technically the selectSpell is not getting disposed() if 'esc' is pressed or clicked away
-
-      // might need to do something similar to When,
-      // create individual instances,
-      // and only give the Close command the ability to dispose them all
-
+    selectSpellQuickPick.onDidHide(() => {
+      // disposed from 'esc' or click away
+      resolve(undefined);
+      selectSpellQuickPick.dispose();
     });
 
     selectSpellQuickPick.onDidAccept(() => {
+      // disposed after selection is made
       const [selection] = selectSpellQuickPick.activeItems;
       resolve(selection);
+      selectSpellQuickPick.dispose();
     });
   });
 }
