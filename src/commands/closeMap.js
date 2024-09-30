@@ -17,7 +17,7 @@ function register(context) {
       ({ command, args } = {}) => {
         // console.log('-------- closeMap() --------',);
 
-        When.removeAllContexts();
+        When.removePreviousContext();
         StatusBars.dispose();
 
         if (

@@ -27,16 +27,15 @@ function register(context) {
           return; // exit
         }
 
-        const { whenContext, setWhenContext, removeWhenContext } = When.initialize(mapPage);
         //   Set the When Context
-        setWhenContext();
+        const { cleanUpWhenContext } = When.initialize(mapPage);
 
         //   Display Page status bar
         const pageStatusBar = StatusBars.page.initialize(mapPage);
         pageStatusBar.show();
 
         function exit() {
-          removeWhenContext();
+          cleanUpWhenContext();
           pageStatusBar.dispose();
         }
 
