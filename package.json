@@ -63,17 +63,27 @@
     },
     "commands": [
       {
-        "command": "maraudersMap.lumos",
-        "title": "Open Map",
+        "command": "maraudersMap.accio",
+        "title": "Open the Map",
         "category": "Marauder's Map"
       }
     ],
     "keybindings": [
       {
-        "command": "maraudersMap.lumos",
+        "command": "maraudersMap.accio",
         "when": "!maraudersMapIsOpen",
-        "key": "ctrl+alt+m",
-        "mac": "cmd+alt+m"
+        "key": "alt+m",
+        "mac": "alt+m"
+      },
+      {
+        "command": "maraudersMap.lumos",
+        "when": "maraudersMapIsOpen && !maraudersMapIsVisible",
+        "key": "space"
+      },
+      {
+        "command": "maraudersMap.mischiefManaged",
+        "when": "maraudersMapIsOpen && !maraudersMapIsVisible",
+        "key": "escape"
       }
     ],
     "whenContexts": [
