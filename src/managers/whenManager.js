@@ -17,7 +17,7 @@ function serializer(mapPage) {
 let currentWhenContext;
 
 /**
- * Creates the necessary "when" clause context functions for the Page.
+ * Sets the necessary "when" clause context functions for the Page.
  *
  * This function generates a formatted string for the when context based on the provided page title
  * and returns an object containing the whenContext string, a function to set the whenContext, and
@@ -30,21 +30,24 @@ let currentWhenContext;
  *   - `removeWhenContext`: A function to remove the necessary when contexts in VS Code.
  */
 function initialize(mapPage) {
+
   const whenContext = serializer(mapPage);
 
   // |-----------------------------------------------------------|
   // |        Well ok, TECHNICALLY, this is the MAGIC ...        |
   // |-----------------------------------------------------------|
 
-  //   Set the WhenContext for the page
-  // ------------------------------------
+  //   Set The When Contexts
+  // -------------------------
 
-  // console.log("setting when context: ", whenContext);
+  // MaraudersMapIsOpen
   vscode.commands.executeCommand(
     "setContext",
     Settings.keys.mapOpenContext,
     true
   );
+
+  // MapPage
   vscode.commands.executeCommand(
     "setContext",
     whenContext ? whenContext : "",
@@ -53,40 +56,46 @@ function initialize(mapPage) {
 
 
   /**
-   * Removes the page's "when" clause context.
+   * Removes the mapPage's "when" clause context.
    */
-  const removeWhenContext = () => {
-    // console.log("removing when context: ", whenContext);
-
+  const removeAllWhenContext = () => {
     vscode.commands.executeCommand(
       "setContext",
       Settings.keys.mapOpenContext,
-      undefined
+      false
     );
     vscode.commands.executeCommand(
       "setContext",
       whenContext ? whenContext : "",
-      undefined
+      false
     );
   };
 
-  let _removed = false;
+  const removeMapPageWhenContext = () => {
+    vscode.commands.executeCommand(
+      "setContext",
+      whenContext ? whenContext : "",
+      false
+    );
+  }
 
-  const cleanUpWhenContext = () => {
+
+
+  let _removed = false;
+  const cleanUpCurrentWhenContexts = () => {
     if (currentWhenContext && currentWhenContext.whenContext === whenContext) {
-      removeWhenContext();
+      removeAllWhenContext();
       currentWhenContext._removed = true;
     }
   };
-
   currentWhenContext = {
     whenContext,
-    removeWhenContext,
+    removeWhenContext: removeAllWhenContext,
     _removed
   };
 
-  const context = { whenContext, cleanUpWhenContext };
-  return context;
+
+  return { whenContext, cleanUpCurrentWhenContexts, removeMapPageWhenContext };
 }
 
 function removePreviousContext() {
@@ -95,6 +104,19 @@ function removePreviousContext() {
     currentWhenContext = undefined;
   }
 }
+
+
+
+//   Selecting a Map Page
+// ------------------------
+/*
+  When Opening the main menu of the Map
+  ALL keybindings for opening a mapPage should be available
+
+  A When context therefore is necessary to allow nested mapPages to be available
+  from the main menu, even if they are not associated with their own mapPage with a keybinding
+*/
+
 
 function setSelectingMapPageContext() {
   vscode.commands.executeCommand(
@@ -108,7 +130,7 @@ function removeSelectingMapPageContext() {
   vscode.commands.executeCommand(
     "setContext",
     Settings.keys.selectingMapPage,
-    undefined
+    false
   );
 }
 
