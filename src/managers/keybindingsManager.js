@@ -72,7 +72,6 @@ let keybindingsCache = {
 };
 
 function updateKeybindingsCache() {
-  // console.log("---------- updating keybindingsCache ------------");
   const allKeybindings = getKeybindingsFromJson();
 
   const pageKeybindings = keybindingForEachPage(allKeybindings);
@@ -90,8 +89,6 @@ function updateKeybindingsCache() {
   keybindingsCache.allKeybindings = allKeybindings;
   keybindingsCache.pages = pageKeybindings;
   keybindingsCache.pageSpells = pageSpells;
-
-  // console.log("keybindingsCache: ", keybindingsCache);
 }
 
 let timeout;
@@ -110,14 +107,12 @@ function initialize(context) {
   function debounceUpdate() {
     clearTimeout(timeout);
     timeout = setTimeout(() => {
-      // console.log("keybindings.json was modified, updating cache...");
       updateKeybindingsCache();
     }, 1000);
   }
   watcher.onDidChange(debounceUpdate);
   watcher.onDidCreate(debounceUpdate);
   watcher.onDidDelete(() => {
-    // console.log("keybindings.json was deleted creating new file...");
     getKeybindingsFromJson();
     debounceUpdate();
   });
@@ -129,10 +124,8 @@ function initialize(context) {
  * @returns {array} - a array of all keybindings.
  */
 function getKeybindings() {
-  // console.log("getKeybindings()");
   let allKeybindings = keybindingsCache.allKeybindings;
   if (!allKeybindings) {
-    // console.log("keybindings were not in cache, fetching");
     allKeybindings = getKeybindingsFromJson();
   }
   return allKeybindings;
@@ -158,11 +151,9 @@ function getKeybindingsFromJson() {
 }
 
 function getKeybindingForPage(mapPage) {
-  // console.log("getKeybindingForPage()");
 
   let pages = keybindingsCache.pages;
   if (!pages) {
-    // console.log("pages not in cache");
     pages = getKeybindingForPage(getKeybindings());
   }
 
@@ -176,13 +167,11 @@ function getKeybindingForPage(mapPage) {
 }
 
 function getSpellKeybindingsForPage(mapPage) {
-  // console.log("getSpellKeybindingsForPage()");
 
   const whenContext = When.serializer(mapPage);
 
   let spellKeybindingsForPage = keybindingsCache.pageSpells[whenContext];
   if (!spellKeybindingsForPage) {
-    // console.log("spells were not in cache");
     spellKeybindingsForPage = allSpellKeybindingsForPage(
       getKeybindings(),
       whenContext
@@ -207,7 +196,6 @@ function allSpellKeybindingsForPage(keybindings, whenContext) {
 function getAllPages() {
   let allPages = keybindingsCache.pages;
   if (!allPages) {
-    // console.log("pages were not in cache");
     allPages = keybindingForEachPage(getKeybindings());
   }
   return allPages;
@@ -233,7 +221,7 @@ function keybindingForEachPage(keybindings) {
 
   keybindings.forEach((keybinding) => {
     if (
-      keybinding.command === Settings.keys.commands.openMap &&
+      keybinding.command === Settings.keys.commands.openMapPage &&
       keybinding.args !== undefined
     ) {
       //   Page keybinding
@@ -247,7 +235,7 @@ function keybindingForEachPage(keybindings) {
     } else if (
       keybinding.command === Settings.keys.commands.closeMap &&
       keybinding.args !== undefined &&
-      keybinding.args.command === Settings.keys.commands.openMap
+      keybinding.args.command === Settings.keys.commands.openMapPage
     ) {
       //   Nested Page Keybinding
       // --------------------------

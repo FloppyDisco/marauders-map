@@ -5,8 +5,9 @@ const Keybindings = require("./src/managers/keybindingsManager");
 const Picks = require("./src/managers/quickPickManager");
 
 // commands
-const showMap = require("./src/commands/showMap");
+const openMainMenu = require("./src/commands/openMainMenu");
 const openMap = require("./src/commands/openMap");
+const showMap = require("./src/commands/showMap");
 const closeMap = require("./src/commands/closeMap");
 
 // keybindings
@@ -27,10 +28,10 @@ function activate(context) {
     StatusBars.mapIcon.initialize().show();
 
     // register commands
-    showMap.register(context);
+    openMainMenu.register(context);
     openMap.register(context);
+    showMap.register(context);
     closeMap.register(context);
-
 
 
     // install default spells

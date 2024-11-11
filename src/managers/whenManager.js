@@ -79,8 +79,6 @@ function initialize(mapPage) {
     );
   }
 
-
-
   let _removed = false;
   const cleanUpCurrentWhenContexts = () => {
     if (currentWhenContext && currentWhenContext.whenContext === whenContext) {
@@ -134,10 +132,36 @@ function removeSelectingMapPageContext() {
   );
 }
 
+
+
+//   Map Visible
+// ---------------
+
+const setMapVisibleContext = () => {
+  vscode.commands.executeCommand(
+    "setContext",
+    Settings.keys.mapVisibleContext,
+    true,
+  );
+}
+
+const removeMapVisibleContext = () => {
+  vscode.commands.executeCommand(
+    "setContext",
+    Settings.keys.mapVisibleContext,
+    false,
+  );
+}
+
+
+
+
 module.exports = {
   initialize,
   serializer,
   removePreviousContext,
   setSelectingMapPageContext,
   removeSelectingMapPageContext,
+  setMapVisibleContext,
+  removeMapVisibleContext
 };

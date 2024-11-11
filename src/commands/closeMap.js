@@ -15,7 +15,6 @@ function register(context) {
     vscode.commands.registerCommand(
       Settings.keys.commands.closeMap,
       ({ command, args } = {}) => {
-        // console.log('-------- closeMap() --------',);
 
         When.removePreviousContext();
         StatusBars.dispose();
@@ -27,11 +26,11 @@ function register(context) {
           Picks.selectSpellQuickPick.clean();
         }
 
-        if (command) {
-          StatusBars.mischief.initialize().show();
+        StatusBars.mischief.initialize().show();
 
+        if (command) {
           // if opening a nested page
-          if (command === Settings.keys.commands.openMap) {
+          if (command === Settings.keys.commands.openMapPage) {
             // &&
             if (Picks.selectSpellQuickPick && Picks.selectSpellQuickPick._visible) {
               // map is already visible

@@ -17,8 +17,8 @@ const createNewSpellKeybinding = require("../createNewSpellKeybinding");
 function register(context) {
   context.subscriptions.push(
     vscode.commands.registerCommand(
-      Settings.keys.commands.openMap,
-      async ({ mapPage, mapDelay } = {}) => {
+      Settings.keys.commands.openMapPage,
+      async ({ mapPage, mapDelay, showMap } = {}) => {
         StatusBars.dispose();
         if (!mapPage) {
           vscode.commands.executeCommand(Settings.keys.commands.showMap);
@@ -50,6 +50,7 @@ function register(context) {
           spells,
           mapPage,
           mapDelay,
+          showMap,
         });
         if (selection === undefined) {
           return closeMap();

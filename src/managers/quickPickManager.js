@@ -17,8 +17,12 @@ const addSpellItem = {
   alwaysShow: true,
 };
 
-async function selectSpell({ spells, mapPage, mapDelay }) {
-  // console.log("----------- selectSpell()");
+
+// |--------------------------------|
+// |        Select The Spell        |
+// |--------------------------------|
+
+async function selectSpell({ spells, mapPage, mapDelay, showMap }) {
 
   const configs = Settings.useConfigs();
 
@@ -34,9 +38,7 @@ async function selectSpell({ spells, mapPage, mapDelay }) {
   // ---------
   selectSpellQuickPick.placeholder = "Choose a Spell ...";
   selectSpellQuickPick.onDidTriggerButton((event) => event.trigger());
-  selectSpellQuickPick.onDidTriggerItemButton((event) =>
-    event.button.trigger()
-  );
+  selectSpellQuickPick.onDidTriggerItemButton((event) => event.button.trigger());
 
   //   TitleBar
   // ------------
@@ -71,23 +73,30 @@ async function selectSpell({ spells, mapPage, mapDelay }) {
 
   selectSpellQuickPick.items = [...spells, addSpellItem];
 
-  //   Map Delay Time
-  // ------------------
-  const mapDelayTime = // mapDelay, if passed, else get default
-    mapDelay !== undefined
-      ? mapDelay
-      : configs.get(Settings.keys.defaultMapDelay);
 
-  if ( !selectingPage && mapDelayTime) {
-    mapOpenTimer = setTimeout(() => {
+  //   Map Delay
+  // -------------
+  if (mapDelay === undefined){ // get default value
+    mapDelay = configs.get(Settings.keys.defaultMapDelay);
+  }
+  if (showMap === undefined){ // get default value
+    showMap =  configs.get(Settings.keys.defaultShowMap);
+  }
+
+  if (showMap){
+    if (!selectingPage && mapDelay) {
       // show map after delay
-      if (selectSpellQuickPick && !selectSpellQuickPick._visible) {
-        selectSpellQuickPick.show();
-      }
-    }, mapDelayTime);
-  } else {
-    // show map with no delay!
-    selectSpellQuickPick.show();
+      mapOpenTimer = setTimeout(() => {
+        if (selectSpellQuickPick && !selectSpellQuickPick._visible) {
+          selectSpellQuickPick.show();
+          When.setMapVisibleContext();
+        }
+      }, mapDelay);
+    } else {
+      // show map immediately
+      selectSpellQuickPick.show();
+      When.setMapVisibleContext();
+    }
   }
 
   return new Promise((resolve) => {
@@ -101,6 +110,7 @@ async function selectSpell({ spells, mapPage, mapDelay }) {
     selectSpellQuickPick.onDidHide(() => {
       // disposed from 'esc' or click away
       resolve(undefined);
+      When.removeMapVisibleContext();
       selectSpellQuickPick.dispose();
     });
 
@@ -118,8 +128,12 @@ const addPageItem = {
   alwaysShow: true,
 };
 
+
+// |-------------------------------|
+// |        Select The Page        |
+// |-------------------------------|
+
 async function selectPage({ pages, mapPage }) {
-  // console.log("----------- selectPage()");
 
   const configs = Settings.useConfigs();
 
@@ -167,6 +181,11 @@ async function selectPage({ pages, mapPage }) {
     });
   });
 }
+
+
+// |------------------------------------------|
+// |        Select The Order of Spells        |
+// |------------------------------------------|
 
 async function selectOrder({ spells, spellToMove, mapPage }) {
   if (selectOrderQuickPick) {
@@ -383,7 +402,7 @@ function createPageMenuItems(
       // menuItem
       ...keybinding,
       label:
-        keybinding.command === Settings.keys.commands.openMap
+        keybinding.command === Settings.keys.commands.openMapPage
           ? `${configs.get(Settings.keys.pageIcon)} ${args.mapPage}`
           : `   ${configs.get(Settings.keys.subpageIcon)} ${args.args.mapPage}`,
       description: generateDescription(keybinding.key),
@@ -426,7 +445,7 @@ function createPageMenuItems(
 
       const buttons = [];
       const spellIsNestedPage =
-        spell.args && spell.args.command === Settings.keys.commands.openMap;
+        spell.args && spell.args.command === Settings.keys.commands.openMapPage;
 
       if (!spellIsNestedPage) {
         buttons.push(moveSpellButton);
@@ -496,7 +515,7 @@ function createSpellMenuItems(keybindings, { mapPage }) {
         ...createSeparator(keybinding.args.label),
         ...keybinding,
       };
-    } else if (args.command === Settings.keys.commands.openMap) {
+    } else if (args.command === Settings.keys.commands.openMapPage) {
       //   Keybinding is a nested Page
       // -------------------------------
       label = `   ${configs.get(Settings.keys.subpageIcon)} Go to ${

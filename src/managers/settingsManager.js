@@ -78,8 +78,10 @@ const buttons = {
 const keys = {
     maraudersMapPrefix: maraudersMapPrefix,
     mapOpenContext: "maraudersMapIsOpen",
+    mapVisibleContext: "maraudersMapIsVisible",
     selectingMapPage: "selectingMapPage",
     defaultMapDelay: "defaultMapDelay",
+    defaultShowMap: "defaultShowMap",
     pageIcon: "pageIcon",
     subpageIcon: "subpageIcon",
     spellIcon: "spellIcon",
@@ -87,15 +89,15 @@ const keys = {
     displayCommandId: "displayCommandId",
     examplePagesKey: "examplePagesInstalled",
     commands: {
+        openMainMenu: `${maraudersMapPrefix}.accio`,
+        openMapPage: `${maraudersMapPrefix}.iSolemnlySwearThatIAmUpToNoGood`,
         showMap: `${maraudersMapPrefix}.lumos`,
-        openMap: `${maraudersMapPrefix}.iSolemnlySwearThatIAmUpToNoGood`,
         closeMap: `${maraudersMapPrefix}.mischiefManaged`,
         saveSpell: `${maraudersMapPrefix}.expectoPatronum`,
 
 
         // deleteSpell: `${maraudersMapPrefix}.obliviate`,
         // editPage: `${maraudersMapPrefix}.erecto`,
-        // editSpell: `${maraudersMapPrefix}.accio`,
         // prior incantato
     },
 };
@@ -147,7 +149,6 @@ function useConfigs() {
 
 module.exports = {
     initialize,
-
     useConfigs,
     keys,
     buttons,

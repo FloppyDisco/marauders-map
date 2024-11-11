@@ -29,6 +29,11 @@
           "default": 500,
           "description": "Time (ms) to delay opening a map page by default."
         },
+        "maraudersMap.defaultShowMap": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether or not to show the Map after the mapDelay time has passed."
+        },
         "maraudersMap.pageIcon": {
           "type": "string",
           "default": "$(book)",
@@ -58,17 +63,32 @@
     },
     "commands": [
       {
+        "command": "maraudersMap.accio",
+        "title": "Open Main Menu",
+        "category": "Marauder's Map"
+      },
+      {
         "command": "maraudersMap.lumos",
-        "title": "Open Map",
+        "title": "Illuminate the Map",
         "category": "Marauder's Map"
       }
     ],
     "keybindings": [
       {
-        "command": "maraudersMap.lumos",
+        "command": "maraudersMap.accio",
         "when": "!maraudersMapIsOpen",
-        "key": "ctrl+alt+m",
-        "mac": "cmd+alt+m"
+        "key": "alt+m",
+        "mac": "alt+m"
+      },
+      {
+        "command": "maraudersMap.lumos",
+        "when": "maraudersMapIsOpen && !maraudersMapIsVisible",
+        "key": "space"
+      },
+      {
+        "command": "maraudersMap.mischiefManaged",
+        "when": "maraudersMapIsOpen && !maraudersMapIsVisible",
+        "key": "escape"
       }
     ],
     "whenContexts": [
