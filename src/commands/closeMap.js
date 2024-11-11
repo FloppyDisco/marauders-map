@@ -27,9 +27,9 @@ function register(context) {
           Picks.selectSpellQuickPick.clean();
         }
 
-        if (command) {
-          StatusBars.mischief.initialize().show();
+        StatusBars.mischief.initialize().show();
 
+        if (command) {
           // if opening a nested page
           if (command === Settings.keys.commands.openMapPage) {
             // &&
