@@ -5,7 +5,7 @@ const Keybindings = require("./src/managers/keybindingsManager");
 const Picks = require("./src/managers/quickPickManager");
 
 // commands
-const showMap = require("./src/commands/showMap");
+const openMainMenu = require("./src/commands/openMainMenu");
 const openMap = require("./src/commands/openMap");
 const closeMap = require("./src/commands/closeMap");
 
@@ -27,7 +27,7 @@ function activate(context) {
     StatusBars.mapIcon.initialize().show();
 
     // register commands
-    showMap.register(context);
+    openMainMenu.register(context);
     openMap.register(context);
     closeMap.register(context);
 

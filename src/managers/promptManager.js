@@ -28,7 +28,7 @@ async function promptUserForCommand({mapPage}) {
 
   const goToAnotherPage = {
     description: `${configs.get(Settings.keys.subpageIcon)} Go to another Page ...`,
-    command: Settings.keys.commands.openMap,
+    command: Settings.keys.commands.openMapPage,
     // alwaysShow: true,
   };
 

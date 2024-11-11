@@ -28,7 +28,7 @@ module.exports = async (mapPage) => {
     case undefined:
       return; // exit on 'Esc' key
 
-    case Settings.keys.commands.openMap:
+    case Settings.keys.commands.openMapPage:
       //   User selected a nested Page
       // -------------------------------
       needPage = true;

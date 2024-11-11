@@ -233,7 +233,7 @@ function keybindingForEachPage(keybindings) {
 
   keybindings.forEach((keybinding) => {
     if (
-      keybinding.command === Settings.keys.commands.openMap &&
+      keybinding.command === Settings.keys.commands.openMapPage &&
       keybinding.args !== undefined
     ) {
       //   Page keybinding
@@ -247,7 +247,7 @@ function keybindingForEachPage(keybindings) {
     } else if (
       keybinding.command === Settings.keys.commands.closeMap &&
       keybinding.args !== undefined &&
-      keybinding.args.command === Settings.keys.commands.openMap
+      keybinding.args.command === Settings.keys.commands.openMapPage
     ) {
       //   Nested Page Keybinding
       // --------------------------

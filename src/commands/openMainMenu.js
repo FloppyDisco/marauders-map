@@ -15,7 +15,7 @@ const When = require("../managers/whenManager");
 function register(context) {
   context.subscriptions.push(
     vscode.commands.registerCommand(
-      Settings.keys.commands.showMap,
+      Settings.keys.commands.openMainMenu,
       async () => {
         // console.log("------------- showMap() -----------");
 
@@ -56,7 +56,7 @@ function register(context) {
           if (mapPage && selectedKey !== undefined) {
             const keybinding = {
               key: selectedKey ? selectedKey : undefined,
-              command: Settings.keys.commands.openMap,
+              command: Settings.keys.commands.openMapPage,
               when: `!${Settings.keys.mapOpenContext}`,
               args: {
                 mapPage,
@@ -70,7 +70,7 @@ function register(context) {
 
         //   Page Selected
         // -----------------
-        vscode.commands.executeCommand(Settings.keys.commands.openMap, {
+        vscode.commands.executeCommand(Settings.keys.commands.openMapPage, {
           mapPage,
           mapDelay: 0,
         });

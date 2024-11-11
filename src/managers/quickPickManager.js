@@ -383,7 +383,7 @@ function createPageMenuItems(
       // menuItem
       ...keybinding,
       label:
-        keybinding.command === Settings.keys.commands.openMap
+        keybinding.command === Settings.keys.commands.openMapPage
           ? `${configs.get(Settings.keys.pageIcon)} ${args.mapPage}`
           : `   ${configs.get(Settings.keys.subpageIcon)} ${args.args.mapPage}`,
       description: generateDescription(keybinding.key),
@@ -426,7 +426,7 @@ function createPageMenuItems(
 
       const buttons = [];
       const spellIsNestedPage =
-        spell.args && spell.args.command === Settings.keys.commands.openMap;
+        spell.args && spell.args.command === Settings.keys.commands.openMapPage;
 
       if (!spellIsNestedPage) {
         buttons.push(moveSpellButton);
@@ -496,7 +496,7 @@ function createSpellMenuItems(keybindings, { mapPage }) {
         ...createSeparator(keybinding.args.label),
         ...keybinding,
       };
-    } else if (args.command === Settings.keys.commands.openMap) {
+    } else if (args.command === Settings.keys.commands.openMapPage) {
       //   Keybinding is a nested Page
       // -------------------------------
       label = `   ${configs.get(Settings.keys.subpageIcon)} Go to ${

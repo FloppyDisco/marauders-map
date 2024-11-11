@@ -31,7 +31,7 @@ function register(context) {
           StatusBars.mischief.initialize().show();
 
           // if opening a nested page
-          if (command === Settings.keys.commands.openMap) {
+          if (command === Settings.keys.commands.openMapPage) {
             // &&
             if (Picks.selectSpellQuickPick && Picks.selectSpellQuickPick._visible) {
               // map is already visible

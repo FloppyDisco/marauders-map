@@ -31,7 +31,7 @@ let mapStatusBarItem;
 function initMapStatusBar() {
     mapStatusBarItem = initStatusBarBase(mapStatusBarItem, {
         text: Settings.titleIcon,
-        command: Settings.keys.commands.openMap,
+        command: Settings.keys.commands.openMapPage,
         tooltip: "I solemnly swear that I am up to no good...",
         alignment: "Right",
     });

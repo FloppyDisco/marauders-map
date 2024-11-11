@@ -17,7 +17,7 @@ const createNewSpellKeybinding = require("../createNewSpellKeybinding");
 function register(context) {
   context.subscriptions.push(
     vscode.commands.registerCommand(
-      Settings.keys.commands.openMap,
+      Settings.keys.commands.openMapPage,
       async ({ mapPage, mapDelay } = {}) => {
         StatusBars.dispose();
         if (!mapPage) {
