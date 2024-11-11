@@ -7,6 +7,7 @@ const Picks = require("./src/managers/quickPickManager");
 // commands
 const openMainMenu = require("./src/commands/openMainMenu");
 const openMap = require("./src/commands/openMap");
+const showMap = require("./src/commands/showMap");
 const closeMap = require("./src/commands/closeMap");
 
 // keybindings
@@ -29,8 +30,8 @@ function activate(context) {
     // register commands
     openMainMenu.register(context);
     openMap.register(context);
+    showMap.register(context);
     closeMap.register(context);
-
 
 
     // install default spells
