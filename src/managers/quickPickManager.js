@@ -23,7 +23,6 @@ const addSpellItem = {
 // |--------------------------------|
 
 async function selectSpell({ spells, mapPage, mapDelay, showMap }) {
-  // console.log("----------- selectSpell()");
 
   const configs = Settings.useConfigs();
 
@@ -135,7 +134,6 @@ const addPageItem = {
 // |-------------------------------|
 
 async function selectPage({ pages, mapPage }) {
-  // console.log("----------- selectPage()");
 
   const configs = Settings.useConfigs();
 

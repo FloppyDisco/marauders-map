@@ -17,7 +17,6 @@ function register(context) {
     vscode.commands.registerCommand(
       Settings.keys.commands.openMainMenu,
       async () => {
-        // console.log("------------- showMap() -----------");
 
         StatusBars.dispose();
 

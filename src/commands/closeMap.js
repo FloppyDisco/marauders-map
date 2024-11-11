@@ -15,7 +15,6 @@ function register(context) {
     vscode.commands.registerCommand(
       Settings.keys.commands.closeMap,
       ({ command, args } = {}) => {
-        // console.log('-------- closeMap() --------',);
 
         When.removePreviousContext();
         StatusBars.dispose();
