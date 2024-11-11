@@ -17,7 +17,12 @@ const addSpellItem = {
   alwaysShow: true,
 };
 
-async function selectSpell({ spells, mapPage, mapDelay }) {
+
+// |--------------------------------|
+// |        Select The Spell        |
+// |--------------------------------|
+
+async function selectSpell({ spells, mapPage, mapDelay, showMap }) {
   // console.log("----------- selectSpell()");
 
   const configs = Settings.useConfigs();
@@ -34,9 +39,7 @@ async function selectSpell({ spells, mapPage, mapDelay }) {
   // ---------
   selectSpellQuickPick.placeholder = "Choose a Spell ...";
   selectSpellQuickPick.onDidTriggerButton((event) => event.trigger());
-  selectSpellQuickPick.onDidTriggerItemButton((event) =>
-    event.button.trigger()
-  );
+  selectSpellQuickPick.onDidTriggerItemButton((event) => event.button.trigger());
 
   //   TitleBar
   // ------------
@@ -71,23 +74,30 @@ async function selectSpell({ spells, mapPage, mapDelay }) {
 
   selectSpellQuickPick.items = [...spells, addSpellItem];
 
-  //   Map Delay Time
-  // ------------------
-  const mapDelayTime = // mapDelay, if passed, else get default
-    mapDelay !== undefined
-      ? mapDelay
-      : configs.get(Settings.keys.defaultMapDelay);
 
-  if ( !selectingPage && mapDelayTime) {
-    mapOpenTimer = setTimeout(() => {
+  //   Map Delay
+  // -------------
+  if (mapDelay === undefined){ // get default value
+    mapDelay = configs.get(Settings.keys.defaultMapDelay);
+  }
+  if (showMap === undefined){ // get default value
+    showMap =  configs.get(Settings.keys.defaultShowMap);
+  }
+
+  if (showMap){
+    if (!selectingPage && mapDelay) {
       // show map after delay
-      if (selectSpellQuickPick && !selectSpellQuickPick._visible) {
-        selectSpellQuickPick.show();
-      }
-    }, mapDelayTime);
-  } else {
-    // show map with no delay!
-    selectSpellQuickPick.show();
+      mapOpenTimer = setTimeout(() => {
+        if (selectSpellQuickPick && !selectSpellQuickPick._visible) {
+          selectSpellQuickPick.show();
+          When.setMapVisibleContext();
+        }
+      }, mapDelay);
+    } else {
+      // show map immediately
+      selectSpellQuickPick.show();
+      When.setMapVisibleContext();
+    }
   }
 
   return new Promise((resolve) => {
@@ -101,6 +111,7 @@ async function selectSpell({ spells, mapPage, mapDelay }) {
     selectSpellQuickPick.onDidHide(() => {
       // disposed from 'esc' or click away
       resolve(undefined);
+      When.removeMapVisibleContext();
       selectSpellQuickPick.dispose();
     });
 
@@ -117,6 +128,11 @@ const addPageItem = {
   command: "addNewPage",
   alwaysShow: true,
 };
+
+
+// |-------------------------------|
+// |        Select The Page        |
+// |-------------------------------|
 
 async function selectPage({ pages, mapPage }) {
   // console.log("----------- selectPage()");
@@ -167,6 +183,11 @@ async function selectPage({ pages, mapPage }) {
     });
   });
 }
+
+
+// |------------------------------------------|
+// |        Select The Order of Spells        |
+// |------------------------------------------|
 
 async function selectOrder({ spells, spellToMove, mapPage }) {
   if (selectOrderQuickPick) {

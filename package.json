@@ -29,6 +29,11 @@
           "default": 500,
           "description": "Time (ms) to delay opening a map page by default."
         },
+        "maraudersMap.defaultShowMap": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether or not to show the Map after the mapDelay time has passed."
+        },
         "maraudersMap.pageIcon": {
           "type": "string",
           "default": "$(book)",
