@@ -54,20 +54,20 @@ function getPathToKeybindingsFolder() {
 }
 
 let keybindingsCache = {
-//
 //   "allKeybindings": [
-//     ...keybindings.json,
+//      ...keybindings.json,
 //    ],
 //   "pages": [
-//     ...all page keybindings,
+//      ...all page keybindings,
 //    ],
 //   "pageSpells": {
-//     "Editor_Spells": [
-//        ...editor spells,
-//    ],
-//    "Comment_Spells": [
-//       ...comment spells,
-//    ],
+//      "Editor_Spells": [
+//          ...editor spells,
+//       ],
+//       "Comment_Spells": [
+//          ...comment spells,
+//       ],
+//    },
 //    ...
 };
 
