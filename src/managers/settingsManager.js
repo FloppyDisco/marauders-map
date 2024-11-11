@@ -81,6 +81,7 @@ const keys = {
     mapVisibleContext: "maraudersMapIsVisible",
     selectingMapPage: "selectingMapPage",
     defaultMapDelay: "defaultMapDelay",
+    defaultShowMap: "defaultShowMap",
     pageIcon: "pageIcon",
     subpageIcon: "subpageIcon",
     spellIcon: "spellIcon",
