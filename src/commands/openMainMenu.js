@@ -9,7 +9,7 @@ const Keybindings = require("../managers/keybindingsManager");
 const When = require("../managers/whenManager");
 
 // |---------------------|
-// |        Lumos        |
+// |        Accio        |
 // |---------------------|
 
 function register(context) {
