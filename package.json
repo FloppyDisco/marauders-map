@@ -64,7 +64,12 @@
     "commands": [
       {
         "command": "maraudersMap.accio",
-        "title": "Open the Map",
+        "title": "Open Main Menu",
+        "category": "Marauder's Map"
+      },
+      {
+        "command": "maraudersMap.lumos",
+        "title": "Illuminate the Map",
         "category": "Marauder's Map"
       }
     ],
