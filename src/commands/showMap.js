@@ -26,7 +26,7 @@ function register(context) {
         const solemnlySwearStatusBar = StatusBars.solenmlySwear.initialize();
         solemnlySwearStatusBar.show();
 
-        function exit() {
+        function closeMap() {
           When.removeSelectingMapPageContext()
           solemnlySwearStatusBar.dispose();
         }
@@ -39,18 +39,18 @@ function register(context) {
           pages,
         });
         if (selection === undefined) {
-          return exit(); // exit on 'Esc' key
+          return closeMap(); // exit on 'Esc' key
 
         } else if (selection.command === Picks.addPageItem.command) {
           // create a new mapPage keybinding
           mapPage = await Prompts.promptUserForNewPageName();
           if (mapPage === undefined) {
-            return exit(); // exit on 'Esc' key
+            return closeMap(); // exit on 'Esc' key
           }
 
           const selectedKey = await Prompts.promptUserForKey({mapPage});
           if (selectedKey === undefined) {
-            return exit(); // exit on 'Esc' key
+            return closeMap(); // exit on 'Esc' key
           }
 
           if (mapPage && selectedKey !== undefined) {

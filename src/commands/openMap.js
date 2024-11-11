@@ -19,23 +19,21 @@ function register(context) {
     vscode.commands.registerCommand(
       Settings.keys.commands.openMap,
       async ({ mapPage, mapDelay } = {}) => {
-
         StatusBars.dispose();
-
         if (!mapPage) {
           vscode.commands.executeCommand(Settings.keys.commands.showMap);
           return; // exit
         }
 
         //   Set the When Context
-        const { cleanUpWhenContext } = When.initialize(mapPage);
+        const { cleanUpCurrentWhenContexts, removeMapPageWhenContext } = When.initialize(mapPage);
 
         //   Display Page status bar
         const pageStatusBar = StatusBars.page.initialize(mapPage);
         pageStatusBar.show();
 
-        function exit() {
-          cleanUpWhenContext();
+        function closeMap() {
+          cleanUpCurrentWhenContexts();
           pageStatusBar.dispose();
         }
 
@@ -54,13 +52,14 @@ function register(context) {
           mapDelay,
         });
         if (selection === undefined) {
-          return exit();
+          return closeMap();
         }
 
         if (selection.command === Picks.addSpellItem.command) {
+          removeMapPageWhenContext()
           const newSpellKeybinding = await createNewSpellKeybinding(mapPage);
           if (newSpellKeybinding === undefined) {
-            return exit();
+            return closeMap();
           }
 
           const [newSpell] = Picks.createSpellMenuItems([newSpellKeybinding], {
@@ -75,24 +74,25 @@ function register(context) {
               mapPage,
             });
             if (orderedSpells === undefined) {
-              return exit();
+              return closeMap();
             }
           } else {
             orderedSpells = [newSpell];
           }
 
           Picks.updateSpellsOnPage(orderedSpells);
-          exit();
+
+          closeMap();
 
         } else {
-
           // command was selected!
+
 
           // |---------------------------------|
           // |        The MAGIC is here        |
           // |---------------------------------|
 
-          exit();
+          closeMap();
           vscode.commands.executeCommand(selection.command, selection.args);
         }
       }
