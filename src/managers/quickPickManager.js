@@ -491,11 +491,6 @@ function createSpellMenuItems(keybindings, { mapPage }) {
     let label;
     let description;
 
-    // return {
-    //   label: "test",
-    //   desciption: "test"
-    // }
-
     if (keybinding.command === "separator") {
       return {
         ...createSeparator(keybinding.args.label),

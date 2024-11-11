@@ -6,7 +6,6 @@ const fs = require("fs");
 let configCache;
 let defaultValues;
 
-
 const platform = os.platform();
 const isVSCodium = vscode.env.appName.includes("VSCodium");
 
