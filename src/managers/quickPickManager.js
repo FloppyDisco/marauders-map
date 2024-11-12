@@ -23,14 +23,14 @@ const addSpellItem = {
 // |--------------------------------|
 
 async function selectSpell({ spells, mapPage, mapDelay, showMap }) {
+  console.log('---- selectSpell() ----')
+
 
   const configs = Settings.useConfigs();
 
   if (selectSpellQuickPick) {
     selectSpellQuickPick.dispose();
   }
-
-  const selectingPage = selectPageQuickPick && !selectPageQuickPick._disposed
 
   selectSpellQuickPick = vscode.window.createQuickPick();
 
@@ -39,6 +39,7 @@ async function selectSpell({ spells, mapPage, mapDelay, showMap }) {
   selectSpellQuickPick.placeholder = "Choose a Spell ...";
   selectSpellQuickPick.onDidTriggerButton((event) => event.trigger());
   selectSpellQuickPick.onDidTriggerItemButton((event) => event.button.trigger());
+  selectSpellQuickPick.visible = false;
 
   //   TitleBar
   // ------------
@@ -74,6 +75,12 @@ async function selectSpell({ spells, mapPage, mapDelay, showMap }) {
   selectSpellQuickPick.items = [...spells, addSpellItem];
 
 
+  selectSpellQuickPick.showMap = () => {
+    selectSpellQuickPick.show();
+    selectSpellQuickPick.visible = true;
+    When.setMapVisibleContext();
+  }
+
   //   Map Delay
   // -------------
   if (mapDelay === undefined){ // get default value
@@ -84,41 +91,39 @@ async function selectSpell({ spells, mapPage, mapDelay, showMap }) {
   }
 
   if (showMap){
-    if (!selectingPage && mapDelay) {
+    if (mapDelay) {
       // show map after delay
       mapOpenTimer = setTimeout(() => {
-        if (selectSpellQuickPick && !selectSpellQuickPick._visible) {
-          selectSpellQuickPick.show();
-          When.setMapVisibleContext();
+        if (selectSpellQuickPick && !selectSpellQuickPick.visible) {
+          selectSpellQuickPick.showMap()
         }
       }, mapDelay);
     } else {
       // show map immediately
-      selectSpellQuickPick.show();
-      When.setMapVisibleContext();
+      selectSpellQuickPick.showMap();
     }
   }
 
   return new Promise((resolve) => {
 
-    selectSpellQuickPick.clean = () => {
-      // disposed from next command keybinding
+    selectSpellQuickPick.discard = () => {
+      // a new event handler is necessary
+      // .onDidHide() is not triggered if the QuickPick is disposed BEFORE the map is shown
+      // this means the promise would not be resolved if closeMap is called before the Map is displayed
+      // using a custom event handler ensures proper disposal
       resolve(undefined);
+      When.removeMapVisibleContext();
       selectSpellQuickPick.dispose();
     }
 
     selectSpellQuickPick.onDidHide(() => {
-      // disposed from 'esc' or click away
-      resolve(undefined);
-      When.removeMapVisibleContext();
-      selectSpellQuickPick.dispose();
+      selectSpellQuickPick.discard();
     });
 
     selectSpellQuickPick.onDidAccept(() => {
-      // disposed after selection is made
       const [selection] = selectSpellQuickPick.activeItems;
       resolve(selection);
-      selectSpellQuickPick.dispose();
+      selectSpellQuickPick.discard();
     });
   });
 }

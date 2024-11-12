@@ -19,11 +19,8 @@ function register(context) {
         When.removePreviousContext();
         StatusBars.dispose();
 
-        if (
-          Picks.selectSpellQuickPick &&
-         !Picks.selectSpellQuickPick._disposed
-        ) {
-          Picks.selectSpellQuickPick.clean();
+        if (Picks.selectSpellQuickPick) {
+          Picks.selectSpellQuickPick.discard();
         }
 
         StatusBars.mischief.initialize().show();
@@ -32,7 +29,7 @@ function register(context) {
           // if opening a nested page
           if (command === Settings.keys.commands.openMapPage) {
             // &&
-            if (Picks.selectSpellQuickPick && Picks.selectSpellQuickPick._visible) {
+            if (Picks.selectSpellQuickPick && Picks.selectSpellQuickPick.visible) {
               // map is already visible
               args.mapDelay = 0;
             } else {

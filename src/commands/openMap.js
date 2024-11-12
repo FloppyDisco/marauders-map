@@ -32,7 +32,8 @@ function register(context) {
         const pageStatusBar = StatusBars.page.initialize(mapPage);
         pageStatusBar.show();
 
-        function closeMap() {
+        function exit() {
+          console.log('exiting selectSpell()');
           cleanUpCurrentWhenContexts();
           pageStatusBar.dispose();
         }
@@ -53,14 +54,14 @@ function register(context) {
           showMap,
         });
         if (selection === undefined) {
-          return closeMap();
+          return exit();
         }
 
         if (selection.command === Picks.addSpellItem.command) {
           removeMapPageWhenContext()
           const newSpellKeybinding = await createNewSpellKeybinding(mapPage);
           if (newSpellKeybinding === undefined) {
-            return closeMap();
+            return exit();
           }
 
           const [newSpell] = Picks.createSpellMenuItems([newSpellKeybinding], {
@@ -75,7 +76,7 @@ function register(context) {
               mapPage,
             });
             if (orderedSpells === undefined) {
-              return closeMap();
+              return exit();
             }
           } else {
             orderedSpells = [newSpell];
@@ -83,7 +84,7 @@ function register(context) {
 
           Picks.updateSpellsOnPage(orderedSpells);
 
-          closeMap();
+          exit();
 
         } else {
           // command was selected!
@@ -92,9 +93,9 @@ function register(context) {
           // |---------------------------------|
           // |        The MAGIC is here        |
           // |---------------------------------|
-
-          closeMap();
+          
           vscode.commands.executeCommand(selection.command, selection.args);
+          exit();
         }
       }
     )

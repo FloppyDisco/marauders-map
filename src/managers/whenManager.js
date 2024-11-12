@@ -111,8 +111,7 @@ function removePreviousContext() {
   When Opening the main menu of the Map
   ALL keybindings for opening a mapPage should be available
 
-  A When context therefore is necessary to allow nested mapPages to be available
-  from the main menu, even if they are not associated with their own mapPage with a keybinding
+  This when context allows nested mapPages to be available,
 */
 
 
