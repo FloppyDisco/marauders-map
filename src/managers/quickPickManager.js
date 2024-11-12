@@ -141,7 +141,7 @@ async function selectSpell({ spells, mapPage, mapDelay, showMap, isNestedPage })
       //console.log('selectSpellQuickPick.onDidAccept()');
       const [selection] = selectSpellQuickPick.activeItems;
       resolve(selection);
-      selectSpellQuickPick.hide();
+      selectSpellQuickPick.discard();
     });
   });
 }
