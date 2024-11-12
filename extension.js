@@ -9,6 +9,7 @@ const openMainMenu = require("./src/commands/openMainMenu");
 const openMap = require("./src/commands/openMap");
 const showMap = require("./src/commands/showMap");
 const closeMap = require("./src/commands/closeMap");
+const goBack = require("./src/commands/goBack");
 
 // keybindings
 const examplePages = require("./src/examplePages");
@@ -32,7 +33,7 @@ function activate(context) {
     openMap.register(context);
     showMap.register(context);
     closeMap.register(context);
-
+    goBack.register(context);
 
     // install default spells
     // examplePages.initialize(context);

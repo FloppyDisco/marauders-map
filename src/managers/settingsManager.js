@@ -93,12 +93,8 @@ const keys = {
         openMapPage: `${maraudersMapPrefix}.iSolemnlySwearThatIAmUpToNoGood`,
         showMap: `${maraudersMapPrefix}.lumos`,
         closeMap: `${maraudersMapPrefix}.mischiefManaged`,
+        goBack:  `${maraudersMapPrefix}.priorIncantato`,
         saveSpell: `${maraudersMapPrefix}.expectoPatronum`,
-
-
-        // deleteSpell: `${maraudersMapPrefix}.obliviate`,
-        // editPage: `${maraudersMapPrefix}.erecto`,
-        // prior incantato
     },
 };
 
