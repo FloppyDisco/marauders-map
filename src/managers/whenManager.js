@@ -10,157 +10,156 @@ function serializer(mapPage) {
   return `${Settings.keys.maraudersMapPrefix}.${mapPage.replaceAll(" ", "_")}`;
 }
 
-// |------------------------------------------|
-// |        WhenContexts for each Page        |
-// |------------------------------------------|
-
-let currentWhenContext;
-
-/**
- * Sets the necessary "when" clause context functions for the Page.
- *
- * This function generates a formatted string for the when context based on the provided page title
- * and returns an object containing the whenContext string, a function to set the whenContext, and
- * a function to remove the whenContext.
- *
- * @param {string} mapPage - The title for this page of the map, used to generate the when context.
- * @returns {{whenContext: string, setWhenContext: function, removeWhenContext: function}} - An object containing:
- *   - `whenContext`: The formatted string to be used as the when context for this page.
- *   - `setWhenContext`: A function to set the necessary when contexts in VS Code.
- *   - `removeWhenContext`: A function to remove the necessary when contexts in VS Code.
- */
-function initialize(mapPage) {
-
-  const whenContext = serializer(mapPage);
-
-  // |-----------------------------------------------------------|
-  // |        Well ok, TECHNICALLY, this is the MAGIC ...        |
-  // |-----------------------------------------------------------|
-
-  //   Set The When Contexts
-  // -------------------------
-
-  // MaraudersMapIsOpen
-  vscode.commands.executeCommand(
-    "setContext",
-    Settings.keys.mapIsActive,
-    true
-  );
-
-  // MapPage
-  vscode.commands.executeCommand(
-    "setContext",
-    whenContext ? whenContext : "",
-    true
-  );
-
-
-  /**
-   * Removes the mapPage's "when" clause context.
-   */
-  const removeAllWhenContext = () => {
-    vscode.commands.executeCommand(
-      "setContext",
-      Settings.keys.mapIsActive,
-      false
-    );
-    vscode.commands.executeCommand(
-      "setContext",
-      whenContext ? whenContext : "",
-      false
-    );
-  };
-
-  const removeMapPageWhenContext = () => {
-    vscode.commands.executeCommand(
-      "setContext",
-      whenContext ? whenContext : "",
-      false
-    );
+let currentContext;
+class ContextCache {
+  constructor (){
+    //console.log('when: creating ContextCache',);
   }
-
-  let _removed = false;
-  const cleanUpCurrentWhenContexts = () => {
-    if (currentWhenContext && currentWhenContext.whenContext === whenContext) {
-      removeAllWhenContext();
-      currentWhenContext._removed = true;
+  add(context){
+    this[context.contextName] = context
+  }
+  get(contextName){
+    if (this.has(contextName)){
+      return this[contextName]
+    } else {
+      return new WhenContext(contextName)
     }
-  };
-  currentWhenContext = {
-    whenContext,
-    removeWhenContext: removeAllWhenContext,
-    _removed
-  };
-
-
-  return { whenContext, cleanUpCurrentWhenContexts, removeMapPageWhenContext };
+  }
+  has(contextName){
+    return contextName in this
+  }
+  removeAll(){
+    // set all contexts to false ?
+  }
+  // cache.currentContext.remove()
+  get currentContext(){
+    return this._currentContext
+  }
+  // cache.currentContext = context: WhenContext
+  set currentContext(context){
+    this._currentContext = context
+  }
 }
+const cache = new ContextCache()
 
-function removePreviousContext() {
-  if (currentWhenContext && !currentWhenContext._removed) {
-    currentWhenContext.removeWhenContext();
-    currentWhenContext = undefined;
+class WhenContext {
+  _isSet = false;
+  constructor(contextName) {
+    //console.log('when: new WhenContext:', contextName);
+    this.contextName = contextName;
+    cache.add(this);
+    return this;
+  }
+  get isSet(){
+    return this._isSet
+  }
+  set isSet(bool){
+    this._isSet = bool
+  }
+  set(){
+    if (!this.isSet){
+      //console.log('when: setting:',this.contextName);
+      vscode.commands.executeCommand(
+        "setContext",
+        this.contextName,
+        true
+      );
+      this.isSet = true;
+    }
+  }
+  remove(){
+    if (this.isSet){
+      //console.log('when: removing:',this.contextName);
+      vscode.commands.executeCommand(
+        "setContext",
+        this.contextName,
+        false
+      );
+      this.isSet = false;
+    }
   }
 }
 
+new WhenContext(Settings.keys.mapIsActive);
+new WhenContext(Settings.keys.mapIsVisible);
+new WhenContext(Settings.keys.selectingMapPage);
 
 
-//   Selecting a Map Page
-// ------------------------
-/*
-  When Opening the main menu of the Map
-  ALL keybindings for opening a mapPage should be available
-
-  This when context allows nested mapPages to be available,
-*/
-
-
-function setSelectingMapPageContext() {
-  vscode.commands.executeCommand(
-    "setContext",
-    Settings.keys.selectingMapPage,
-    true
-  );
-}
-
-function removeSelectingMapPageContext() {
-  vscode.commands.executeCommand(
-    "setContext",
-    Settings.keys.selectingMapPage,
-    false
-  );
-}
+// |-----------------------------------------------------------|
+// |        Well ok, TECHNICALLY, this is the MAGIC ...        |
+// |-----------------------------------------------------------|
 
 
 
-//   Map Visible
-// ---------------
+function removeMapIsActiveOnExit(whenContext){
+  //console.log('when:', whenContext.contextName, ' is requesting to set mapIsActive: false');
+  if (cache.currentContext && cache.currentContext.contextName === whenContext.contextName){
+    // the current page is requesting to close the map
+    //console.log('when: granted...');
+    const isActiveContext = cache.get(Settings.keys.mapIsActive)
+    if (isActiveContext.isSet){
+      isActiveContext.remove()
+    }
+  } else {
+    //console.log('when: denied...');
+  }
 
-const setMapVisibleContext = () => {
-  vscode.commands.executeCommand(
-    "setContext",
-    Settings.keys.mapIsVisible,
-    true,
-  );
-}
-
-const removeMapVisibleContext = () => {
-  vscode.commands.executeCommand(
-    "setContext",
-    Settings.keys.mapIsVisible,
-    false,
-  );
 }
 
 
+function activatePage(mapPage) {
+  //console.log('when: initializing mapPage Context:', mapPage);
+
+  // remove all other mapPage When Contexts ?
+
+  // set maraudersMapIsActive Context
+  const isActiveContext = cache.get(Settings.keys.mapIsActive)
+  isActiveContext.set()
+
+  // set mapPage Context
+  const contextName = serializer(mapPage);
+
+  const whenContext = cache.get(contextName)
+
+  cache.currentContext = whenContext
+  whenContext.set()
+
+  function removePageContext(){
+    if (whenContext.isSet){
+      whenContext.remove()
+    }
+  }
+  function removeMapIsActiveContext(){
+    removeMapIsActiveOnExit(whenContext)
+  }
+
+  return {removePageContext, removeMapIsActiveContext}
+}
+
+// must be called before initializing the new page
+// function removePreviousPageContext() {
+//   const context = cache.currentContext;
+//   if (context && context.isSet) {
+//     context.remove()
+//   }
+// }
+
+
+function setContext(contextName){
+  return () => cache.get(contextName).set()
+}
+
+function removeContext(contextName){
+  return () => cache.get(contextName).remove()
+}
 
 
 module.exports = {
-  initialize,
   serializer,
-  removePreviousContext,
-  setSelectingMapPageContext,
-  removeSelectingMapPageContext,
-  setMapVisibleContext,
-  removeMapVisibleContext
+  activatePage,
+
+  setSelectingMapPageContext: setContext(Settings.keys.selectingMapPage),
+  removeSelectingMapPageContext: removeContext(Settings.keys.selectingMapPage),
+  setMapIsVisibleContext: setContext(Settings.keys.mapIsVisible),
+  removeMapIsVisibleContext: removeContext(Settings.keys.mapIsVisible)
 };

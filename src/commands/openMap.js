@@ -19,23 +19,26 @@ function register(context) {
     vscode.commands.registerCommand(
       Settings.keys.commands.openMapPage,
       async ({ mapPage, mapDelay, showMap } = {}) => {
+        //console.log('---------- openMap()');
+
         StatusBars.dispose();
         if (!mapPage) {
-          vscode.commands.executeCommand(Settings.keys.commands.showMap);
+          vscode.commands.executeCommand(Settings.keys.commands.openMainMenu);
           return; // exit
         }
 
-        //   Set the When Context
-        const { cleanUpCurrentWhenContexts, removeMapPageWhenContext } = When.initialize(mapPage);
+        // Set the When Context
+        const {removePageContext, removeMapIsActiveContext } = When.activatePage(mapPage);
 
         //   Display Page status bar
         const pageStatusBar = StatusBars.page.initialize(mapPage);
         pageStatusBar.show();
 
         function exit() {
-          console.log('exiting selectSpell()');
-          cleanUpCurrentWhenContexts();
+          //console.log('exiting selectSpell()');
           pageStatusBar.dispose();
+          removePageContext();
+          removeMapIsActiveContext();
         }
 
         const spellKeybindings =
@@ -58,7 +61,7 @@ function register(context) {
         }
 
         if (selection.command === Picks.addSpellItem.command) {
-          removeMapPageWhenContext()
+          removePageContext();
           const newSpellKeybinding = await createNewSpellKeybinding(mapPage);
           if (newSpellKeybinding === undefined) {
             return exit();
@@ -81,21 +84,15 @@ function register(context) {
           } else {
             orderedSpells = [newSpell];
           }
-
           Picks.updateSpellsOnPage(orderedSpells);
-
           exit();
 
         } else {
-          // command was selected!
-
-
           // |---------------------------------|
           // |        The MAGIC is here        |
           // |---------------------------------|
-          
-          vscode.commands.executeCommand(selection.command, selection.args);
           exit();
+          vscode.commands.executeCommand(selection.command, selection.args);
         }
       }
     )

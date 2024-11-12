@@ -23,7 +23,7 @@ const addSpellItem = {
 // |--------------------------------|
 
 async function selectSpell({ spells, mapPage, mapDelay, showMap }) {
-  console.log('---- selectSpell() ----')
+  //console.log('---- selectSpell() ----')
 
 
   const configs = Settings.useConfigs();
@@ -76,9 +76,10 @@ async function selectSpell({ spells, mapPage, mapDelay, showMap }) {
 
 
   selectSpellQuickPick.showMap = () => {
+    //console.log('selectSpellQuickPick.showMap()');
     selectSpellQuickPick.show();
     selectSpellQuickPick.visible = true;
-    When.setMapVisibleContext();
+    When.setMapIsVisibleContext();
   }
 
   //   Map Delay
@@ -107,20 +108,25 @@ async function selectSpell({ spells, mapPage, mapDelay, showMap }) {
   return new Promise((resolve) => {
 
     selectSpellQuickPick.discard = () => {
+      //console.log('selectSpellQuickPick.discard()');
+
       // a new event handler is necessary
       // .onDidHide() is not triggered if the QuickPick is disposed BEFORE the map is shown
       // this means the promise would not be resolved if closeMap is called before the Map is displayed
       // using a custom event handler ensures proper disposal
       resolve(undefined);
-      When.removeMapVisibleContext();
+      When.removeMapIsVisibleContext();
       selectSpellQuickPick.dispose();
+      cancelTimer();
     }
 
     selectSpellQuickPick.onDidHide(() => {
+      //console.log('selectSpellQuickPick.onDidHide()');
       selectSpellQuickPick.discard();
     });
 
     selectSpellQuickPick.onDidAccept(() => {
+      //console.log('selectSpellQuickPick.onDidAccept()');
       const [selection] = selectSpellQuickPick.activeItems;
       resolve(selection);
       selectSpellQuickPick.discard();
@@ -601,7 +607,10 @@ function disposeQuickPicks() {
 }
 
 function cancelTimer() {
-  clearTimeout(mapOpenTimer);
+  if (mapOpenTimer){
+    clearTimeout(mapOpenTimer);
+    mapOpenTimer = null;
+  }
 }
 
 function initialize(context){
