@@ -22,7 +22,7 @@ const addSpellItem = {
 // |        Select The Spell        |
 // |--------------------------------|
 
-async function selectSpell({ spells, mapPage, mapDelay, showMap }) {
+async function selectSpell({ spells, mapPage, mapDelay, showMap, isNestedPage }) {
   //console.log('---- selectSpell() ----')
 
 

@@ -18,7 +18,7 @@ function register(context) {
   context.subscriptions.push(
     vscode.commands.registerCommand(
       Settings.keys.commands.openMapPage,
-      async ({ mapPage, mapDelay, showMap } = {}) => {
+      async ({ mapPage, mapDelay, showMap, isNestedPage } = {}) => {
         //console.log('---------- openMap()');
 
         StatusBars.dispose();
@@ -55,6 +55,7 @@ function register(context) {
           mapPage,
           mapDelay,
           showMap,
+          isNestedPage
         });
         if (selection === undefined) {
           return exit();
@@ -88,9 +89,11 @@ function register(context) {
           exit();
 
         } else {
+
           // |---------------------------------|
           // |        The MAGIC is here        |
           // |---------------------------------|
+          
           exit();
           vscode.commands.executeCommand(selection.command, selection.args);
         }
