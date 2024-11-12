@@ -59,7 +59,7 @@ The time delay before the map is shown
 {
     "key": "cmd+e",
     "command": "MaraudersMap.iSolemnlySwearThatIAmUpToNoGood",
-    "when": "!MaraudersMapIsOpen",
+    "when": "!maraudersMapIsActive",
     "args": {
         "mapPage": "Editor",
         "mapDelay": 3000 <= custom mapDelay
@@ -86,7 +86,7 @@ This means the Map will **NOT** be shown unless **(Space)** is pressed after a P
 {
     "key": "cmd+e",
     "command": "MaraudersMap.iSolemnlySwearThatIAmUpToNoGood",
-    "when": "!MaraudersMapIsOpen",
+    "when": "!maraudersMapIsActive",
     "args": {
         "mapPage": "Editor",
         "showMap": false <= custom showMap
@@ -194,7 +194,7 @@ Separators are great for organization, and quick navigation using the default ke
 {
     "key": "cmd+e",
     "command": "MaraudersMap.iSolemnlySwearThatIAmUpToNoGood",
-    "when": "!MaraudersMapIsOpen",
+    "when": "!maraudersMapIsActive",
     "args": {
         "mapPage": "Editor",
         "mapDelay": 300    // optional arg for per-page mapDelay
@@ -256,7 +256,7 @@ This is most likely due to a conflicting global keybinding.
 
 This issue can be fixed by adding
 
-`"when": "!MaraudersMapIsOpen"`
+`"when": "!maraudersMapIsActive"`
 
 to the conflicting keybinding. Doing this *should* prevent VS Code from selecting the conflicting keybinding while a Page is activated.
 

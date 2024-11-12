@@ -6,7 +6,7 @@ const keybindings = [
   {
     key: "e",
     command: "maraudersMap.iSolemnlySwearThatIAmUpToNoGood",
-    when: "!maraudersMapIsOpen",
+    when: "!maraudersMapIsActive",
     args: {
       mapPage: "Editor Spells",
     },

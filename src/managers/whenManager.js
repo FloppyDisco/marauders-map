@@ -43,7 +43,7 @@ function initialize(mapPage) {
   // MaraudersMapIsOpen
   vscode.commands.executeCommand(
     "setContext",
-    Settings.keys.mapOpenContext,
+    Settings.keys.mapIsActive,
     true
   );
 
@@ -61,7 +61,7 @@ function initialize(mapPage) {
   const removeAllWhenContext = () => {
     vscode.commands.executeCommand(
       "setContext",
-      Settings.keys.mapOpenContext,
+      Settings.keys.mapIsActive,
       false
     );
     vscode.commands.executeCommand(
@@ -139,7 +139,7 @@ function removeSelectingMapPageContext() {
 const setMapVisibleContext = () => {
   vscode.commands.executeCommand(
     "setContext",
-    Settings.keys.mapVisibleContext,
+    Settings.keys.mapIsVisible,
     true,
   );
 }
@@ -147,7 +147,7 @@ const setMapVisibleContext = () => {
 const removeMapVisibleContext = () => {
   vscode.commands.executeCommand(
     "setContext",
-    Settings.keys.mapVisibleContext,
+    Settings.keys.mapIsVisible,
     false,
   );
 }

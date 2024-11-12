@@ -76,24 +76,24 @@
     "keybindings": [
       {
         "command": "maraudersMap.accio",
-        "when": "!maraudersMapIsOpen",
+        "when": "!maraudersMapIsActive",
         "key": "alt+m",
         "mac": "alt+m"
       },
       {
         "command": "maraudersMap.lumos",
-        "when": "maraudersMapIsOpen && !maraudersMapIsVisible",
+        "when": "maraudersMapIsActive && !maraudersMapIsVisible",
         "key": "space"
       },
       {
         "command": "maraudersMap.mischiefManaged",
-        "when": "maraudersMapIsOpen && !maraudersMapIsVisible",
+        "when": "maraudersMapIsActive && !maraudersMapIsVisible",
         "key": "escape"
       }
     ],
     "whenContexts": [
       {
-        "key": "maraudersMapIsOpen",
+        "key": "maraudersMapIsActive",
         "description": "The Marauder's Map is Open",
         "type": "boolean"
       },

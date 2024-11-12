@@ -56,7 +56,7 @@ function register(context) {
             const keybinding = {
               key: selectedKey ? selectedKey : undefined,
               command: Settings.keys.commands.openMapPage,
-              when: `!${Settings.keys.mapOpenContext}`,
+              when: `!${Settings.keys.mapIsActive}`,
               args: {
                 mapPage,
               },
