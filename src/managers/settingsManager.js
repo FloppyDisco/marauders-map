@@ -100,6 +100,7 @@ const keys = {
         closeMap: `${maraudersMapPrefix}.mischiefManaged`,
         goBack:  `${maraudersMapPrefix}.priorIncantato`,
         saveSpell: `${maraudersMapPrefix}.expectoPatronum`,
+        revealKeybinding: `${maraudersMapPrefix}.alohomora`,
     },
 };
 
