@@ -2,6 +2,7 @@ const vscode = require("vscode");
 
 // managers
 const Settings = require("./settingsManager");
+const Notifications = require("./notificationsManager");
 const Keybindings = require("./keybindingsManager");
 const StatusBars = require("./statusBarManager");
 const When = require("./whenManager");
@@ -24,7 +25,6 @@ const addSpellItem = {
 
 async function selectSpell({ spells, mapPage, mapDelay, showMap, isNestedPage }) {
   //console.log('---- selectSpell() ----')
-
 
   const configs = Settings.useConfigs();
 
@@ -50,7 +50,6 @@ async function selectSpell({ spells, mapPage, mapDelay, showMap, isNestedPage })
   const displayTitle = configs.get(Settings.keys.displayMapTitle);
   if (displayTitle) {
     selectSpellQuickPick.title = `${Settings.titleIcon} ${mapPage}`;
-
     const buttons = []
     if (isNestedPage && previousPage){
       buttons.push({
@@ -60,7 +59,6 @@ async function selectSpell({ spells, mapPage, mapDelay, showMap, isNestedPage })
         }
       });
     }
-
     const mapPageKeybinding = Keybindings.getKeybindingForPage(mapPage);
     buttons.push({
       ...Settings.buttons.editPage,
@@ -68,7 +66,6 @@ async function selectSpell({ spells, mapPage, mapDelay, showMap, isNestedPage })
         Keybindings.revealKeybinding(mapPageKeybinding);
       },
     });
-
     selectSpellQuickPick.buttons = buttons
   }
 
@@ -359,9 +356,7 @@ async function selectOrder({ spells, spellToMove, mapPage }) {
 }
 
 function updateSpellsOnPage(spells) {
-
   StatusBars.saving.initialize().show();
-
   spells = spells.map((spell) => ({
     key: spell.key,
     command: spell.command,
@@ -370,8 +365,7 @@ function updateSpellsOnPage(spells) {
       ...spell.args,
     },
   }));
-  Keybindings.saveKeybindings(spells);
-  return spells;
+  return Keybindings.saveKeybindings(spells);
 }
 
 function createSeparator(label) {
@@ -394,17 +388,7 @@ function generateRemoveSpellButton(spell) {
   return {
     ...Settings.buttons.removeSpell,
     trigger: () => {
-      vscode.window
-        .showWarningMessage(
-          "Are you sure you want to delete this Spell?",
-          "Yes",
-          "No"
-        )
-        .then((selected) => {
-          if (selected === "Yes") {
-            Keybindings.removeKeybinding(spell);
-          }
-        });
+      Notifications.confirmRemoveSpell(spell)
     },
   };
 }

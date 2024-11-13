@@ -2,6 +2,7 @@ const vscode = require("vscode");
 
 // managers
 const Settings = require("../managers/settingsManager");
+const Notifications = require("../managers/notificationsManager");
 const Picks = require("../managers/quickPickManager");
 const Keybindings = require("../managers/keybindingsManager");
 const StatusBars = require("../managers/statusBarManager");
@@ -85,7 +86,13 @@ function register(context) {
           } else {
             orderedSpells = [newSpell];
           }
-          Picks.updateSpellsOnPage(orderedSpells);
+          Picks.updateSpellsOnPage(orderedSpells)
+          .then(result => {
+            Notifications.newSpell(newSpellKeybinding);
+          })
+          .catch(error => {
+            console.log(error)
+          })
           exit();
 
         } else {
@@ -93,7 +100,7 @@ function register(context) {
           // |---------------------------------|
           // |        The MAGIC is here        |
           // |---------------------------------|
-          
+
           exit();
           vscode.commands.executeCommand(selection.command, selection.args);
         }

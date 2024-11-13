@@ -268,66 +268,82 @@ function keybindingForEachPage(keybindings) {
  * @param {Array<Object>} newKeybindings - The list of new keybinding objects to add or update.
  */
 function saveKeybindings(newKeybindings) {
-  try {
-    // Default empty array content if file does not exist
-    let currentContent = "[]";
+  return new Promise((resolve, reject) => {
+    try {
+      // Default empty array content if file does not exist
+      let currentContent = "[]";
 
-    if (fs.existsSync(keybindingsPath)) {
-      // Read the current content of the keybindings file if it exists
-      currentContent = fs.readFileSync(keybindingsPath, "utf8");
+      if (fs.existsSync(keybindingsPath)) {
+        // Read the current content of the keybindings file if it exists
+        currentContent = fs.readFileSync(keybindingsPath, "utf8");
 
-      // Backup the current keybindings.json
-      fs.writeFileSync(backupPath, currentContent);
-    } else {
-      // Create an empty keybindings.json file with an empty array if it doesn't exist
-      fs.writeFileSync(keybindingsPath, currentContent, "utf8");
-    }
+        // Backup the current keybindings.json
+        fs.writeFileSync(backupPath, currentContent);
+      } else {
+        // Create an empty keybindings.json file with an empty array if it doesn't exist
+        fs.writeFileSync(keybindingsPath, currentContent, "utf8");
+      }
 
-    let currentKeybindings = jsonc.parse(currentContent) || [];
+      let currentKeybindings = jsonc.parse(currentContent) || [];
 
-    newKeybindings.forEach((newKeybinding) => {
-      // Find if the keybinding already exists
-      const existingIndex = currentKeybindings.findIndex(
-        (kb) =>
-          kb.when &&
-          kb.when === newKeybinding.when &&
-          kb.key === newKeybinding.key &&
-          kb.args &&
-          kb.args.command === newKeybinding.args.command &&
-          kb.args.label === newKeybinding.args.label &&
-          kb.args.mapPage === newKeybinding.args.mapPage
-      );
+      newKeybindings.forEach((newKeybinding) => {
+        // Find if the keybinding already exists
+        const existingIndex = currentKeybindings.findIndex(
+          (kb) =>
+            kb.when &&
+            kb.when === newKeybinding.when &&
+            kb.key === newKeybinding.key &&
+            kb.args &&
+            kb.args.command === newKeybinding.args.command &&
+            kb.args.label === newKeybinding.args.label &&
+            kb.args.mapPage === newKeybinding.args.mapPage
+        );
 
-      if (existingIndex !== -1) {
-        //  delete current keybinding
+        if (existingIndex !== -1) {
+          //  delete current keybinding
+          const edits = jsonc.modify(
+            currentContent,
+            [existingIndex],
+            undefined, // undefined removes the item
+            { formattingOptions: { insertSpaces: true, tabSize: 2 } }
+          );
+          currentContent = jsonc.applyEdits(currentContent, edits);
+          currentKeybindings.splice(existingIndex, 1);
+        }
+      });
+
+      newKeybindings.forEach((newKeybinding, index) => {
+        // Add keybinding
         const edits = jsonc.modify(
           currentContent,
-          [existingIndex],
-          undefined, // undefined removes the item
+          [currentKeybindings.length + index],
+          newKeybinding,
           { formattingOptions: { insertSpaces: true, tabSize: 2 } }
         );
+
         currentContent = jsonc.applyEdits(currentContent, edits);
-        currentKeybindings.splice(existingIndex, 1);
-      }
-    });
+      });
 
-    newKeybindings.forEach((newKeybinding, index) => {
-      // Add keybinding
-      const edits = jsonc.modify(
-        currentContent,
-        [currentKeybindings.length + index],
-        newKeybinding,
-        { formattingOptions: { insertSpaces: true, tabSize: 2 } }
-      );
+      // Write the updated content back to keybindings.json
+      fs.writeFileSync(keybindingsPath, currentContent, "utf8");
 
-      currentContent = jsonc.applyEdits(currentContent, edits);
-    });
+      resolve(true)
 
-    // Write the updated content back to keybindings.json
-    fs.writeFileSync(keybindingsPath, currentContent, "utf8");
-  } catch (error) {
-    console.error("Error writing to keybindings.json:", error);
-  }
+    } catch (error) {
+
+      // |-------------------|
+      // |        BUG        |
+      // |-------------------|
+      /*
+      This does not seem to catch when there are problems in keybindings.json
+      i am able to write keybindings even when the json is broken.
+      probably need to do some error handling to figure out if this is even working.
+      */
+     
+      console.error("Error writing to keybindings.json:", error);
+      reject(error)
+    }
+  })
 }
 
 /**
