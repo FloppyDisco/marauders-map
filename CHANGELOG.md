@@ -7,12 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
    - more ways to input keycodes and validation
-   - notifications! for extra sauce
 
 ## [0.0.15] - 2024-NOV-13
 
 ### Added
    - Go Back button and command for nested pages
+   - Notifications on saving a Page or Spell
 ### Changed
    - When Contexts are now a stand alone class for better management
 ### Fixed
