@@ -112,18 +112,18 @@ function activatePage(mapPage) {
 }
 
 function setContext(contextName){
-  return () => cache.get(contextName).set()
+  cache.get(contextName).set()
 }
 function removeContext(contextName){
-  return () => cache.get(contextName).remove()
+  cache.get(contextName).remove()
 }
 
 module.exports = {
   serializer,
   activatePage,
 
-  setSelectingMapPageContext: setContext(Settings.keys.selectingMapPage),
-  removeSelectingMapPageContext: removeContext(Settings.keys.selectingMapPage),
-  setMapIsVisibleContext: setContext(Settings.keys.mapIsVisible),
-  removeMapIsVisibleContext: removeContext(Settings.keys.mapIsVisible)
+  setSelectingMapPageContext: () => { setContext(Settings.keys.selectingMapPage)},
+  removeSelectingMapPageContext: () => { removeContext(Settings.keys.selectingMapPage)},
+  setMapIsVisibleContext: () => { setContext(Settings.keys.mapIsVisible)},
+  removeMapIsVisibleContext: () => { removeContext(Settings.keys.mapIsVisible)}
 };

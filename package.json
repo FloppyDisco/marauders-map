@@ -4,7 +4,7 @@
   "publisher": "bs-code",
   "icon": "src/media/icon.png",
   "repository": "https://github.com/FloppyDisco/marauders-map",
-  "description": "Boost productivity by saving keybindings in groups. Displays a visual guide of all keybindings in each group.",
+  "description": "Boost productivity by saving keyboard shortcuts into groups! Displays a visual guide to easily remember the shortcuts in each group.",
   "version": "0.0.14",
   "engines": {
     "vscode": "^1.91.0"
@@ -71,6 +71,11 @@
         "command": "maraudersMap.lumos",
         "title": "Illuminate the Map",
         "category": "Marauder's Map"
+      },
+      {
+        "command": "maraudersMap.priorIncantato",
+        "title": "Go to the Previous Page",
+        "category": "Marauder's Map"
       }
     ],
     "keybindings": [
@@ -89,6 +94,12 @@
         "command": "maraudersMap.mischiefManaged",
         "when": "maraudersMapIsActive && !maraudersMapIsVisible",
         "key": "escape"
+      },
+      {
+        "command": "maraudersMap.priorIncantato",
+        "when": "maraudersMapIsActive && maraudersMapIsVisible",
+        "key": "ctrl+left",
+        "mac": "cmd+left"
       }
     ],
     "whenContexts": [

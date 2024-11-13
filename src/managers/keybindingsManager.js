@@ -193,6 +193,10 @@ function allSpellKeybindingsForPage(keybindings, whenContext) {
   });
 }
 
+function getPreviousPage(mapPage) {
+  return keybindingsCache.nestedPages[When.serializer(mapPage)]?.previousPage
+}
+
 function getAllPages() {
   let allPages = keybindingsCache.pages;
   if (!allPages) {
@@ -227,7 +231,7 @@ function keybindingForEachPage(keybindings) {
       //   Page keybinding
       // -------------------
 
-      const mapPage = keybinding.args.mapPage;
+      const mapPage = When.serializer(keybinding.args.mapPage);
       if (mapPage) {
         uniqueMapPages.add(mapPage);
         mapPagesKeybindings[mapPage] = keybinding;
@@ -242,19 +246,19 @@ function keybindingForEachPage(keybindings) {
 
       const nestedArgs = keybinding.args.args;
       if (nestedArgs && nestedArgs.mapPage) {
-        const mapPage = nestedArgs.mapPage;
+        const mapPage = When.serializer(nestedArgs.mapPage);
         uniqueMapPages.add(mapPage);
-        nestedMapPagesKeybindings[mapPage] = keybinding;
+        nestedMapPagesKeybindings[mapPage] = {...keybinding, previousPage: keybinding.when.split("||")[0].trim().split(".")[1]};
       }
     }
   });
 
+  keybindingsCache.nestedPages = nestedMapPagesKeybindings
   return Array.from(uniqueMapPages).map((page) => {
-    //
     return mapPagesKeybindings.hasOwnProperty(page)
-      ? //   return page keybindings before nested page keybindings
-        // ----------------------------------------------------------
-        mapPagesKeybindings[page]
+    //   return page keybindings before nested page keybindings
+    // ----------------------------------------------------------
+      ? mapPagesKeybindings[page]
       : nestedMapPagesKeybindings[page];
   });
 }
@@ -446,6 +450,7 @@ module.exports = {
   getKeybindingForPage,
   getSpellKeybindingsForPage,
   getAllPages,
+  getPreviousPage,
   saveKeybindings,
   removeKeybinding,
   revealKeybinding,

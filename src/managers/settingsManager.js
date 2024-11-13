@@ -54,6 +54,11 @@ const mapIcon = "🗺️";
 const maraudersMapPrefix = "maraudersMap";
 
 const buttons = {
+    goBack: {
+        id: "goBack",
+        iconPath: new vscode.ThemeIcon("arrow-left"),
+        tooltip: "Go to Previous Page",
+    },
     editSpell: {
         id: "editSpell",
         iconPath: new vscode.ThemeIcon("go-to-file"),
@@ -93,12 +98,8 @@ const keys = {
         openMapPage: `${maraudersMapPrefix}.iSolemnlySwearThatIAmUpToNoGood`,
         showMap: `${maraudersMapPrefix}.lumos`,
         closeMap: `${maraudersMapPrefix}.mischiefManaged`,
+        goBack:  `${maraudersMapPrefix}.priorIncantato`,
         saveSpell: `${maraudersMapPrefix}.expectoPatronum`,
-
-
-        // deleteSpell: `${maraudersMapPrefix}.obliviate`,
-        // editPage: `${maraudersMapPrefix}.erecto`,
-        // prior incantato
     },
 };
 

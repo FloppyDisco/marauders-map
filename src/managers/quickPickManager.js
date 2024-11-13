@@ -22,7 +22,7 @@ const addSpellItem = {
 // |        Select The Spell        |
 // |--------------------------------|
 
-async function selectSpell({ spells, mapPage, mapDelay, showMap }) {
+async function selectSpell({ spells, mapPage, mapDelay, showMap, isNestedPage }) {
   //console.log('---- selectSpell() ----')
 
 
@@ -32,10 +32,14 @@ async function selectSpell({ spells, mapPage, mapDelay, showMap }) {
     selectSpellQuickPick.dispose();
   }
 
+  const previousPage = Keybindings.getPreviousPage(mapPage)
+
   selectSpellQuickPick = vscode.window.createQuickPick();
 
   //   Props
   // ---------
+  selectSpellQuickPick.mapPage = mapPage;
+  selectSpellQuickPick.previousPage = previousPage;
   selectSpellQuickPick.placeholder = "Choose a Spell ...";
   selectSpellQuickPick.onDidTriggerButton((event) => event.trigger());
   selectSpellQuickPick.onDidTriggerItemButton((event) => event.button.trigger());
@@ -47,17 +51,25 @@ async function selectSpell({ spells, mapPage, mapDelay, showMap }) {
   if (displayTitle) {
     selectSpellQuickPick.title = `${Settings.titleIcon} ${mapPage}`;
 
-    if (mapPage) {
-      const mapPageKeybinding = Keybindings.getKeybindingForPage(mapPage);
-      selectSpellQuickPick.buttons = [
-        {
-          ...Settings.buttons.editPage,
-          trigger: () => {
-            Keybindings.revealKeybinding(mapPageKeybinding);
-          },
-        },
-      ];
+    const buttons = []
+    if (isNestedPage && previousPage){
+      buttons.push({
+        ...Settings.buttons.goBack,
+        trigger: () => {
+          vscode.commands.executeCommand(Settings.keys.commands.goBack)
+        }
+      });
     }
+
+    const mapPageKeybinding = Keybindings.getKeybindingForPage(mapPage);
+    buttons.push({
+      ...Settings.buttons.editPage,
+      trigger: () => {
+        Keybindings.revealKeybinding(mapPageKeybinding);
+      },
+    });
+
+    selectSpellQuickPick.buttons = buttons
   }
 
   // |-----------------------|
