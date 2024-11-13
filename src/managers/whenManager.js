@@ -10,11 +10,12 @@ function serializer(mapPage) {
   return `${Settings.keys.maraudersMapPrefix}.${mapPage.replaceAll(" ", "_")}`;
 }
 
+// |-----------------------------------------------------------|
+// |        Well ok, TECHNICALLY, this is the MAGIC ...        |
+// |-----------------------------------------------------------|
+
 let currentContext;
 class ContextCache {
-  constructor (){
-    //console.log('when: creating ContextCache',);
-  }
   add(context){
     this[context.contextName] = context
   }
@@ -28,14 +29,9 @@ class ContextCache {
   has(contextName){
     return contextName in this
   }
-  removeAll(){
-    // set all contexts to false ?
-  }
-  // cache.currentContext.remove()
   get currentContext(){
     return this._currentContext
   }
-  // cache.currentContext = context: WhenContext
   set currentContext(context){
     this._currentContext = context
   }
@@ -84,43 +80,23 @@ new WhenContext(Settings.keys.mapIsActive);
 new WhenContext(Settings.keys.mapIsVisible);
 new WhenContext(Settings.keys.selectingMapPage);
 
-
-// |-----------------------------------------------------------|
-// |        Well ok, TECHNICALLY, this is the MAGIC ...        |
-// |-----------------------------------------------------------|
-
-
-
 function removeMapIsActiveOnExit(whenContext){
-  //console.log('when:', whenContext.contextName, ' is requesting to set mapIsActive: false');
   if (cache.currentContext && cache.currentContext.contextName === whenContext.contextName){
-    // the current page is requesting to close the map
-    //console.log('when: granted...');
     const isActiveContext = cache.get(Settings.keys.mapIsActive)
     if (isActiveContext.isSet){
       isActiveContext.remove()
     }
-  } else {
-    //console.log('when: denied...');
   }
-
 }
 
-
 function activatePage(mapPage) {
-  //console.log('when: initializing mapPage Context:', mapPage);
-
-  // remove all other mapPage When Contexts ?
-
   // set maraudersMapIsActive Context
   const isActiveContext = cache.get(Settings.keys.mapIsActive)
   isActiveContext.set()
 
   // set mapPage Context
   const contextName = serializer(mapPage);
-
   const whenContext = cache.get(contextName)
-
   cache.currentContext = whenContext
   whenContext.set()
 
@@ -132,27 +108,15 @@ function activatePage(mapPage) {
   function removeMapIsActiveContext(){
     removeMapIsActiveOnExit(whenContext)
   }
-
-  return {removePageContext, removeMapIsActiveContext}
+  return { removePageContext, removeMapIsActiveContext }
 }
-
-// must be called before initializing the new page
-// function removePreviousPageContext() {
-//   const context = cache.currentContext;
-//   if (context && context.isSet) {
-//     context.remove()
-//   }
-// }
-
 
 function setContext(contextName){
   return () => cache.get(contextName).set()
 }
-
 function removeContext(contextName){
   return () => cache.get(contextName).remove()
 }
-
 
 module.exports = {
   serializer,
