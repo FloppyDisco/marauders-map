@@ -34,7 +34,7 @@ function register(context) {
             if (Picks.selectSpellQuickPick && Picks.selectSpellQuickPick.visible) {
               // && map is already visible
               // show the Page immediately
-              args.mapDelay = 0
+              args.mapDelay = 0;
             } else {
               // map is not visible yet: reset the timer
               Picks.cancelTimer();
