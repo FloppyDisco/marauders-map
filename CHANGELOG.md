@@ -6,7 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+   - more ways to input keycodes and validation
+   - notifications! for extra sauce
 
+## [0.0.15] - 2024-NOV-13
+
+### Added
+   - Go Back button and command for nested pages
+### Changed
+   - When Contexts are now a stand alone class for better management
+### Fixed
+   - showMap command interfering with creating new spells space was unusable
 
 
 ## [0.0.14] - 2024-NOV-11
@@ -21,14 +31,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
    - Button to reveal keybinding in `keybindings.json`
 ### Fixed
-   - Bug fix for displaying menu items that do not have keybindings
+   - displaying menu items that do not have keybindings
 
 ## [0.0.10] - 2024-Sep-10
 
 ### Added
    - Feature: custom separators for Pages
 ### Fixed
-   - Bug fix for keybinding.json not existing
+   - error when keybinding.json does not exist
 
 
 ## [0.0.8] - 2024-Sep-06
@@ -41,8 +51,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
       - nested page symbol
       - displaying the Map title
       - displaying the command id when a custom label is provided
-### Fixed   
-   - Bug fix mapDelay times for nested pages. Nested Pages are now shown immediately if the map is already open
+### Changed  
+   - mapDelay times for nested pages. Nested Pages are now shown immediately if the map is already open
 
 ## initial development
 
