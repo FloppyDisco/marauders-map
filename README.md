@@ -161,6 +161,7 @@ The default is `$(chevron-right)`.
 - **(⌥M)** Mac \ **(alt+M)** PC => Opens the Main Menu of the Maruaders Map
 - **(Space)** => Show Map immediately if a Page is active
 - **(Escape)** => Close the Map if a Page is active
+- **(⌘Left)** Mac \ **(Ctrl+Left)** PC => Go Back to the Previous Page
 
 ## Keybindings
 
