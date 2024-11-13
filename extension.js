@@ -13,7 +13,7 @@ const goBack = require("./src/commands/goBack");
 const revealKeybinding = require("./src/commands/revealKeybinding");
 
 // keybindings
-const examplePages = require("./src/examplePages");
+const examples = require("./src/examples");
 
 /**
  * @param {vscode.ExtensionContext} context
@@ -26,9 +26,6 @@ function activate(context) {
     Keybindings.initialize(context);
     Picks.initialize(context);
 
-    // create UI
-    StatusBars.mapIcon.initialize().show();
-
     // register commands
     openMainMenu.register(context);
     openMap.register(context);
@@ -37,8 +34,11 @@ function activate(context) {
     goBack.register(context);
     revealKeybinding.register(context);
 
-    // install default spells
-    // examplePages.initialize(context);
+    // create UI
+    StatusBars.mapIcon.initialize().show();
+
+    // install examples
+    examples.initialize(context);
 }
 
 function deactivate() {}

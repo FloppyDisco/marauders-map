@@ -92,7 +92,7 @@ const keys = {
     spellIcon: "spellIcon",
     displayMapTitle: "displayMapTitle",
     displayCommandId: "displayCommandId",
-    examplePagesKey: "examplePagesInstalled",
+    examples: `${maraudersMapPrefix}.examplesInstalled`,
     commands: {
         openMainMenu: `${maraudersMapPrefix}.accio`,
         openMapPage: `${maraudersMapPrefix}.iSolemnlySwearThatIAmUpToNoGood`,
