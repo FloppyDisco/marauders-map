@@ -222,7 +222,7 @@ async function initialize(context) {
   }
 
   // debugging: set the install flag back to false
-  context.globalState.update(Settings.keys.examples, undefined);
+  // context.globalState.update(Settings.keys.examples, undefined);
 }
 
 module.exports = {
