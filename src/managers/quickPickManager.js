@@ -356,9 +356,7 @@ async function selectOrder({ spells, spellToMove, mapPage }) {
 }
 
 function updateSpellsOnPage(spells) {
-
   StatusBars.saving.initialize().show();
-
   spells = spells.map((spell) => ({
     key: spell.key,
     command: spell.command,
@@ -367,8 +365,7 @@ function updateSpellsOnPage(spells) {
       ...spell.args,
     },
   }));
-  Keybindings.saveKeybindings(spells);
-  return spells;
+  return Keybindings.saveKeybindings(spells);
 }
 
 function createSeparator(label) {

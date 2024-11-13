@@ -86,8 +86,13 @@ function register(context) {
           } else {
             orderedSpells = [newSpell];
           }
-          Picks.updateSpellsOnPage(orderedSpells);
-          Notifications.newSpell(newSpellKeybinding);
+          Picks.updateSpellsOnPage(orderedSpells)
+          .then(result => {
+            Notifications.newSpell(newSpellKeybinding);
+          })
+          .catch(error => {
+            console.log(error)
+          })
           exit();
 
         } else {
