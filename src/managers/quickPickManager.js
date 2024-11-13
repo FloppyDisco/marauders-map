@@ -356,7 +356,6 @@ async function selectOrder({ spells, spellToMove, mapPage }) {
 }
 
 function updateSpellsOnPage(spells) {
-  StatusBars.saving.initialize().show();
   spells = spells.map((spell) => ({
     key: spell.key,
     command: spell.command,

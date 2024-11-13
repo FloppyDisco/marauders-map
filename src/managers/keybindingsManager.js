@@ -5,6 +5,7 @@ const vscode = require("vscode");
 const jsonc = require("jsonc-parser");
 
 const Settings = require("./settingsManager");
+const StatusBars = require("./statusBarManager");
 const When = require("./whenManager");
 
 const keybindingsFolder = getPathToKeybindingsFolder();
@@ -72,6 +73,7 @@ let keybindingsCache = {
 };
 
 function updateKeybindingsCache() {
+  StatusBars.saving.initialize().show();
   const allKeybindings = getKeybindingsFromJson();
 
   const pageKeybindings = keybindingForEachPage(allKeybindings);
@@ -339,7 +341,7 @@ function saveKeybindings(newKeybindings) {
       i am able to write keybindings even when the json is broken.
       probably need to do some error handling to figure out if this is even working.
       */
-     
+
       console.error("Error writing to keybindings.json:", error);
       reject(error)
     }
