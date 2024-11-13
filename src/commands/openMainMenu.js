@@ -2,6 +2,7 @@ const vscode = require("vscode");
 
 // managers
 const Settings = require("../managers/settingsManager");
+const Notifications = require("../managers/notificationsManager");
 const Picks = require("../managers/quickPickManager");
 const Prompts = require("../managers/promptManager");
 const StatusBars = require("../managers/statusBarManager");
@@ -25,7 +26,7 @@ function register(context) {
         const solemnlySwearStatusBar = StatusBars.solenmlySwear.initialize();
         solemnlySwearStatusBar.show();
 
-        function closeMap() {
+        function exit() {
           When.removeSelectingMapPageContext()
           solemnlySwearStatusBar.dispose();
         }
@@ -38,18 +39,18 @@ function register(context) {
           pages,
         });
         if (selection === undefined) {
-          return closeMap(); // exit on 'Esc' key
+          return exit(); // exit on 'Esc' key
 
         } else if (selection.command === Picks.addPageItem.command) {
           // create a new mapPage keybinding
           mapPage = await Prompts.promptUserForNewPageName();
           if (mapPage === undefined) {
-            return closeMap(); // exit on 'Esc' key
+            return exit(); // exit on 'Esc' key
           }
 
           const selectedKey = await Prompts.promptUserForKey({mapPage});
           if (selectedKey === undefined) {
-            return closeMap(); // exit on 'Esc' key
+            return exit(); // exit on 'Esc' key
           }
 
           if (mapPage && selectedKey !== undefined) {
@@ -61,7 +62,9 @@ function register(context) {
                 mapPage,
               },
             };
-            Keybindings.saveKeybindings([keybinding]);
+            await Keybindings.saveKeybindings([keybinding])
+            .then(result => Notifications.newPage(keybinding))
+            .catch(error => exit())
           }
         } else {
           mapPage = selection.args.mapPage || selection.args.args.mapPage;
@@ -69,10 +72,12 @@ function register(context) {
 
         //   Page Selected
         // -----------------
-        vscode.commands.executeCommand(Settings.keys.commands.openMapPage, {
-          mapPage,
-          mapDelay: 0,
-        });
+        if(mapPage){
+          vscode.commands.executeCommand(Settings.keys.commands.openMapPage, {
+            mapPage,
+            mapDelay: 0,
+          });
+        }
       }
     )
   );
