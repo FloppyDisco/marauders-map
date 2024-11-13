@@ -387,8 +387,16 @@ function generateEditSpellButton(spell) {
 function generateRemoveSpellButton(spell) {
   return {
     ...Settings.buttons.removeSpell,
-    trigger: () => {
-      Notifications.confirmRemoveSpell(spell)
+    trigger: async () => {
+      const button = "Delete"
+      await Notifications.confirm({
+        message:  `Are you sure you want to delete ${spell.args.label || spell.args.mapPage || spell.args.args.mapPage || "this Spell"}?`,
+        button,
+      }).then(selected => {
+        if (selected === button){
+          Keybindings.removeKeybinding(spell)
+        }
+      })
     },
   };
 }

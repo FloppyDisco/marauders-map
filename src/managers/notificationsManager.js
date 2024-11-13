@@ -1,6 +1,5 @@
 const vscode = require("vscode");
 const Settings = require("../managers/settingsManager");
-const Keybindings = require("../managers/keybindingsManager");
 
 async function showTimedNotification({ message }){
     await vscode.window.withProgress(
@@ -51,23 +50,16 @@ function newSpell(newSpellKeybinding){
     showTimedNotification({message});
 }
 
-
-function confirmRemoveSpell(spell){
-    const button = "Delete"
-    return vscode.window.showWarningMessage(
-      `Are you sure you want to delete ${spell.args.label || spell.args.mapPage || spell.args.args.mapPage || "this Spell"}?`,
-      {modal: true},
-      button,
-    ).then((selected) => {
-      if (selected === button) {
-          Keybindings.removeKeybinding(spell);
-      }
-    });
+function confirm({message, detail, button}) {
+    return vscode.window.showInformationMessage(
+        message,
+        {modal: true, detail},
+        button
+    )
 }
-
 
 module.exports = {
     newPage,
     newSpell,
-    confirmRemoveSpell,
+    confirm,
 };
