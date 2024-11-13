@@ -22,11 +22,17 @@ module.exports = async (mapPage) => {
   let isSeparator;
   let when = When.serializer(mapPage);
 
+  When.setMapIsVisibleContext()
+
+  function exit(){
+    When.removeMapIsVisibleContext();
+  }
+
   const selectedCommand = await Prompts.promptUserForCommand({ mapPage });
 
   switch (selectedCommand) {
     case undefined:
-      return; // exit on 'Esc' key
+      return exit(); // exit on 'Esc' key
 
     case Settings.keys.commands.openMapPage:
       //   User selected a nested Page
@@ -61,7 +67,7 @@ module.exports = async (mapPage) => {
     // ask which Page this command will go to =>
     const selection = await Picks.selectPage({ pages, mapPage });
     if (selection === undefined) {
-      return; // exit on 'Esc' key
+      return exit() // exit on 'Esc' key
 
     } else if (selection.command === Picks.addPageItem.command) {
       // prompt user for newPage name
@@ -79,7 +85,7 @@ module.exports = async (mapPage) => {
   if (needKey) {
     selectedKey = await Prompts.promptUserForKey(mapPage);
     if (selectedKey === undefined) {
-      return; // exit on 'Esc' key
+      return exit(); // exit on 'Esc' key
     }
   }
 
@@ -89,7 +95,7 @@ module.exports = async (mapPage) => {
       mapPage,
     });
     if (selectedLabel === undefined) {
-      return; // exit on 'Esc' key
+      return exit(); // exit on 'Esc' key
     }
   }
 

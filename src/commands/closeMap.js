@@ -15,25 +15,31 @@ function register(context) {
     vscode.commands.registerCommand(
       Settings.keys.commands.closeMap,
       ({ command, args } = {}) => {
+        //console.log('---------- closeMap()');
 
-        When.removePreviousContext();
+        // remove the mapPage Context from openMap
+        // i don't think this needs to be here,
+        // the page context will be removed from the openMap command being discarded
+        // When.removePreviousPageContext();
+
         StatusBars.dispose();
 
+        // discard the QP from openMap
         if (Picks.selectSpellQuickPick) {
           Picks.selectSpellQuickPick.discard();
         }
 
         StatusBars.mischief.initialize().show();
 
-        if (command) {
-          // if opening a nested page
+        if (command) { // a command is passed
           if (command === Settings.keys.commands.openMapPage) {
-            // &&
+            // the command is opening another Page
             if (Picks.selectSpellQuickPick && Picks.selectSpellQuickPick.visible) {
-              // map is already visible
+              // && map is already visible
+              // show the Page immediately
               args.mapDelay = 0;
             } else {
-              // map is not visible yet, reset timer
+              // map is not visible yet: reset the timer
               Picks.cancelTimer();
             }
           }
